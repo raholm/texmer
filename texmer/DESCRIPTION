@@ -1,0 +1,9 @@
+Package: texmer
+Title: Text Segmentation Algorithms
+Version: 0.0.0.9000
+Authors@R: person("Rasmus", "Holm", email = "rasmus.holm723@gmail.com", role = c("aut", "cre"))
+Description: An R package for segmenting text.
+Depends: R (>= 3.4.1)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true

@@ -42,7 +42,7 @@ token_seg <- function(corpus, seg_size, tokenized_corpus=NULL, token="words", ..
     }
 
     ids <- as.character(unlist(apply(seg_stats, 1, gen_ids)))
-    tokenized_corpus$id <-ids
+    tokenized_corpus$id <- ids
 
     tokenized_corpus %>%
         texcur::tf_merge_tokens(delim=" ")

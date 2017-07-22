@@ -4,7 +4,7 @@
 #' Segments a corpus based on a fixed number of tokens
 #'
 #' @export
-token_seg <- function(corpus, seg_size, tokenized_corpus=NULL, token="words", ...) {
+tf_token_seg <- function(corpus, seg_size, tokenized_corpus=NULL, token="words", ...) {
     .check_input(corpus, seg_size, tokenized_corpus)
 
     if (is.null(tokenized_corpus)) {

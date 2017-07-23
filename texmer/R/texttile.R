@@ -63,6 +63,7 @@ tf_texttile_doc <- function(document, sentence_size, block_size, stopwords, para
     token_sequences
 }
 
+#' TODO: Fix so that it calculates scores for all token_sequences (DON'T START AT BLOCK_SIZE but at 1)
 #' @keywords internal
 .calculate_block_scores <- function(token_sequences, block_size) {
     create_token_sequence_from_block <- function(block) {
@@ -170,6 +171,66 @@ tf_texttile_doc <- function(document, sentence_size, block_size, stopwords, para
     scores[n_ts] <- nrow(right_new_tokens) / denom
 
     scores
+}
+
+#' @keywords internal
+.calculate_gap_boundaries <- function(lexical_scores) {
+    cutoff_score <- .calculate_depth_cutoff_score(lexical_scores)
+    boundaries <- c()
+
+    for (i in seq_along(lexical_scores)) {
+        score <- lexical_scores[i]
+
+        left_depth_score <- .calculate_depth_score_by_side(lexical_scores, i, TRUE)
+        right_depth_score <- .calculate_depth_score_by_side(lexical_scores, i, FALSE)
+
+        depth_score <- left_depth_score + right_depth_score
+
+        if (depth_score >= cutoff_score) {
+            boundaries <- c(boundaries, i)
+        }
+    }
+
+    boundaries
+}
+
+#' @keywords internal
+.calculate_depth_cutoff_score <- function(lexical_scores, liberal=TRUE) {
+    avg <- mean(lexical_scores)
+    stdev <- sd(lexical_scores)
+
+    if (liberal) {
+        avg - stdev
+    } else {
+        avg - stdev / 2
+    }
+}
+
+#' @keywords internal
+.calculate_depth_score_by_side <- function(lexical_scores, gap, left=TRUE) {
+    depth_score <- 0
+    current_gap <- gap
+
+    while (lexical_scores[current_gap] - lexical_scores[gap] >= depth_score) {
+        depth_score <- lexical_scores[current_gap] - lexical_scores[gap]
+
+        if (left) {
+            current_gap <- current_gap - 1
+        } else {
+            current_gap <- current_gap + 1
+        }
+
+        if ((current_gap < 0 & left) | (current_gap == length(lexical_scores) & !left)) {
+            break
+        }
+    }
+
+    depth_score
+}
+
+#' @keywords internal
+.convert_gap_boundaries_to_token_boundaries <- function(gap_boundaries, sentence_size) {
+    gap_boundaries * sentence_size
 }
 
 tf_texttile_doc(document, 20, 2, c("the", "is", "that", "in", "of"))

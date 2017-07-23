@@ -9,7 +9,8 @@ tf_texttile <- function(corpus, sentence_size, block_size) {
 tf_texttile_doc <- function(document, stopwords,
                             sentence_size, block_size,
                             method="block",
-                            paragraph_breakpoint="\n") {
+                            paragraph_breakpoint="\n",
+                            liberal_depth_cutoff=TRUE) {
     checkr::assert_string(document)
     checkr::assert_integer(sentence_size, lower=1)
     checkr::assert_integer(block_size, lower=1)
@@ -28,7 +29,7 @@ tf_texttile_doc <- function(document, stopwords,
         lexical_scores <- .calculate_vocabulary_introduction_scores(token_sequences, sentence_size)
     }
 
-    gap_boundaries <- .find_gap_boundaries(lexical_scores)
+    gap_boundaries <- .find_gap_boundaries(lexical_scores, liberal_depth_cutoff)
 
     if (length(gap_boundaries) == 0) {
         warning("Could not find any boundaries. Returning the original document.")
@@ -190,8 +191,8 @@ tf_texttile_doc <- function(document, stopwords,
 }
 
 #' @keywords internal
-.find_gap_boundaries <- function(lexical_scores) {
-    cutoff_score <- .calculate_depth_cutoff_score(lexical_scores)
+.find_gap_boundaries <- function(lexical_scores, liberal) {
+    cutoff_score <- .calculate_depth_cutoff_score(lexical_scores, liberal)
     boundaries <- c()
 
     for (i in seq_along(lexical_scores)) {

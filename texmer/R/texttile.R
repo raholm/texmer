@@ -6,21 +6,37 @@ tf_texttile <- function(corpus, sentence_size, block_size) {
 
 }
 
-tf_texttile_doc <- function(document, sentence_size, block_size, stopwords, paragraph_breakpoint="\n") {
+tf_texttile_doc <- function(document, stopwords,
+                            sentence_size, block_size,
+                            method="block",
+                            paragraph_breakpoint="\n") {
     checkr::assert_string(document)
     checkr::assert_integer(sentence_size, lower=1)
     checkr::assert_integer(block_size, lower=1)
     checkr::assert_character(stopwords)
+    checkr::assert_subset(method, c("block", "vocabulary"))
     checkr::assert_string(paragraph_breakpoint)
 
 
     paragraph_breaks <- .find_paragraph_breakpoints(document, paragraph_breakpoint)
     tokens <- .get_tokens(document)
     token_sequences <- .get_token_sequences(tokens, sentence_size, stopwords)
-    block_scores <- .calculate_block_scores(token_sequences, block_size)
-    vocabularity_introduction_scores <- .calculate_vocabulary_introduction_scores(token_sequences, sentence_size)
 
-    vocabularity_introduction_scores
+    if (method == "block") {
+        lexical_scores <- .calculate_block_scores(token_sequences, block_size)
+    } else {
+        lexical_scores <- .calculate_vocabulary_introduction_scores(token_sequences, sentence_size)
+    }
+
+    gap_boundaries <- .find_gap_boundaries(lexical_scores)
+
+    if (length(gap_boundaries) == 0) {
+        warning("Could not find any boundaries. Returning the original document.")
+        return(document)
+    }
+
+    token_boundaries <- .convert_gap_boundaries_to_token_boundaries(gap_boundaries, sentence_size)
+    .construct_segmented_document(tokens, token_boundaries)
 }
 
 #' @keywords internal
@@ -174,7 +190,7 @@ tf_texttile_doc <- function(document, sentence_size, block_size, stopwords, para
 }
 
 #' @keywords internal
-.calculate_gap_boundaries <- function(lexical_scores) {
+.find_gap_boundaries <- function(lexical_scores) {
     cutoff_score <- .calculate_depth_cutoff_score(lexical_scores)
     boundaries <- c()
 
@@ -211,7 +227,7 @@ tf_texttile_doc <- function(document, sentence_size, block_size, stopwords, para
     depth_score <- 0
     current_gap <- gap
 
-    while (lexical_scores[current_gap] - lexical_scores[gap] >= depth_score) {
+    while ((lexical_scores[current_gap] - lexical_scores[gap]) >= depth_score) {
         depth_score <- lexical_scores[current_gap] - lexical_scores[gap]
 
         if (left) {
@@ -220,7 +236,7 @@ tf_texttile_doc <- function(document, sentence_size, block_size, stopwords, para
             current_gap <- current_gap + 1
         }
 
-        if ((current_gap < 0 & left) | (current_gap == length(lexical_scores) & !left)) {
+        if ((current_gap < 1 & left) | (current_gap > length(lexical_scores) & !left)) {
             break
         }
     }
@@ -233,7 +249,27 @@ tf_texttile_doc <- function(document, sentence_size, block_size, stopwords, para
     gap_boundaries * sentence_size
 }
 
-tf_texttile_doc(document, 20, 2, c("the", "is", "that", "in", "of"))
+#' @keywords internal
+.construct_segmented_document <- function(tokens, token_boundaries) {
+    n <- length(token_boundaries) + 1
+
+    ids <- unlist(lapply(1:n, function(idx) {
+        if (idx == 1) {
+            rep(idx, token_boundaries[idx])
+        } else if (idx == n) {
+            rep(idx, nrow(tokens) - token_boundaries[idx - 1])
+        } else {
+            rep(idx, token_boundaries[idx] - token_boundaries[idx - 1])
+        }
+    }))
+
+    tokens$id <- as.character(ids)
+
+    tokens %>%
+        texcur::tf_merge_tokens()
+}
+
+head(tf_texttile_doc(document, c("the", "is", "that", "in", "of"), 15, 2, method="vocabulary")$text)
 
 segments[[1]] %>%
     dplyr::full_join(segments[[2]], by="token") %>%

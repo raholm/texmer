@@ -1,25 +1,26 @@
-#' @param w Pseudo-sentence size
-#' @param k The window size
+#' @param sentence_size The Pseudo-sentence size
+#' @param block_size The window size
 #'
 #' @export
-tf_texttile <- function(corpus, w, k) {
+tf_texttile <- function(corpus, sentence_size, block_size) {
 
 }
 
-tf_texttile_doc <- function(document, w, k, stopwords, breakpoint="\n") {
+tf_texttile_doc <- function(document, sentence_size, block_size, stopwords, paragraph_breakpoint="\n") {
     checkr::assert_string(document)
-    checkr::assert_integer(w, lower=1)
-    checkr::assert_integer(k, lower=1)
+    checkr::assert_integer(sentence_size, lower=1)
+    checkr::assert_integer(block_size, lower=1)
     checkr::assert_character(stopwords)
-    checkr::assert_string(breakpoint)
+    checkr::assert_string(paragraph_breakpoint)
 
 
-    paragraph_breaks <- .find_paragraph_breakpoints(document, breakpoint)
+    paragraph_breaks <- .find_paragraph_breakpoints(document, paragraph_breakpoint)
     tokens <- .get_tokens(document)
-    token_sequences <- .get_token_sequences(tokens, w, stopwords)
-    lexical_scores <- .calculate_lexical_scores(token_sequences, k)
+    token_sequences <- .get_token_sequences(tokens, sentence_size, stopwords)
+    block_scores <- .calculate_block_scores(token_sequences, block_size)
+    vocabularity_introduction_scores <- .calculate_vocabulary_introduction_scores(token_sequences, sentence_size)
 
-    lexical_scores
+    vocabularity_introduction_scores
 }
 
 #' @keywords internal
@@ -62,7 +63,8 @@ tf_texttile_doc <- function(document, w, k, stopwords, breakpoint="\n") {
     token_sequences
 }
 
-.calculate_lexical_scores <- function(token_sequences, block_size) {
+#' @keywords internal
+.calculate_block_scores <- function(token_sequences, block_size) {
     create_token_sequence_from_block <- function(block) {
         join_token_sequence <- function(ts1, ts2) {
             ts1 %>%
@@ -121,11 +123,11 @@ tf_texttile_doc <- function(document, w, k, stopwords, breakpoint="\n") {
         left_token_sequence <- create_token_sequence_from_block(left_block)
         right_token_sequence <- create_token_sequence_from_block(right_block)
 
-        numerator <- left_token_sequence %>%
-            calculate_numerator(right_token_sequence)
+        numerator <- calculate_numerator(left_token_sequence,
+                                         right_token_sequence)
 
-        denominator <- left_token_sequence %>%
-            calculate_denominator(right_token_sequence)
+        denominator <- calculate_denominator(left_token_sequence,
+                                             right_token_sequence)
 
         score <- numerator / denominator
 
@@ -135,9 +137,39 @@ tf_texttile_doc <- function(document, w, k, stopwords, breakpoint="\n") {
     scores
 }
 
-.calculate_vocabulary_introduction <- function(token_sequences, sentence_size, block_size) {
+#' @keywords internal
+.calculate_vocabulary_introduction_scores <- function(token_sequences, sentence_size) {
+    n_ts <- length(token_sequences)
     denom <- 2 * sentence_size
 
+    scores <- rep(NA, n_ts)
+
+    left_tokens_seen <- dplyr::data_frame(token="")
+    right_tokens_seen <- dplyr::data_frame(token=token_sequences[[1]]$token)
+
+    for (i in 1:(n_ts - 1)) {
+        left_new_tokens <- token_sequences[[i]] %>%
+            dplyr::anti_join(left_tokens_seen, by="token")
+
+        right_new_tokens <- token_sequences[[i + 1]] %>%
+            dplyr::anti_join(right_tokens_seen, by="token")
+
+        score <- (nrow(left_new_tokens) + nrow(right_new_tokens)) / denom
+        scores[i] <- score
+
+        left_tokens_seen <- left_tokens_seen %>%
+            dplyr::full_join(left_new_tokens, by="token")
+
+        right_tokens_seen <- right_tokens_seen %>%
+            dplyr::full_join(right_new_tokens, by="token")
+    }
+
+    ## Last score where we only look at the last token sequence
+    right_new_tokens <- token_sequences[[n_ts]] %>%
+        dplyr::anti_join(left_tokens_seen, by="token")
+    scores[n_ts] <- nrow(right_new_tokens) / denom
+
+    scores
 }
 
 tf_texttile_doc(document, 20, 2, c("the", "is", "that", "in", "of"))

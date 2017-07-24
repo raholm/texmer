@@ -1,14 +1,10 @@
 test_that("tf_token_seg raises an error for invalid input", {
-    expect_error(tf_token_seg(data.frame(), 1, NULL))
-    expect_error(tf_token_seg(dplyr::data_frame(), 1, NULL))
-    expect_error(tf_token_seg(dplyr::data_frame(body=c("a", "b")), 1, NULL))
-    expect_error(tf_token_seg(dplyr::data_frame(text=c(1, 2)), 1, NULL))
-    expect_error(tf_token_seg(dplyr::data_frame(text=c("a", "b")), 0, NULL))
-    expect_error(tf_token_seg(dplyr::data_frame(text=c("a", "b")), "", NULL))
-    expect_error(tf_token_seg(dplyr::data_frame(text=c("a", "b")), 1, data.frame()))
-    expect_error(tf_token_seg(dplyr::data_frame(text=c("a", "b")), 1, dplyr::data_frame()))
-    expect_error(tf_token_seg(dplyr::data_frame(text=c("a", "b")), 1, dplyr::data_frame(text=c("a", "b"))))
-    expect_error(tf_token_seg(dplyr::data_frame(text=c("a", "b")), 1, dplyr::data_frame(token=c(1, 2))))
+    expect_error(tf_token_seg(data.frame(), 1))
+    expect_error(tf_token_seg(dplyr::data_frame(), 1))
+    expect_error(tf_token_seg(dplyr::data_frame(body=c("a", "b")), 1))
+    expect_error(tf_token_seg(dplyr::data_frame(text=c(1, 2)), 1))
+    expect_error(tf_token_seg(dplyr::data_frame(text=c("a", "b")), 0))
+    expect_error(tf_token_seg(dplyr::data_frame(text=c("a", "b")), ""))
 })
 
 test_that("tf_token_seg segmentize corpus", {

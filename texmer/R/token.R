@@ -1,19 +1,20 @@
-#' Token Segmentizer
+#' Segment text into segments with fixed number of tokens.
 #'
 #' @description
-#' Segments a corpus based on a fixed number of tokens
+#' Segments each document in a corpus based on a fixed maximum number of tokens per segment.
+#'
+#' @param corpus A data frame containing columns 'id' and 'text'
+#' @param seg_size An integer determining the maximum number of tokens per segment
 #'
 #' @export
-tf_token_seg <- function(corpus, seg_size, tokenized_corpus=NULL, token="words", ...) {
-    .check_input(corpus, seg_size, tokenized_corpus)
+tf_token_seg <- function(corpus, seg_size, ...) {
+    .check_input(corpus, seg_size)
 
-    if (is.null(tokenized_corpus)) {
-        tokenized_corpus <- corpus %>%
-            texcur::tf_tokenize(token=token, ...) %>%
-            dplyr::mutate(docid=id)
-    }
+    tokens <- corpus %>%
+        texcur::tf_tokenize(token="words", ...) %>%
+        dplyr::mutate(docid=id)
 
-    seg_stats <- tokenized_corpus %>%
+    seg_stats <- tokens %>%
         dplyr::group_by(id) %>%
         dplyr::summarise(ntokens=n(),
                          segsize=min(seg_size, ntokens),
@@ -42,23 +43,16 @@ tf_token_seg <- function(corpus, seg_size, tokenized_corpus=NULL, token="words",
     }
 
     ids <- as.character(unlist(apply(seg_stats, 1, gen_ids)))
-    tokenized_corpus$id <- ids
+    tokens$id <- ids
 
-    tokenized_corpus %>%
+    tokens %>%
         texcur::tf_merge_tokens(delim=" ")
 }
 
-.check_input <- function(corpus, seg_size, tokenized_corpus) {
+.check_input <- function(corpus, seg_size) {
     checkr::assert_type(corpus, "tbl_df")
     checkr::assert_subset(c("id", "text"), names(corpus))
     ## checkr::assert_factor(corpus$id)
     checkr::assert_character(corpus$text)
     checkr::assert_integer(seg_size, lower=1)
-
-    if (!is.null(tokenized_corpus)) {
-        checkr::assert_type(tokenized_corpus, "tbl_df")
-        checkr::assert_subset(c("id", "token"), names(tokenized_corpus))
-        ## checkr::assert_factor(tokenized_corpus$id)
-        checkr::assert_character(tokenized_corpus$token)
-    }
 }

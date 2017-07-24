@@ -3,3 +3,4 @@
 export(tf_texttile)
 export(tf_token_seg)
 export(tf_topictile)
+importFrom(stats,sd)

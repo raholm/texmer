@@ -1,10 +1,10 @@
-test_that("tf_texttile_doc throws error when document contains less tokens than the sentence size", {
-    document <- "hello world"
+test_that(".tf_texttile_doc throws error when document contains less tokens than the sentence size", {
+    document <- 123
     stopwords <- c("is")
     sentence_size <- 3
     block_size <- 2
 
-    expect_error(tf_texttile_doc(document, stopwords, sentence_size, block_size, method="vocabulary"))
+    expect_error(.tf_texttile_doc(document, stopwords, sentence_size, block_size, method="vocabulary"))
 })
 
 test_that(".find_paragraph_breakpoints finds the correct breakpoints", {

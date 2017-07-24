@@ -43,13 +43,29 @@ tf_texttile <- function(corpus, stopwords,
                  sentence_size ,block_size,
                  method, liberal_depth_cutoff)
 
+    result <- dplyr::data_frame()
 
+    for (i in 1:nrow(corpus)) {
+        id <- corpus$id[i]
+        document <- corpus$text[i]
+
+        segments <- .tf_texttile_doc(document, stopwords,
+                                     sentence_size, block_size,
+                                     method, liberal_depth_cutoff)
+        segments$docid <- id
+
+        result <- result %>%
+            rbind(segments)
+    }
+
+    result$id <- 1:nrow(result)
+    result
 }
 
-tf_texttile_doc <- function(document, stopwords,
-                            sentence_size, block_size,
-                            method="block",
-                            liberal_depth_cutoff=TRUE) {
+.tf_texttile_doc <- function(document, stopwords,
+                             sentence_size, block_size,
+                             method="block",
+                             liberal_depth_cutoff=TRUE) {
     ## paragraph_breaks <- .find_paragraph_breakpoints(document, paragraph_breakpoint)
     tokens <- .get_tokens(document)
 
@@ -308,5 +324,5 @@ tf_texttile_doc <- function(document, stopwords,
     checkr::assert_integer(sentence_size, lower=1)
     checkr::assert_integer(block_size, lower=1)
     checkr::assert_subset(method, c("block", "vocabulary"))
-    ## checkr::assert_logical(liberal_depth_cutoff)
+    checkr::assert_logical(liberal_depth_cutoff)
 }

@@ -17,6 +17,7 @@ tf_texttile_doc <- function(document, stopwords,
     checkr::assert_character(stopwords)
     checkr::assert_subset(method, c("block", "vocabulary"))
     checkr::assert_string(paragraph_breakpoint)
+    ## checkr::assert_boolean(liberal_depth_cutoff)
 
 
     paragraph_breaks <- .find_paragraph_breakpoints(document, paragraph_breakpoint)
@@ -28,10 +29,18 @@ tf_texttile_doc <- function(document, stopwords,
 
     token_sequences <- .get_token_sequences(tokens, sentence_size, stopwords)
 
+    if (length(token_sequences) < 2) {
+        stop("Not enough token sequences.")
+    }
+
     if (method == "block") {
         lexical_scores <- .calculate_block_scores(token_sequences, block_size)
     } else {
         lexical_scores <- .calculate_vocabulary_introduction_scores(token_sequences, sentence_size)
+    }
+
+    if (length(lexical_scores) < 2) {
+        stop("Not enough lexical scores.")
     }
 
     gap_boundaries <- .find_gap_boundaries(lexical_scores, liberal_depth_cutoff)
@@ -89,7 +98,7 @@ tf_texttile_doc <- function(document, stopwords,
 #' @keywords internal
 .calculate_block_scores <- function(token_sequences, block_size) {
     create_token_sequence_from_block <- function(block) {
-        join_token_sequence <- function(ts1, ts2) {
+        merge_token_sequence <- function(ts1, ts2) {
             ts1 %>%
                 dplyr::full_join(ts2, by="token") %>%
                 dplyr::rowwise() %>%
@@ -99,14 +108,8 @@ tf_texttile_doc <- function(document, stopwords,
                 dplyr::ungroup()
         }
 
-        token_sequence <- block[[1]]
-
-        for (seq_idx in 2:length(block)) {
-            token_sequence <- token_sequence %>%
-                join_token_sequence(block[[seq_idx]])
-        }
-
-        token_sequence
+        block %>%
+            Reduce(merge_token_sequence, .)
     }
 
     calculate_numerator <- function(ts1, ts2) {
@@ -132,13 +135,15 @@ tf_texttile_doc <- function(document, stopwords,
     }
 
     n_ts <- length(token_sequences)
-    gap_idxs <- block_size:(n_ts - block_size)
+    gap_idxs <- 1:(n_ts - 1)
 
     scores <- rep(NA, length(gap_idxs))
 
     for (gap_idx in gap_idxs) {
-        left_idx <- gap_idx - block_size + 1
-        right_idx <- gap_idx + block_size
+        k <- min(gap_idx, block_size, n_ts - gap_idx)
+
+        left_idx <- gap_idx - k + 1
+        right_idx <- gap_idx + k
 
         left_block <- token_sequences[left_idx:gap_idx]
         right_block  <- token_sequences[(gap_idx + 1):right_idx]
@@ -154,7 +159,7 @@ tf_texttile_doc <- function(document, stopwords,
 
         score <- numerator / denominator
 
-        scores[gap_idx - block_size + 1] <- score
+        scores[gap_idx] <- score
     }
 
     scores

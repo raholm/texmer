@@ -7,16 +7,6 @@ test_that("tf_texttile_doc throws error when document contains less tokens than 
     expect_error(tf_texttile_doc(document, stopwords, sentence_size, block_size, method="vocabulary"))
 })
 
-test_that("tf_texttile_doc check this error", {
-    document <- "hello world"
-    stopwords <- c("is")
-    sentence_size <- 2
-    block_size <- 2
-
-    tf_texttile_doc(document, stopwords, sentence_size, block_size, method="vocabulary")
-})
-
-
 test_that(".find_paragraph_breakpoints finds the correct breakpoints", {
     document <- "Hello, world!\nWhat are you doing tonight?\nIs that a fishstick?"
     breakpoint <- "\n"
@@ -51,7 +41,24 @@ test_that(".get_token_sequences returns the correct token sequences", {
 })
 
 test_that(".calculate_block_scores calculates the scores correctly", {
-    expect_true(FALSE)
+    token_sequences <- dplyr::lst("1"=dplyr::data_frame(token=c("good"), n=as.integer(c(1))),
+                                  "2"=dplyr::data_frame(token=c("what", "are", "doing"), n=as.integer(c(1, 1, 2))),
+                                  "3"=dplyr::data_frame(token=c("good", "doing"), n=as.integer(c(2, 3))),
+                                  "4"=dplyr::data_frame(token=c("here", "good", "what"), n=as.integer(c(2, 4, 3))))
+    block_size <- 2
+
+    token_sequences[2:2]
+
+    .calculate_block_scores(token_sequences, block_size)
+
+
+    actual <- .calculate_block_scores(token_sequences, block_size)
+    expected <- c(
+        0,
+        (6 * 1 + 3 * 1 + 3 * 2) / sqrt(sum(c(1, 1, 1, 2)^2) * sum(c(6, 3, 2, 3)^2)),
+        (2 * 4) / sqrt(sum(c(2, 3)^2) * sum(c(2, 4, 3)^2))
+    )
+    expect_equal(actual, expected)
 })
 
 test_that(".calculate_vocabulary_introduction_scores calculates the scores correctly", {

@@ -93,7 +93,7 @@ tf_texttile <- function(corpus, stopwords,
 
     if (length(gap_boundaries) == 0) {
         warning("Could not find any boundaries. Returning the original document.")
-        return(document)
+        return(dplyr::data_frame(id="-1", text=document))
     }
 
     token_boundaries <- .convert_gap_boundaries_to_token_boundaries(gap_boundaries, sentence_size)

@@ -94,7 +94,6 @@ tf_texttile_doc <- function(document, stopwords,
     token_sequences
 }
 
-#' TODO: Fix so that it calculates scores for all token_sequences (DON'T START AT BLOCK_SIZE but at 1)
 #' @keywords internal
 .calculate_block_scores <- function(token_sequences, block_size) {
     create_token_sequence_from_block <- function(block) {

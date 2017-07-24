@@ -12,6 +12,8 @@ tf_token_seg(corpus, seg_size, token = "words", ...)
 \item{seg_size}{An integer determining the maximum number of tokens per segment}
 
 \item{token}{The definition of token. See \code{\link[tidytext]{unnest_tokens}} for options.}
+
+\item{...}{Options to \code{\link[tidytext]{unnest_tokens}}.}
 }
 \description{
 Segments each document in a corpus based on a fixed maximum number of tokens per segment.

@@ -32,8 +32,13 @@
 #' @param method The method for lexical scoring; currently are 'block' and 'vocabulary' supported.
 #' @param liberal_depth_cutoff A logical. If 'TRUE' (the default) the depth cutoff will be more liberal. See 'Details' for more information.
 #'
+#' @importFrom stats sd
+#'
 #' @export
-tf_texttile <- function(corpus, sentence_size, block_size, method="block", liberal_depth_cutoff=TRUE) {
+tf_texttile <- function(corpus, stopwords,
+                        sentence_size, block_size,
+                        method="block",
+                        liberal_depth_cutoff=TRUE) {
 
 }
 

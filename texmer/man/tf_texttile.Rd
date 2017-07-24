@@ -4,11 +4,13 @@
 \alias{tf_texttile}
 \title{Segmenting text into multi-paragraph subtopic passages.}
 \usage{
-tf_texttile(corpus, sentence_size, block_size, method = "block",
+tf_texttile(corpus, stopwords, sentence_size, block_size, method = "block",
   liberal_depth_cutoff = TRUE)
 }
 \arguments{
 \item{corpus}{A data frame}
+
+\item{stopwords}{A character vector of stopwords.}
 
 \item{sentence_size}{The pseudo-sentence size, the number of tokens in a sentence. See 'Details' for more information.}
 
@@ -17,8 +19,6 @@ tf_texttile(corpus, sentence_size, block_size, method = "block",
 \item{method}{The method for lexical scoring; currently are 'block' and 'vocabulary' supported.}
 
 \item{liberal_depth_cutoff}{A logical. If 'TRUE' (the default) the depth cutoff will be more liberal. See 'Details' for more information.}
-
-\item{stopwords}{A character vector of stopwords.}
 }
 \description{
 TextTiling is segmenting text into multi-paragraph subtopic passages.

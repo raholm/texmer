@@ -6,6 +6,7 @@
 #' @param corpus A data frame containing columns 'id' and 'text'
 #' @param seg_size An integer determining the maximum number of tokens per segment
 #' @param token The definition of token. See \code{\link[tidytext]{unnest_tokens}} for options.
+#' @param ... Options to \code{\link[tidytext]{unnest_tokens}}.
 #'
 #' @export
 tf_token_seg <- function(corpus, seg_size, token="words", ...) {

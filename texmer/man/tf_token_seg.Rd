@@ -2,11 +2,17 @@
 % Please edit documentation in R/token.R
 \name{tf_token_seg}
 \alias{tf_token_seg}
-\title{Token Segmentizer}
+\title{Segment text into segments with fixed number of tokens.}
 \usage{
-tf_token_seg(corpus, seg_size, tokenized_corpus = NULL, token = "words",
-  ...)
+tf_token_seg(corpus, seg_size, token = "words", ...)
+}
+\arguments{
+\item{corpus}{A data frame containing columns 'id' and 'text'}
+
+\item{seg_size}{An integer determining the maximum number of tokens per segment}
+
+\item{token}{The definition of token. See \code{\link[tidytext]{unnest_tokens}} for options.}
 }
 \description{
-Segments a corpus based on a fixed number of tokens
+Segments each document in a corpus based on a fixed maximum number of tokens per segment.
 }

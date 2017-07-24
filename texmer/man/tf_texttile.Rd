@@ -43,9 +43,9 @@ Tokenization refers to the division of the input document to lexical units. The 
 
 In order to find subtopics in the document, the algorithm uses different lexical scoring methods. Current implementation provides two different methods, 'Block' and 'Vocabulary'.
 
-The block method groups \code{block_size} many adjacent token-sequences and is meant to approximate the average paragraph size. Adjacent blocks are then compared for overall lexical similarity based on normalized inner product of two blocks. The actual numbers in the computation are the frequencies of the tokens.
+The block method groups \code{block_size} many adjacent token-sequences and is meant to approximate the average paragraph size. Adjacent blocks are then compared for overall lexical similarity based on normalized inner product of two blocks. The actual numbers in the computation are the frequgencies of the tokens.
 
-The vocabulary method uses the vocabulary to find lexical similatiry between token-sequences. The lexical score is based on the number of new terms up to that point, i.e., occuring for the first time in the document, between adjacent token-sequences. That is if there are few new terms then the score will be low and vice-verse.
+The vocabulary method uses the vocabulary to find lexical similatiry between pairs of token-sequences. The lexical score is based on the number of new terms up to that point, i.e., occuring for the first time in the document, between adjacent token-sequences. That is if there are few new terms then the score will be low and vice-verse.
 }
 
 \section{Boundary Identification}{

@@ -8,7 +8,7 @@ tf_texttile(corpus, sentence_size, block_size, method = "block",
   liberal_depth_cutoff = TRUE)
 }
 \arguments{
-\item{corpus}{The corpus to segment}
+\item{corpus}{A data frame}
 
 \item{sentence_size}{The pseudo-sentence size, the number of tokens in a sentence. See 'Details' for more information.}
 
@@ -32,11 +32,11 @@ The algorithm can be broken down into three parts:
 \item Lexical Score Determination
 \item Boundary Identification
 }
-The follwing sections will describe the different parts in detail.
+The following sections will describe the different parts in detail.
 }
 \section{Tokenization}{
 
-Tokenization refers to the division of the input document to lexical unit. The document is first converted to lowercase, non-alphanumeric characters are removed, and then is converted into so called token-sequences based on the \code{sentence_size}. Stopwords are contributed to the sentence size but are removed from the token-sequences. Given the stopwords ('are', 'doing') and a sentence size of two, the document 'Hello World! What are you doing?' will be converted to the token-sequences ('hello world', 'what', 'you').
+Tokenization refers to the division of the input document to lexical units. The document is first transformed to lowercase, non-alphanumeric characters are removed, and then is converted into so called token-sequences based on the \code{sentence_size}. Stopwords are contributed to the sentence size but are removed from the token-sequences. Given the stopwords ('are', 'doing') and a sentence size of two, the document 'Hello World! What are you doing?' will be converted to the token-sequences ('hello world', 'what', 'you').
 }
 
 \section{Lexical Score Determination}{
@@ -45,11 +45,11 @@ In order to find subtopics in the document, the algorithm uses different lexical
 
 The block method groups \code{block_size} many adjacent token-sequences and is meant to approximate the average paragraph size. Adjacent blocks are then compared for overall lexical similarity based on normalized inner product of two blocks. The actual numbers in the computation are the frequencies of the tokens.
 
-The vocabulary method rather uses, as its name suggests, the vocabulary to find differences in subtopic between token-sequences. The lexical score is based on the number of new terms, i.e., occuring for the first time in the document, between adjacent token-sequences.
+The vocabulary method uses the vocabulary to find lexical similatiry between token-sequences. The lexical score is based on the number of new terms up to that point, i.e., occuring for the first time in the document, between adjacent token-sequences. That is if there are few new terms then the score will be low and vice-verse.
 }
 
 \section{Boundary Identification}{
 
-Segmenting the document is equivalent to finding boundary points of subtopics in the document which is based on the lexical scores. The boundary indentification algorithm is simple by assigning a depth score, the depth of the valley if one occurs, for each lexical score. A deep valley means that, based on the lexical score, there have been a change in topic at that point. The \code{liberal_depth_cutoff} is used to determine if the valley is deep enough for a boundary point. As the name suggests if it is set to 'TRUE' it will be more liberal. When the boundary points have been identified the document is segmented at those points.
+Segmenting the document is equivalent to finding boundary points of subtopics in the document which is based on the lexical scores. The boundary indentification algorithm assigns a depth score, the depth of the valley if one occurs, to each lexical score. A deep valley means that, based on the lexical score, there have been a change in topic at that point. The \code{liberal_depth_cutoff} is used to determine if the valley is deep enough for a boundary point. As the name suggests if it is set to 'TRUE' it will be more liberal. When the boundary points have been identified the document is segmented at those points.
 }
 

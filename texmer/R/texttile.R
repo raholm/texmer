@@ -10,22 +10,22 @@
 #' \item Lexical Score Determination
 #' \item Boundary Identification
 #' }
-#' The follwing sections will describe the different parts in detail.
+#' The following sections will describe the different parts in detail.
 #'
 #' @section Tokenization:
-#' Tokenization refers to the division of the input document to lexical unit. The document is first converted to lowercase, non-alphanumeric characters are removed, and then is converted into so called token-sequences based on the \code{sentence_size}. Stopwords are contributed to the sentence size but are removed from the token-sequences. Given the stopwords ('are', 'doing') and a sentence size of two, the document 'Hello World! What are you doing?' will be converted to the token-sequences ('hello world', 'what', 'you').
+#' Tokenization refers to the division of the input document to lexical units. The document is first transformed to lowercase, non-alphanumeric characters are removed, and then is converted into so called token-sequences based on the \code{sentence_size}. Stopwords are contributed to the sentence size but are removed from the token-sequences. Given the stopwords ('are', 'doing') and a sentence size of two, the document 'Hello World! What are you doing?' will be converted to the token-sequences ('hello world', 'what', 'you').
 #'
 #' @section Lexical Score Determination:
 #' In order to find subtopics in the document, the algorithm uses different lexical scoring methods. Current implementation provides two different methods, 'Block' and 'Vocabulary'.
 #'
-#' The block method groups \code{block_size} many adjacent token-sequences and is meant to approximate the average paragraph size. Adjacent blocks are then compared for overall lexical similarity based on normalized inner product of two blocks. The actual numbers in the computation are the frequencies of the tokens.
+#' The block method groups \code{block_size} many adjacent token-sequences and is meant to approximate the average paragraph size. Adjacent blocks are then compared for overall lexical similarity based on normalized inner product of two blocks. The actual numbers in the computation are the frequgencies of the tokens.
 #'
-#' The vocabulary method rather uses, as its name suggests, the vocabulary to find differences in subtopic between token-sequences. The lexical score is based on the number of new terms, i.e., occuring for the first time in the document, between adjacent token-sequences.
+#' The vocabulary method uses the vocabulary to find lexical similatiry between pairs of token-sequences. The lexical score is based on the number of new terms up to that point, i.e., occuring for the first time in the document, between adjacent token-sequences. That is if there are few new terms then the score will be low and vice-verse.
 #'
 #' @section Boundary Identification:
-#' Segmenting the document is equivalent to finding boundary points of subtopics in the document which is based on the lexical scores. The boundary indentification algorithm is simple by assigning a depth score, the depth of the valley if one occurs, for each lexical score. A deep valley means that, based on the lexical score, there have been a change in topic at that point. The \code{liberal_depth_cutoff} is used to determine if the valley is deep enough for a boundary point. As the name suggests if it is set to 'TRUE' it will be more liberal. When the boundary points have been identified the document is segmented at those points.
+#' Segmenting the document is equivalent to finding boundary points of subtopics in the document which is based on the lexical scores. The boundary indentification algorithm assigns a depth score, the depth of the valley if one occurs, to each lexical score. A deep valley means that, based on the lexical score, there have been a change in topic at that point. The \code{liberal_depth_cutoff} is used to determine if the valley is deep enough for a boundary point. As the name suggests if it is set to 'TRUE' it will be more liberal. When the boundary points have been identified the document is segmented at those points.
 #'
-#' @param corpus The corpus to segment
+#' @param corpus A data frame
 #' @param stopwords A character vector of stopwords.
 #' @param sentence_size The pseudo-sentence size, the number of tokens in a sentence. See 'Details' for more information.
 #' @param block_size The block size as defined in the paper. See 'Details' for more information.
@@ -84,7 +84,6 @@ tf_texttile_doc <- function(document, stopwords,
     .construct_segmented_document(tokens, token_boundaries)
 }
 
-#' @keywords internal
 .find_paragraph_breakpoints <- function(document, breakpoint) {
     dplyr::data_frame(text=unlist(stringr::str_split(document, breakpoint))) %>%
         dplyr::filter(text != "") %>%
@@ -96,7 +95,6 @@ tf_texttile_doc <- function(document, stopwords,
             dplyr::filter(row_number() != n())
 }
 
-#' @keywords internal
 .get_tokens <- function(document) {
     df_doc <- dplyr::data_frame(text=document)
     tokens <- df_doc %>%
@@ -106,7 +104,6 @@ tf_texttile_doc <- function(document, stopwords,
     tokens
 }
 
-#' @keywords internal
 .get_token_sequences <- function(tokens, w, stopwords) {
     df_stopwords <- dplyr::data_frame(token=stopwords)
 
@@ -124,7 +121,6 @@ tf_texttile_doc <- function(document, stopwords,
     token_sequences
 }
 
-#' @keywords internal
 .calculate_block_scores <- function(token_sequences, block_size) {
     create_token_sequence_from_block <- function(block) {
         merge_token_sequence <- function(ts1, ts2) {
@@ -194,7 +190,6 @@ tf_texttile_doc <- function(document, stopwords,
     scores
 }
 
-#' @keywords internal
 .calculate_vocabulary_introduction_scores <- function(token_sequences, sentence_size) {
     n_ts <- length(token_sequences)
     denom <- 2 * sentence_size
@@ -229,7 +224,6 @@ tf_texttile_doc <- function(document, stopwords,
     scores
 }
 
-#' @keywords internal
 .find_gap_boundaries <- function(lexical_scores, liberal) {
     cutoff_score <- .calculate_depth_cutoff_score(lexical_scores, liberal)
     boundaries <- c()
@@ -250,7 +244,6 @@ tf_texttile_doc <- function(document, stopwords,
     boundaries
 }
 
-#' @keywords internal
 .calculate_depth_cutoff_score <- function(lexical_scores, liberal=TRUE) {
     avg <- mean(lexical_scores)
     stdev <- sd(lexical_scores)
@@ -262,7 +255,6 @@ tf_texttile_doc <- function(document, stopwords,
     }
 }
 
-#' @keywords internal
 .calculate_depth_score_by_side <- function(lexical_scores, gap, left=TRUE) {
     depth_score <- 0
     current_gap <- gap
@@ -284,12 +276,10 @@ tf_texttile_doc <- function(document, stopwords,
     depth_score
 }
 
-#' @keywords internal
 .convert_gap_boundaries_to_token_boundaries <- function(gap_boundaries, sentence_size) {
     gap_boundaries * sentence_size
 }
 
-#' @keywords internal
 .construct_segmented_document <- function(tokens, token_boundaries) {
     n <- length(token_boundaries) + 1
 

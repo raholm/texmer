@@ -39,6 +39,10 @@ tf_texttile <- function(corpus, stopwords,
                         sentence_size, block_size,
                         method="block",
                         liberal_depth_cutoff=TRUE) {
+    .check_input(corpus, stopwords,
+                 sentence_size ,block_size,
+                 method, liberal_depth_cutoff)
+
 
 }
 
@@ -46,15 +50,6 @@ tf_texttile_doc <- function(document, stopwords,
                             sentence_size, block_size,
                             method="block",
                             liberal_depth_cutoff=TRUE) {
-    checkr::assert_string(document)
-    checkr::assert_integer(sentence_size, lower=1)
-    checkr::assert_integer(block_size, lower=1)
-    checkr::assert_character(stopwords)
-    checkr::assert_subset(method, c("block", "vocabulary"))
-    checkr::assert_string(paragraph_breakpoint)
-    ## checkr::assert_logical(liberal_depth_cutoff)
-
-
     ## paragraph_breaks <- .find_paragraph_breakpoints(document, paragraph_breakpoint)
     tokens <- .get_tokens(document)
 
@@ -302,4 +297,16 @@ tf_texttile_doc <- function(document, stopwords,
 
     tokens %>%
         texcur::tf_merge_tokens()
+}
+
+.check_input <- function(corpus, stopwords,
+                         sentence_size, block_size,
+                         method, liberal_depth_cutoff) {
+    checkr::assert_type(corpus, "tbl_df")
+    checkr::assert_subset(c("id", "text"), names(corpus))
+    checkr::assert_character(stopwords)
+    checkr::assert_integer(sentence_size, lower=1)
+    checkr::assert_integer(block_size, lower=1)
+    checkr::assert_subset(method, c("block", "vocabulary"))
+    ## checkr::assert_logical(liberal_depth_cutoff)
 }

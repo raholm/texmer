@@ -10,7 +10,7 @@
 #'
 #' @export
 tf_token_seg <- function(corpus, seg_size, token="words", ...) {
-    .check_input(corpus, seg_size)
+    .check_input_token_seg(corpus, seg_size)
 
     tokens <- corpus %>%
         texcur::tf_tokenize(token=token, ...) %>%
@@ -51,7 +51,7 @@ tf_token_seg <- function(corpus, seg_size, token="words", ...) {
         texcur::tf_merge_tokens(delim=" ")
 }
 
-.check_input <- function(corpus, seg_size) {
+.check_input_token_seg <- function(corpus, seg_size) {
     checkr::assert_type(corpus, "tbl_df")
     checkr::assert_subset(c("id", "text"), names(corpus))
     ## checkr::assert_factor(corpus$id)

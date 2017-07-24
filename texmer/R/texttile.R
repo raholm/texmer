@@ -39,9 +39,9 @@ tf_texttile <- function(corpus, stopwords,
                         sentence_size, block_size,
                         method="block",
                         liberal_depth_cutoff=TRUE) {
-    .check_input(corpus, stopwords,
-                 sentence_size ,block_size,
-                 method, liberal_depth_cutoff)
+    .check_input_texttile(corpus, stopwords,
+                          sentence_size ,block_size,
+                          method, liberal_depth_cutoff)
 
     result <- dplyr::data_frame()
 
@@ -315,7 +315,7 @@ tf_texttile <- function(corpus, stopwords,
         texcur::tf_merge_tokens()
 }
 
-.check_input <- function(corpus, stopwords,
+.check_input_texttile <- function(corpus, stopwords,
                          sentence_size, block_size,
                          method, liberal_depth_cutoff) {
     checkr::assert_type(corpus, "tbl_df")

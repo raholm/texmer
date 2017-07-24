@@ -137,7 +137,7 @@ tf_texttile_doc <- function(document, stopwords,
     n_ts <- length(token_sequences)
     gap_idxs <- 1:(n_ts - 1)
 
-    scores <- rep(NA, length(gap_idxs))
+    scores <- c(rep(NA, n_ts - 1), 0)
 
     for (gap_idx in gap_idxs) {
         k <- min(gap_idx, block_size, n_ts - gap_idx)

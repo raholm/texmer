@@ -56,7 +56,8 @@ test_that(".calculate_block_scores calculates the scores correctly", {
     expected <- c(
         0,
         (6 * 1 + 3 * 1 + 3 * 2) / sqrt(sum(c(1, 1, 1, 2)^2) * sum(c(6, 3, 2, 3)^2)),
-        (2 * 4) / sqrt(sum(c(2, 3)^2) * sum(c(2, 4, 3)^2))
+        (2 * 4) / sqrt(sum(c(2, 3)^2) * sum(c(2, 4, 3)^2)),
+        0
     )
     expect_equal(actual, expected)
 })

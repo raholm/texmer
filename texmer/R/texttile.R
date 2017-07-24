@@ -1,15 +1,45 @@
-#' @param sentence_size The Pseudo-sentence size
-#' @param block_size The window size
+#' @title Segmenting text into multi-paragraph subtopic passages.
+#'
+#' @description TextTiling is segmenting text into multi-paragraph subtopic passages.
+#' It is based on the paper 'TextTiling: Segmenting Text into Multi-paragraph Subtopic Passages'
+#' written by Marti A. Hearst.
+#'
+#' @details The algorithm can be broken down into three parts:
+#' \enumerate{
+#' \item Tokenization
+#' \item Lexical Score Determination
+#' \item Boundary Identification
+#' }
+#' The follwing sections will describe the different parts in detail.
+#'
+#' @section Tokenization:
+#' Tokenization refers to the division of the input document to lexical unit. The document is first converted to lowercase, non-alphanumeric characters are removed, and then is converted into so called token-sequences based on the \code{sentence_size}. Stopwords are contributed to the sentence size but are removed from the token-sequences. Given the stopwords ('are', 'doing') and a sentence size of two, the document 'Hello World! What are you doing?' will be converted to the token-sequences ('hello world', 'what', 'you').
+#'
+#' @section Lexical Score Determination:
+#' In order to find subtopics in the document, the algorithm uses different lexical scoring methods. Current implementation provides two different methods, 'Block' and 'Vocabulary'.
+#'
+#' The block method groups \code{block_size} many adjacent token-sequences and is meant to approximate the average paragraph size. Adjacent blocks are then compared for overall lexical similarity based on normalized inner product of two blocks. The actual numbers in the computation are the frequencies of the tokens.
+#'
+#' The vocabulary method rather uses, as its name suggests, the vocabulary to find differences in subtopic between token-sequences. The lexical score is based on the number of new terms, i.e., occuring for the first time in the document, between adjacent token-sequences.
+#'
+#' @section Boundary Identification:
+#' Segmenting the document is equivalent to finding boundary points of subtopics in the document which is based on the lexical scores. The boundary indentification algorithm is simple by assigning a depth score, the depth of the valley if one occurs, for each lexical score. A deep valley means that, based on the lexical score, there have been a change in topic at that point. The \code{liberal_depth_cutoff} is used to determine if the valley is deep enough for a boundary point. As the name suggests if it is set to 'TRUE' it will be more liberal. When the boundary points have been identified the document is segmented at those points.
+#'
+#' @param corpus The corpus to segment
+#' @param stopwords A character vector of stopwords.
+#' @param sentence_size The pseudo-sentence size, the number of tokens in a sentence. See 'Details' for more information.
+#' @param block_size The block size as defined in the paper. See 'Details' for more information.
+#' @param method The method for lexical scoring; currently are 'block' and 'vocabulary' supported.
+#' @param liberal_depth_cutoff A logical. If 'TRUE' (the default) the depth cutoff will be more liberal. See 'Details' for more information.
 #'
 #' @export
-tf_texttile <- function(corpus, sentence_size, block_size) {
+tf_texttile <- function(corpus, sentence_size, block_size, method="block", liberal_depth_cutoff=TRUE) {
 
 }
 
 tf_texttile_doc <- function(document, stopwords,
                             sentence_size, block_size,
                             method="block",
-                            paragraph_breakpoint="\n",
                             liberal_depth_cutoff=TRUE) {
     checkr::assert_string(document)
     checkr::assert_integer(sentence_size, lower=1)
@@ -17,10 +47,10 @@ tf_texttile_doc <- function(document, stopwords,
     checkr::assert_character(stopwords)
     checkr::assert_subset(method, c("block", "vocabulary"))
     checkr::assert_string(paragraph_breakpoint)
-    ## checkr::assert_boolean(liberal_depth_cutoff)
+    ## checkr::assert_logical(liberal_depth_cutoff)
 
 
-    paragraph_breaks <- .find_paragraph_breakpoints(document, paragraph_breakpoint)
+    ## paragraph_breaks <- .find_paragraph_breakpoints(document, paragraph_breakpoint)
     tokens <- .get_tokens(document)
 
     if (sentence_size > nrow(tokens)) {

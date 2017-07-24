@@ -21,6 +21,11 @@ tf_texttile_doc <- function(document, stopwords,
 
     paragraph_breaks <- .find_paragraph_breakpoints(document, paragraph_breakpoint)
     tokens <- .get_tokens(document)
+
+    if (sentence_size > nrow(tokens)) {
+        stop("Document is too small for the specified sentence size.")
+    }
+
     token_sequences <- .get_token_sequences(tokens, sentence_size, stopwords)
 
     if (method == "block") {
@@ -269,30 +274,3 @@ tf_texttile_doc <- function(document, stopwords,
     tokens %>%
         texcur::tf_merge_tokens()
 }
-
-head(tf_texttile_doc(document, c("the", "is", "that", "in", "of"), 15, 2, method="vocabulary")$text)
-
-segments[[1]] %>%
-    dplyr::full_join(segments[[2]], by="token") %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(n=sum(n.x, n.y, na.rm=TRUE),
-                  n.x=NULL,
-                  n.y=NULL) %>%
-    dplyr::ungroup()
-
-
-segments[[1]] %>%
-    dplyr::summarize(n=sum(n))
-
-stopwords <- dplyr::data_frame(token=c("the", "is", "that"))
-
-
-document <- "Campylobacteriosis remains the most commonly reported bacterial foodborne disease in humans worldwide . The incidence of campylobacteriosis has risen recently, with more than 200,000 confirmed cases in the European Union reported each year , .  () infections are clinically manifested by diarrhoea, fever, and abdominal cramps, and, in certain cases, may be followed by long-term sequelae such as Guillain-Barr syndrome or reactive arthritis . Although it is generally agreed that the major source of human infections is contaminated poultry meat, there is evidence that surface and/or drinking water also acts as a vehicle for  and  transmissions to humans , , , , . Rivers or other natural aquatic environments can be contaminated with thermotolerant  by raw sewage, discharge from wastewater-treated agricultural land, or faeces from wild or domestic animals , , , , .
-
-
-
-Assessments of microbiological water quality generally focus on testing for indicator bacteria, like , which are used to estimate the exposure of drinking water to faecal contamination , . Nevertheless, the onset of human  infections or outbreaks may necessitate the inclusion of thermotolerant  in microbial water analyses , . Water analysis laboratories often use the ISO standard method 17995:2005 , which initially includes a filtration step of the water samples, followed by bacterial enrichment and cultivation on selective agar plates. However, the ISO method is time consuming and often fails to detect  from water samples . This may be the result of higher amounts of injured or viable but nonculturable (VBNC) cells under stressful environmental conditions, as is the case in water . To circumvent the limitations of culture-based methods, quantitative real-time PCR (qPCR) approaches for the detection of  from water have been developed and successfully applied , , , . However, the lack of differentiation between DNA from viable and nonviable cells restricts the implementation of these PCR-based techniques for routine diagnostic applications . Recently, a sample pretreatment with intercalating dyes like ethidium monoazide (EMA) or propidium monoazide (PMA) was proposed to address this problem. These dyes cross the membranes of damaged cells, covalently bind to DNA after photoactivation, and, thus, block PCR amplification of DNA from nonviable cells . EMA- or PMA-qPCR assays have been successfully used to quantify  from poultry products , ,  but little is known about the applicability of a viability qPCR to determine the quantities of  from water samples , .
-
-
-
-Therefore, the objectives of this study were to assess the general suitability of an EMA-qPCR method for the quantification of  cells from water samples. For this purpose, two methods for the recovery of cells from water samples were comparatively analysed, and live/dead ratios after inoculation of cells in different type of water were considered."

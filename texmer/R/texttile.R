@@ -66,11 +66,11 @@ tf_texttile <- function(corpus, stopwords,
                              sentence_size, block_size,
                              method="block",
                              liberal_depth_cutoff=TRUE) {
-    ## paragraph_breaks <- .find_paragraph_breakpoints(document, paragraph_breakpoint)
     tokens <- .get_tokens(document)
 
     if (sentence_size > nrow(tokens)) {
-        stop("Document is too small for the specified sentence size.")
+        warning("Document is too small for the specified sentence size. Returning the original document.")
+        return(dplyr::data_frame(id="-1", text=document))
     }
 
     token_sequences <- .get_token_sequences(tokens, sentence_size, stopwords)
@@ -120,11 +120,11 @@ tf_texttile <- function(corpus, stopwords,
     tokens
 }
 
-.get_token_sequences <- function(tokens, w, stopwords) {
+.get_token_sequences <- function(tokens, sentence_size, stopwords) {
     df_stopwords <- dplyr::data_frame(token=stopwords)
 
     n <- nrow(tokens)
-    r <- rep(1:floor(n / w), each=w)[1:n]
+    r <- rep(1:floor(n / sentence_size), each=sentence_size)[1:n]
 
     token_sequences <- split(tokens, r)
 
@@ -247,7 +247,7 @@ tf_texttile <- function(corpus, stopwords,
 .construct_segmented_document <- function(tokens, token_boundaries) {
     ids <- as.character(generate_texttile_segment_ids_from_boundry_points_cpp(token_boundaries,
                                                                               nrow(tokens)));
-    tokens$id <- ids;
+    tokens$id <- ids
     tokens %>%
         texcur::tf_merge_tokens()
 }

@@ -11,14 +11,11 @@ Rcpp::IntegerVector generate_token_segment_ids_cpp(const Rcpp::IntegerVector& nt
                                                    const Rcpp::IntegerVector& segsize_per_doc) {
   int n = Rcpp::sum(ntoken_per_doc);
 
-  Rcpp::IntegerVector ids(n);
-  Rcpp::IntegerVector id_repeat_counts;
+  Rcpp::IntegerVector ids(n), id_repeat_counts;
 
   int max_id = 1;
   int id_idx = 0;
-  int current_id;
-
-  int ntoken, nseg, segsize;
+  int current_id, ntoken, nseg, segsize;
 
   for (unsigned i = 0; i < ntoken_per_doc.size(); ++i) {
     ntoken = ntoken_per_doc[i];

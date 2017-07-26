@@ -6,15 +6,15 @@
 using namespace Rcpp;
 
 // generate_token_segment_ids_cpp
-Rcpp::IntegerVector generate_token_segment_ids_cpp(const Rcpp::IntegerVector& ntokens_per_doc, const Rcpp::IntegerVector& nsegments_per_doc, const Rcpp::IntegerVector& segment_size_per_doc);
-RcppExport SEXP _texmer_generate_token_segment_ids_cpp(SEXP ntokens_per_docSEXP, SEXP nsegments_per_docSEXP, SEXP segment_size_per_docSEXP) {
+Rcpp::IntegerVector generate_token_segment_ids_cpp(const Rcpp::IntegerVector& ntoken_per_doc, const Rcpp::IntegerVector& nseg_per_doc, const Rcpp::IntegerVector& segsize_per_doc);
+RcppExport SEXP _texmer_generate_token_segment_ids_cpp(SEXP ntoken_per_docSEXP, SEXP nseg_per_docSEXP, SEXP segsize_per_docSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type ntokens_per_doc(ntokens_per_docSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type nsegments_per_doc(nsegments_per_docSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type segment_size_per_doc(segment_size_per_docSEXP);
-    rcpp_result_gen = Rcpp::wrap(generate_token_segment_ids_cpp(ntokens_per_doc, nsegments_per_doc, segment_size_per_doc));
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type ntoken_per_doc(ntoken_per_docSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type nseg_per_doc(nseg_per_docSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type segsize_per_doc(segsize_per_docSEXP);
+    rcpp_result_gen = Rcpp::wrap(generate_token_segment_ids_cpp(ntoken_per_doc, nseg_per_doc, segsize_per_doc));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -89,7 +89,7 @@ tf_texttile <- function(corpus, stopwords,
         stop("Not enough lexical scores.")
     }
 
-    gap_boundaries <- .find_gap_boundaries(lexical_scores, liberal_depth_cutoff)
+    gap_boundaries <- find_gap_boundaries_cpp(lexical_scores, liberal_depth_cutoff)
 
     if (length(gap_boundaries) == 0) {
         warning("Could not find any boundaries. Returning the original document.")
@@ -238,58 +238,6 @@ tf_texttile <- function(corpus, stopwords,
     scores[n_ts] <- nrow(right_new_tokens) / denom
 
     scores
-}
-
-.find_gap_boundaries <- function(lexical_scores, liberal) {
-    cutoff_score <- .calculate_depth_cutoff_score(lexical_scores, liberal)
-    boundaries <- c()
-
-    for (i in seq_along(lexical_scores)) {
-        score <- lexical_scores[i]
-
-        left_depth_score <- .calculate_depth_score_by_side(lexical_scores, i, TRUE)
-        right_depth_score <- .calculate_depth_score_by_side(lexical_scores, i, FALSE)
-
-        depth_score <- left_depth_score + right_depth_score
-
-        if (depth_score >= cutoff_score) {
-            boundaries <- c(boundaries, i)
-        }
-    }
-
-    boundaries
-}
-
-.calculate_depth_cutoff_score <- function(lexical_scores, liberal=TRUE) {
-    avg <- mean(lexical_scores)
-    stdev <- sd(lexical_scores)
-
-    if (liberal) {
-        avg - stdev
-    } else {
-        avg - stdev / 2
-    }
-}
-
-.calculate_depth_score_by_side <- function(lexical_scores, gap, left=TRUE) {
-    depth_score <- 0
-    current_gap <- gap
-
-    while ((lexical_scores[current_gap] - lexical_scores[gap]) >= depth_score) {
-        depth_score <- lexical_scores[current_gap] - lexical_scores[gap]
-
-        if (left) {
-            current_gap <- current_gap - 1
-        } else {
-            current_gap <- current_gap + 1
-        }
-
-        if ((current_gap < 1 & left) | (current_gap > length(lexical_scores) & !left)) {
-            break
-        }
-    }
-
-    depth_score
 }
 
 .convert_gap_boundaries_to_token_boundaries <- function(gap_boundaries, sentence_size) {

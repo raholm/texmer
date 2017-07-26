@@ -86,66 +86,6 @@ test_that("find_gap_boundaries_cpp finds the correct boundaries", {
     expect_equal(actual, expected)
 })
 
-test_that(".find_gap_boundaries finds the correct boundaries", {
-    scores <- c(5, 2, 3, 1, 1, 4, 6, 4)
-
-    actual <- .find_gap_boundaries(scores, TRUE)
-    expected <- c(2, 4, 5, 6, 8)
-    expect_equal(actual, expected)
-
-    actual <- .find_gap_boundaries(scores, FALSE)
-    expected <- c(2, 4, 5)
-    expect_equal(actual, expected)
-})
-
-test_that(".calculate_depth_cutoff_score is calculating correctly", {
-    scores <- c(1, 2, 3)
-
-    actual <- .calculate_depth_cutoff_score(scores, TRUE)
-    expected <- 2 - 1
-    expect_equal(actual, expected)
-
-    actual <- .calculate_depth_cutoff_score(scores, FALSE)
-    expected <- 2 - 0.5
-    expect_equal(actual, expected)
-})
-
-
-test_that(".calculate_depth_score_by_side calculates the score correctly", {
-    scores <- c(5, 2, 3, 1, 1, 6, 7, 4)
-    gap <- 4
-
-    actual <- .calculate_depth_score_by_side(scores, gap, TRUE)
-    expected <- 3 - 1
-    expect_equal(actual, expected)
-
-    actual <- .calculate_depth_score_by_side(scores, gap, FALSE)
-    expected <- 7 - 1
-    expect_equal(actual, expected)
-})
-
-test_that(".calculate_depth_score_by_side calculates the score correctly (boundary cases)", {
-    scores <- c(5, 1, 4)
-    gap <- 2
-
-    actual <- .calculate_depth_score_by_side(scores, gap, TRUE)
-    expected <- 5 - 1
-    expect_equal(actual, expected)
-
-    actual <- .calculate_depth_score_by_side(scores, gap, FALSE)
-    expected <- 4 - 1
-    expect_equal(actual, expected)
-})
-
-test_that(".convert_gap_boundaries_to_token_boudaries is converting correctly", {
-    gap_boundaries <- c(2, 5, 9)
-    sentence_size <- 5
-
-    actual <- .convert_gap_boundaries_to_token_boundaries(gap_boundaries, sentence_size)
-    expected <- gap_boundaries * sentence_size
-    expect_equal(actual, expected)
-})
-
 test_that(".construct_segmented_document is constructing correctly", {
     tokens <- dplyr::data_frame(token=c("hello", "world",
                                         "what", "are", "you", "doing", "tonight",

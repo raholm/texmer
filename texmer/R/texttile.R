@@ -297,20 +297,9 @@ tf_texttile <- function(corpus, stopwords,
 }
 
 .construct_segmented_document <- function(tokens, token_boundaries) {
-    n <- length(token_boundaries) + 1
-
-    ids <- unlist(lapply(1:n, function(idx) {
-        if (idx == 1) {
-            rep(idx, token_boundaries[idx])
-        } else if (idx == n) {
-            rep(idx, nrow(tokens) - token_boundaries[idx - 1])
-        } else {
-            rep(idx, token_boundaries[idx] - token_boundaries[idx - 1])
-        }
-    }))
-
-    tokens$id <- as.character(ids)
-
+    ids <- as.character(generate_texttile_segment_ids_from_boundry_points_cpp(token_boundaries,
+                                                                              nrow(tokens)));
+    tokens$id <- ids;
     tokens %>%
         texcur::tf_merge_tokens()
 }
@@ -323,6 +312,6 @@ tf_texttile <- function(corpus, stopwords,
     checkr::assert_character(stopwords)
     checkr::assert_integer(sentence_size, lower=1)
     checkr::assert_integer(block_size, lower=1)
-    checkr::assert_subset(method, c("block", "vocabulary"))
+    checkr::assert_choice(method, c("block", "vocabulary"))
     checkr::assert_logical(liberal_depth_cutoff)
 }

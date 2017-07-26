@@ -74,6 +74,18 @@ test_that(".calculate_vocabulary_introduction_scores calculates the scores corre
     expect_equal(actual, expected)
 })
 
+test_that("find_gap_boundaries_cpp finds the correct boundaries", {
+    scores <- c(5, 2, 3, 1, 1, 4, 6, 4)
+
+    actual <- find_gap_boundaries_cpp(scores, TRUE)
+    expected <- c(2, 4, 5, 6, 8)
+    expect_equal(actual, expected)
+
+    actual <- find_gap_boundaries_cpp(scores, FALSE)
+    expected <- c(2, 4, 5)
+    expect_equal(actual, expected)
+})
+
 test_that(".find_gap_boundaries finds the correct boundaries", {
     scores <- c(5, 2, 3, 1, 1, 4, 6, 4)
 

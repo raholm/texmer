@@ -21,7 +21,7 @@ test_that("tf_token_seg segmentize corpus", {
                                   text=c("what are", "you doing", "out here", "friend",
                                          "this is", "not a", "stream of", "fresh water",
                                          "hello",
-                                         "hello world"))
+                                         "hello world")) %>% dplyr::arrange(id)
 
     expect_equal(actual, expected)
 })

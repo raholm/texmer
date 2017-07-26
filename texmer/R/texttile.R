@@ -316,8 +316,8 @@ tf_texttile <- function(corpus, stopwords,
 }
 
 .check_input_texttile <- function(corpus, stopwords,
-                         sentence_size, block_size,
-                         method, liberal_depth_cutoff) {
+                                  sentence_size, block_size,
+                                  method, liberal_depth_cutoff) {
     checkr::assert_type(corpus, "tbl_df")
     checkr::assert_subset(c("id", "text"), names(corpus))
     checkr::assert_character(stopwords)

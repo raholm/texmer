@@ -3,4 +3,6 @@
 export(tf_texttile)
 export(tf_token_seg)
 export(tf_topictile)
+importFrom(Rcpp,sourceCpp)
 importFrom(stats,sd)
+useDynLib(texmer)

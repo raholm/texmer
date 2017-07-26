@@ -18,33 +18,15 @@ tf_token_seg <- function(corpus, seg_size, token="words", ...) {
 
     seg_stats <- tokens %>%
         dplyr::group_by(id) %>%
-        dplyr::summarise(ntokens=n(),
-                         segsize=min(seg_size, ntokens),
-                         nsegs=ceiling(ntokens / segsize)) %>%
+        dplyr::summarise(ntoken=n(),
+                         segsize=min(seg_size, ntoken),
+                         nseg=ceiling(ntoken / segsize)) %>%
         dplyr::ungroup() %>%
         dplyr::mutate(id=NULL)
 
-
-    max_id <- 0
-
-    gen_ids <- function(x) {
-        ntokens <- x[1]
-        segsize <- x[2]
-        nsegs <- x[3]
-
-        start_pos <- seq(1, ntokens, by=segsize)
-        end_pos <- c(start_pos[-1], ntokens + 1)
-
-        ids <- unlist(lapply(1:nsegs, function(id) {
-            rep(id, end_pos[id] - start_pos[id])
-        })) + max_id
-
-        max_id <<- max(ids)
-
-        ids
-    }
-
-    ids <- as.character(unlist(apply(seg_stats, 1, gen_ids)))
+    ids <- as.character(generate_token_segment_ids(seg_stats$ntoken,
+                                                   seg_stats$nseg,
+                                                   seg_stats$segsize))
     tokens$id <- ids
 
     tokens %>%

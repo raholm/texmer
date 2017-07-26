@@ -13,5 +13,7 @@ Imports:
     dplyr,
     stringr,
     texcur,
-    checkr
+    checkr,
+    Rcpp
 RoxygenNote: 6.0.1
+LinkingTo: Rcpp

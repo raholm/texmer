@@ -6,9 +6,9 @@
 #include <cmath>
 
 // [[Rcpp::export]]
-Rcpp::IntegerVector generate_token_segment_ids(const Rcpp::IntegerVector& ntokens_per_doc,
-                                               const Rcpp::IntegerVector& nsegments_per_doc,
-                                               const Rcpp::IntegerVector& segment_size_per_doc) {
+Rcpp::IntegerVector generate_token_segment_ids_cpp(const Rcpp::IntegerVector& ntokens_per_doc,
+                                                   const Rcpp::IntegerVector& nsegments_per_doc,
+                                                   const Rcpp::IntegerVector& segment_size_per_doc) {
   int n = Rcpp::sum(ntokens_per_doc);
 
   Rcpp::IntegerVector ids(n);

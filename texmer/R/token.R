@@ -24,9 +24,9 @@ tf_token_seg <- function(corpus, seg_size, token="words", ...) {
         dplyr::ungroup() %>%
         dplyr::mutate(id=NULL)
 
-    ids <- as.character(generate_token_segment_ids(seg_stats$ntoken,
-                                                   seg_stats$nseg,
-                                                   seg_stats$segsize))
+    ids <- as.character(generate_token_segment_ids_cpp(seg_stats$ntoken,
+                                                       seg_stats$nseg,
+                                                       seg_stats$segsize))
     tokens$id <- ids
 
     tokens %>%

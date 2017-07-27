@@ -86,6 +86,15 @@ test_that("find_gap_boundaries_cpp finds the correct boundaries", {
     expect_equal(actual, expected)
 })
 
+test_that(".convert_gap_boundaries_to_token_boudaries is converting correctly", {
+    gap_boundaries <- c(2, 5, 9)
+    sentence_size <- 5
+
+    actual <- .convert_gap_boundaries_to_token_boundaries(gap_boundaries, sentence_size)
+    expected <- gap_boundaries * sentence_size
+    expect_equal(actual, expected)
+})
+
 test_that(".construct_segmented_document is constructing correctly", {
     tokens <- dplyr::data_frame(token=c("hello", "world",
                                         "what", "are", "you", "doing", "tonight",

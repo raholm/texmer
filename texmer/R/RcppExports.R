@@ -9,6 +9,10 @@ generate_texttile_segment_ids_from_boundry_points_cpp <- function(boundary_pts, 
     .Call('_texmer_generate_texttile_segment_ids_from_boundry_points_cpp', PACKAGE = 'texmer', boundary_pts, n)
 }
 
+tokensequence_test <- function() {
+    invisible(.Call('_texmer_tokensequence_test', PACKAGE = 'texmer'))
+}
+
 generate_token_segment_ids_cpp <- function(ntoken_per_doc, nseg_per_doc, segsize_per_doc) {
     .Call('_texmer_generate_token_segment_ids_cpp', PACKAGE = 'texmer', ntoken_per_doc, nseg_per_doc, segsize_per_doc)
 }

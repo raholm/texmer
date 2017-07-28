@@ -255,11 +255,13 @@ tf_texttile <- function(corpus, stopwords,
 .check_input_texttile <- function(corpus, stopwords,
                                   sentence_size, block_size,
                                   method, liberal_depth_cutoff) {
-    checkr::assert_type(corpus, "tbl_df")
-    checkr::assert_subset(c("id", "text"), names(corpus))
+    checkr::assert_tidy_table(corpus, c("id", "text"))
     checkr::assert_character(stopwords)
-    checkr::assert_integer(sentence_size, lower=1)
-    checkr::assert_integer(block_size, lower=1)
+    checkr::assert_integer(sentence_size, len=1, lower=1)
+    checkr::assert_integer(block_size, len=1, lower=1)
     checkr::assert_choice(method, c("block", "vocabulary"))
-    checkr::assert_logical(liberal_depth_cutoff)
+    checkr::assert_logical(liberal_depth_cutoff, len=1)
 }
+
+## run_testthat_tests()
+## tokensequence_test()

@@ -3,6 +3,12 @@
 #include <iostream>
 #include <algorithm>
 
+TokenSequence::TokenSequence(const std::vector<std::string>& tokens) {
+  for (auto const &token : tokens) {
+    insert_or_add_element(std::make_pair(token, 1));
+  }
+}
+
 TokenSequence::TokenSequence(const Rcpp::StringVector& tokens) {
   for (auto const &token : tokens) {
     insert_or_add_element(std::make_pair(Rcpp::as<std::string>(token), 1));

@@ -13,6 +13,7 @@ public:
   TokenSequence() = default;
   TokenSequence(const TokenSequence& ts) = default;
   TokenSequence(TokenSequence&& ts) = default;
+  TokenSequence(const std::vector<std::string>& tokens);
   TokenSequence(const Rcpp::StringVector& tokens);
 
   ~TokenSequence() = default;

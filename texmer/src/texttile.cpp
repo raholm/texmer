@@ -3,13 +3,66 @@
 #include <algorithm>
 #include <cmath>
 
-std::vector<std::vector<TokenSequence>> create_token_sequences(const Rcpp::List& doc_tokens,
-                                                               std::size_t sentence_size,
-                                                               const Rcpp::StringVector& stopwords) {
-  return;
+CorpusTokenSequences create_token_sequences(const RCorpus& corpus,
+                                            std::size_t sentence_size,
+                                            const RStopwords& stopwords) {
+  CorpusTokenSequences token_sequences;
+  Doc doc;
+  Vocabulary stopwords_voc(stopwords);
+
+  for (unsigned i = 0; i < corpus.size(); ++i) {
+    doc = Rcpp::as<Doc>(corpus[i]);
+    token_sequences.push_back(create_token_sequences_for_doc(doc,
+                                                             sentence_size,
+                                                             stopwords_voc));
+  }
+
+  return token_sequences;
 }
 
-Rcpp::NumericVector calculate_block_scores(const std::vector<std::vector<TokenSequence>>& token_sequences,
+CorpusTokenSequences create_token_sequences(const Corpus& corpus,
+                                            std::size_t sentence_size,
+                                            const Stopwords& stopwords) {
+  CorpusTokenSequences token_sequences;
+  Doc doc;
+  Vocabulary stopwords_voc(stopwords);
+
+  for (unsigned i = 0; i < corpus.size(); ++i) {
+    doc = corpus[i];
+    token_sequences.push_back(create_token_sequences_for_doc(doc,
+                                                             sentence_size,
+                                                             stopwords_voc));
+  }
+
+  return token_sequences;
+}
+
+DocTokenSequences create_token_sequences_for_doc(const Doc& tokens,
+                                                 std::size_t sentence_size,
+                                                 const Vocabulary& stopwords) {
+  DocTokenSequences token_sequences;
+  std::size_t nseg = ceil(tokens.size() / sentence_size);
+
+  std::size_t start, end;
+  std::vector<std::string> segment;
+  TokenSequence token_sequence;
+
+  for (unsigned i = 0; i < nseg; ++i) {
+    start = i * sentence_size;
+    end = std::max(start + sentence_size, tokens.size());
+
+    segment = Doc(tokens.begin() + start,
+                  tokens.begin() + end);
+    token_sequence = TokenSequence(segment);
+    token_sequence -= stopwords;
+    token_sequences.push_back(token_sequence);
+  }
+
+  return token_sequences;
+}
+
+
+Scores calculate_block_scores(const CorpusTokenSequences& token_sequences,
                                            std::size_t block_size) {
   return;
 }
@@ -56,11 +109,11 @@ std::size_t bs_compute_square_sum(const std::vector<std::size_t>& v) {
                          [](const std::size_t acc,
                             const std::size_t val) {
                            return acc + val * val;
-                  });
+                         });
 }
 
-Rcpp::NumericVector calculate_vocabulary_scores(const std::vector<std::vector<TokenSequence>>& token_sequences,
-                                                std::size_t sentence_size) {
+Scores calculate_vocabulary_scores(const CorpusTokenSequences& token_sequences,
+                                   std::size_t sentence_size) {
   return;
 }
 

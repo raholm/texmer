@@ -1,5 +1,70 @@
 #include "texttile.h"
 
+#include <algorithm>
+#include <cmath>
+
+std::vector<std::vector<TokenSequence>> create_token_sequences(const Rcpp::List& doc_tokens,
+                                                               std::size_t sentence_size,
+                                                               const Rcpp::StringVector& stopwords) {
+  return;
+}
+
+Rcpp::NumericVector calculate_block_scores(const std::vector<std::vector<TokenSequence>>& token_sequences,
+                                           std::size_t block_size) {
+  return;
+}
+
+
+TokenSequence create_token_sequence_from_block(const std::vector<TokenSequence>& block) {
+  TokenSequence result;
+  for (auto const& ts : block) {
+    result += ts;
+  }
+  return result;
+}
+
+std::size_t bs_calculate_numerator(const TokenSequence& left, const TokenSequence& right) {
+  TokenSequence ts = left * right;
+  std::vector<std::size_t> counts = ts.get_counts();
+  return std::accumulate(counts.cbegin(), counts.cend(), 0,
+                         [](const std::size_t acc,
+                            const std::size_t count) {
+                           return acc + count;
+                         });
+}
+
+double bs_calculate_denominator(const TokenSequence& left, const TokenSequence& right) {
+  std::vector<std::size_t> left_counts = left.get_counts();
+  std::vector<std::size_t> right_counts = right.get_counts();
+
+  std::size_t left_sq_sum = bs_compute_square_sum(left_counts);
+  std::size_t right_sq_sum = bs_compute_square_sum(right_counts);
+
+  return sqrt(left_sq_sum * right_sq_sum);
+}
+
+std::size_t bs_compute_sum(const std::vector<std::size_t>& v) {
+  return std::accumulate(v.cbegin(), v.cend(), 0,
+                         [](const std::size_t acc,
+                            const std::size_t val) {
+                           return acc + val;
+                         });
+}
+
+std::size_t bs_compute_square_sum(const std::vector<std::size_t>& v) {
+  return std::accumulate(v.cbegin(), v.cend(), 0,
+                         [](const std::size_t acc,
+                            const std::size_t val) {
+                           return acc + val * val;
+                  });
+}
+
+Rcpp::NumericVector calculate_vocabulary_scores(const std::vector<std::vector<TokenSequence>>& token_sequences,
+                                                std::size_t sentence_size) {
+  return;
+}
+
+
 // [[Rcpp::export]]
 Rcpp::IntegerVector find_gap_boundaries_cpp(Rcpp::NumericVector& lexical_scores,
                                             bool liberal) {

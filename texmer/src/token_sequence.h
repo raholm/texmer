@@ -3,9 +3,10 @@
 
 #include <Rcpp.h>
 
-#include <iostream>
 #include <map>
 #include <string>
+
+#include "vocabulary.h"
 
 class TokenSequence {
 public:
@@ -22,7 +23,16 @@ public:
   TokenSequence operator+(const TokenSequence& rhs) const;
   TokenSequence& operator+=(const TokenSequence& rhs);
 
+  TokenSequence operator*(const TokenSequence& rhs) const;
+  TokenSequence& operator*=(const TokenSequence& rhs);
+
+  TokenSequence operator-(const Vocabulary& rhs) const;
+  TokenSequence& operator-=(const Vocabulary& rhs) const;
+
   std::size_t length() const;
+
+  Vocabulary get_vocabulary() const;
+  std::vector<std::size_t> get_counts() const;
 
   void print() const;
 

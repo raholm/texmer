@@ -1,8 +1,11 @@
 #include "token_sequence.h"
 
+#include <iostream>
+#include <algorithm>
+
 TokenSequence::TokenSequence(const Rcpp::StringVector& tokens) {
-  for (unsigned i = 0; i < tokens.size(); ++i) {
-    insert_or_add_element(std::make_pair(Rcpp::as<std::string>(tokens[i]), 1));
+  for (auto const &token : tokens) {
+    insert_or_add_element(std::make_pair(Rcpp::as<std::string>(token), 1));
   }
 }
 
@@ -15,7 +18,6 @@ TokenSequence& TokenSequence::operator+=(const TokenSequence& rhs) {
   for (auto const &p : rhs.type_count) {
     insert_or_add_element(p);
   }
-
   return *this;
 }
 
@@ -25,6 +27,24 @@ std::size_t TokenSequence::length() const {
                             const std::pair<std::string, std::size_t>& p) {
                            return acc + p.second;
                          });
+}
+
+Vocabulary TokenSequence::get_vocabulary() const {
+  std::vector<std::string> vocabulary;
+  std::transform(type_count.cbegin(), type_count.cend(), std::back_inserter(vocabulary),
+                 [](auto const& pair) {
+                   return pair.first;
+                 });
+  return Vocabulary(vocabulary);
+}
+
+std::vector<std::size_t> TokenSequence::get_counts() const {
+  std::vector<std::size_t> counts;
+  std::transform(type_count.cbegin(), type_count.cend(), std::back_inserter(counts),
+                 [](auto const& pair) {
+                   return pair.second;
+                 });
+  return counts;
 }
 
 void TokenSequence::print() const {
@@ -60,4 +80,7 @@ void tokensequence_test() {
 
   std::cout << "ts1 + ts2 (" << ts3.length() << "):" << std::endl;
   ts3.print();
+
+  std::cout << "ts1 vocabulary:" << std::endl;
+  ts1.get_vocabulary().print();
 }

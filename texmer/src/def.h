@@ -4,18 +4,13 @@
 #include <string>
 #include <vector>
 
-#include "token_sequence.h"
+class TokenSequence;
 
 using Token = std::string;
 
 using Doc = std::vector<Token>;
-using RDoc = Rcpp::StringVector;
-
 using Corpus = std::vector<Doc>;
-using RCorpus = Rcpp::List;
-
 using Stopwords = Doc;
-using RStopwords = RDoc;
 
 using DocTokenSequences = std::vector<TokenSequence>;
 using CorpusTokenSequences = std::vector<DocTokenSequences>;
@@ -26,5 +21,10 @@ using DocScores = std::vector<Score>;
 using CorpusScores = std::vector<DocScores>;
 
 using BoundaryPoints = std::vector<std::size_t>;
+
+using DocSegments = std::vector<std::size_t>;
+using CorpusSegments = std::vector<DocSegments>;
+
+#include "Rdef.h"
 
 #endif // DEF_H

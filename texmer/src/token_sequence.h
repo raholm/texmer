@@ -1,13 +1,11 @@
 #ifndef TOKEN_SEQUENCE_H
 #define TOKEN_SEQUENCE_H
 
-#include <Rcpp.h>
-
-#include <map>
 #include <string>
+#include <vector>
+#include <map>
 
 #include "vocabulary.h"
-
 
 class TokenSequence {
 public:
@@ -17,7 +15,6 @@ public:
   TokenSequence(const TokenSequence& ts) = default;
   TokenSequence(TokenSequence&& ts) = default;
   TokenSequence(const std::vector<Token>& tokens);
-  TokenSequence(const Rcpp::StringVector& tokens);
 
   ~TokenSequence() = default;
 
@@ -31,7 +28,7 @@ public:
   TokenSequence& operator*=(const TokenSequence& rhs);
 
   TokenSequence operator-(const Vocabulary& rhs) const;
-  TokenSequence& operator-=(const Vocabulary& rhs) const;
+  TokenSequence& operator-=(const Vocabulary& rhs);
 
   std::size_t length() const;
 

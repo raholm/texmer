@@ -56,5 +56,10 @@ Stopwords convert_stopwords_from_R(const RStopwords& rstopwords) {
   return Rcpp::as<Stopwords>(rstopwords);
 }
 
+std::string to_lower(const std::string& s) {
+  std::string l;
+  std::transform(s.cbegin(), s.cend(), l.begin(), ::tolower);
+  return l;
+}
 
 #endif // UTIL_H

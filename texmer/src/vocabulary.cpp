@@ -1,16 +1,9 @@
 #include "vocabulary.h"
 
 #include <iostream>
-#include <algorithm>
 
 Vocabulary::Vocabulary(const std::vector<Token>& tokens) {
   vocabulary.insert(tokens.cbegin(), tokens.cend());
-}
-
-Vocabulary::Vocabulary(const Rcpp::StringVector& tokens) {
-  for (auto const &token : tokens) {
-    vocabulary.insert(Rcpp::as<Token>(token));
-  }
 }
 
 Vocabulary Vocabulary::operator+(const Vocabulary& rhs) const {
@@ -31,6 +24,10 @@ Vocabulary Vocabulary::operator-(const Vocabulary& rhs) const {
 Vocabulary& Vocabulary::operator-=(const Vocabulary& rhs) {
   vocabulary.erase(rhs.vocabulary.cbegin(), rhs.vocabulary.cend());
   return *this;
+}
+
+bool Vocabulary::find(const Token& token) const {
+  return vocabulary.find(token) != vocabulary.end();
 }
 
 std::size_t Vocabulary::length() const {

@@ -1,10 +1,8 @@
 #ifndef VOCABULARY_H
 #define VOCABULARY_H
 
-#include <Rcpp.h>
-
-#include <vector>
 #include <string>
+#include <vector>
 #include <set>
 
 class Vocabulary {
@@ -15,7 +13,6 @@ public:
   Vocabulary(const Vocabulary& v) = default;
   Vocabulary(Vocabulary&& v) = default;
   Vocabulary(const std::vector<Token>& tokens);
-  Vocabulary(const Rcpp::StringVector& tokens);
 
   Vocabulary operator+(const Vocabulary& rhs) const;
   Vocabulary& operator+=(const Vocabulary& rhs);
@@ -23,12 +20,15 @@ public:
   Vocabulary operator-(const Vocabulary& rhs) const;
   Vocabulary& operator-=(const Vocabulary& rhs);
 
+  bool find(const Token& token) const;
+
   std::size_t length() const;
 
   void print() const;
 
 private:
   std::set<Token> vocabulary;
+
 };
 
 #endif // VOCABULARY_H

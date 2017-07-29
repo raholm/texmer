@@ -5,7 +5,7 @@ get_texttile_segments_cpp <- function(tokens, stopwords, sentence_size, block_si
     .Call('_texmer_get_texttile_segments_cpp', PACKAGE = 'texmer', tokens, stopwords, sentence_size, block_size, method, liberal)
 }
 
-generate_token_segment_ids_cpp <- function(ntoken_per_doc, nseg_per_doc, segsize_per_doc) {
-    .Call('_texmer_generate_token_segment_ids_cpp', PACKAGE = 'texmer', ntoken_per_doc, nseg_per_doc, segsize_per_doc)
+get_token_segment_ids_cpp <- function(n_tokens_per_doc, n_segs_per_doc, segsize_per_doc) {
+    .Call('_texmer_get_token_segment_ids_cpp', PACKAGE = 'texmer', n_tokens_per_doc, n_segs_per_doc, segsize_per_doc)
 }
 

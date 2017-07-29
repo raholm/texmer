@@ -3,13 +3,13 @@
 #include <iostream>
 #include <algorithm>
 
-Vocabulary::Vocabulary(const std::vector<std::string>& tokens) {
+Vocabulary::Vocabulary(const std::vector<Token>& tokens) {
   vocabulary.insert(tokens.cbegin(), tokens.cend());
 }
 
 Vocabulary::Vocabulary(const Rcpp::StringVector& tokens) {
   for (auto const &token : tokens) {
-    vocabulary.insert(Rcpp::as<std::string>(token));
+    vocabulary.insert(Rcpp::as<Token>(token));
   }
 }
 

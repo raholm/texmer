@@ -3,43 +3,45 @@
 #include <algorithm>
 #include <cmath>
 
-CorpusTokenSequences create_token_sequences(const RCorpus& corpus,
-                                            std::size_t sentence_size,
-                                            const RStopwords& stopwords) {
+#include "util.h"
+
+CorpusTokenSequences create_token_sequences_from_corpus(const RCorpus& corpus,
+                                                        std::size_t sentence_size,
+                                                        const RStopwords& stopwords) {
   CorpusTokenSequences token_sequences;
   Doc doc;
   Vocabulary stopwords_voc(stopwords);
 
   for (unsigned i = 0; i < corpus.size(); ++i) {
     doc = Rcpp::as<Doc>(corpus[i]);
-    token_sequences.push_back(create_token_sequences_for_doc(doc,
-                                                             sentence_size,
-                                                             stopwords_voc));
+    token_sequences.push_back(create_token_sequences_from_doc(doc,
+                                                              sentence_size,
+                                                              stopwords_voc));
   }
 
   return token_sequences;
 }
 
-CorpusTokenSequences create_token_sequences(const Corpus& corpus,
-                                            std::size_t sentence_size,
-                                            const Stopwords& stopwords) {
+CorpusTokenSequences create_token_sequences_from_corpus(const Corpus& corpus,
+                                                        std::size_t sentence_size,
+                                                        const Stopwords& stopwords) {
   CorpusTokenSequences token_sequences;
   Doc doc;
   Vocabulary stopwords_voc(stopwords);
 
   for (unsigned i = 0; i < corpus.size(); ++i) {
     doc = corpus[i];
-    token_sequences.push_back(create_token_sequences_for_doc(doc,
-                                                             sentence_size,
-                                                             stopwords_voc));
+    token_sequences.push_back(create_token_sequences_from_doc(doc,
+                                                              sentence_size,
+                                                              stopwords_voc));
   }
 
   return token_sequences;
 }
 
-DocTokenSequences create_token_sequences_for_doc(const Doc& tokens,
-                                                 std::size_t sentence_size,
-                                                 const Vocabulary& stopwords) {
+DocTokenSequences create_token_sequences_from_doc(const Doc& tokens,
+                                                  std::size_t sentence_size,
+                                                  const Vocabulary& stopwords) {
   DocTokenSequences token_sequences;
   std::size_t nseg = ceil(tokens.size() / sentence_size);
 
@@ -61,14 +63,57 @@ DocTokenSequences create_token_sequences_for_doc(const Doc& tokens,
   return token_sequences;
 }
 
+CorpusScores calculate_block_scores_for_corpus(const CorpusTokenSequences& token_sequences,
+                                               std::size_t block_size) {
+  CorpusScores scores;
 
-Scores calculate_block_scores(const CorpusTokenSequences& token_sequences,
-                                           std::size_t block_size) {
-  return;
+  for (auto const& token_sequence : token_sequences) {
+    scores.push_back(calculate_block_scores_for_doc(token_sequence,
+                                                    block_size));
+  }
+
+  return scores;
+}
+
+DocScores calculate_block_scores_for_doc(const DocTokenSequences& token_sequences,
+                                         std::size_t block_size) {
+  std::size_t n = token_sequences.size();
+  DocScores scores(n, 0.0);
+
+  BlockTokenSequences left_block, right_block;
+  TokenSequence left_block_ts, right_block_ts;
+
+  std::size_t current_block_size;
+  std::size_t left_start_offset, left_end_offset;
+  std::size_t right_start_offset, right_end_offset;
+
+  for (std::size_t gap = 0; gap < (n - 1); ++gap) {
+    current_block_size = std::min({gap, block_size, n - gap});
+
+    left_start_offset = gap - current_block_size;
+    left_end_offset = gap + 1;
+
+    right_start_offset = left_end_offset;
+    right_end_offset = right_start_offset + current_block_size + 1;
+
+    left_block = BlockTokenSequences(token_sequences.cbegin() + left_start_offset,
+                                     token_sequences.cbegin() + left_end_offset);
+
+    right_block = BlockTokenSequences(token_sequences.cbegin() + right_start_offset,
+                                      token_sequences.cbegin() + right_end_offset);
+
+    left_block_ts = create_token_sequence_from_block(left_block);
+    right_block_ts = create_token_sequence_from_block(right_block);
+
+
+    scores[gap] = bs_calculate_score(left_block_ts, right_block_ts);
+  }
+
+  return scores;
 }
 
 
-TokenSequence create_token_sequence_from_block(const std::vector<TokenSequence>& block) {
+TokenSequence create_token_sequence_from_block(const BlockTokenSequences& block) {
   TokenSequence result;
   for (auto const& ts : block) {
     result += ts;
@@ -76,81 +121,70 @@ TokenSequence create_token_sequence_from_block(const std::vector<TokenSequence>&
   return result;
 }
 
+Score bs_calculate_score(const TokenSequence& left, const TokenSequence& right) {
+  std::size_t numerator = bs_calculate_numerator(left, right);
+  double denominator = bs_calculate_denominator(left, right);
+  return numerator / denominator;
+}
+
 std::size_t bs_calculate_numerator(const TokenSequence& left, const TokenSequence& right) {
   TokenSequence ts = left * right;
   std::vector<std::size_t> counts = ts.get_counts();
-  return std::accumulate(counts.cbegin(), counts.cend(), 0,
-                         [](const std::size_t acc,
-                            const std::size_t count) {
-                           return acc + count;
-                         });
+  return sum(counts);
 }
 
 double bs_calculate_denominator(const TokenSequence& left, const TokenSequence& right) {
   std::vector<std::size_t> left_counts = left.get_counts();
   std::vector<std::size_t> right_counts = right.get_counts();
 
-  std::size_t left_sq_sum = bs_compute_square_sum(left_counts);
-  std::size_t right_sq_sum = bs_compute_square_sum(right_counts);
+  std::size_t left_sq_sum = square_sum(left_counts);
+  std::size_t right_sq_sum = square_sum(right_counts);
 
   return sqrt(left_sq_sum * right_sq_sum);
 }
 
-std::size_t bs_compute_sum(const std::vector<std::size_t>& v) {
-  return std::accumulate(v.cbegin(), v.cend(), 0,
-                         [](const std::size_t acc,
-                            const std::size_t val) {
-                           return acc + val;
-                         });
-}
-
-std::size_t bs_compute_square_sum(const std::vector<std::size_t>& v) {
-  return std::accumulate(v.cbegin(), v.cend(), 0,
-                         [](const std::size_t acc,
-                            const std::size_t val) {
-                           return acc + val * val;
-                         });
-}
-
-Scores calculate_vocabulary_scores(const CorpusTokenSequences& token_sequences,
-                                   std::size_t sentence_size) {
+CorpusScores calculate_vocabulary_scores_for_corpus(const CorpusTokenSequences& token_sequences,
+                                                    std::size_t sentence_size) {
   return;
 }
 
+DocScores calculate_vocabulary_scores_for_doc(const DocTokenSequences& token_sequences,
+                                              std::size_t sentence_size) {
+  return;
+}
 
-// [[Rcpp::export]]
-Rcpp::IntegerVector find_gap_boundaries_cpp(Rcpp::NumericVector& lexical_scores,
-                                            bool liberal) {
-  Rcpp::IntegerVector boundaries;
+BoundaryPoints find_gap_boundaries_from_doc_scores(const DocScores& lexical_scores,
+                                                   bool liberal) {
+  BoundaryPoints boundaries;
 
   double cutoff_score = get_depth_cutoff_score(lexical_scores, liberal);
   double score, depth_score, left_depth_score, right_depth_score;
 
-  for (unsigned i = 0; i < lexical_scores.size(); ++i) {
-    score = lexical_scores[i];
+  for (unsigned gap = 0; gap < lexical_scores.size(); ++gap) {
+    score = lexical_scores[gap];
 
-    left_depth_score = get_depth_score_by_side(lexical_scores, i, true);
-    right_depth_score = get_depth_score_by_side(lexical_scores, i, false);
+    left_depth_score = get_depth_score_by_side(lexical_scores, gap, true);
+    right_depth_score = get_depth_score_by_side(lexical_scores, gap, false);
 
     depth_score = left_depth_score + right_depth_score;
 
     if (depth_score >= cutoff_score)
-      boundaries.push_back(i + 1);
+      boundaries.push_back(gap + 1);
   }
 
   return boundaries;
 }
 
-double get_depth_cutoff_score(Rcpp::NumericVector& lexical_scores,
+double get_depth_cutoff_score(const DocScores& lexical_scores,
                               bool liberal) {
-  double avg = Rcpp::mean(lexical_scores);
-  double stdev = Rcpp::sd(lexical_scores);
+  double avg = mean(lexical_scores);
+  double stdev = sd(lexical_scores);
 
   if (liberal) return avg - stdev;
   else return avg - stdev / 2;
 }
 
-double get_depth_score_by_side(Rcpp::NumericVector& lexical_scores,
+double get_depth_score_by_side(const DocScores& lexical_scores,
                                unsigned gap,
                                bool left) {
   double depth_score = 0;

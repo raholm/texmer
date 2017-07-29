@@ -3,56 +3,96 @@
 
 #include <Rcpp.h>
 
+#include "def.h"
 #include "token_sequence.h"
 
-using Doc = std::vector<std::string>;
-using RDoc = Rcpp::StringVector;
+class TextTile {
+public:
+  TextTile(std::size_t sentence_size, std::size_t block_size, const std::string method, bool liberal);
 
-using Corpus = std::vector<Doc>;
-using RCorpus = Rcpp::List;
+  ~TextTile() = default;
 
-using Stopwords = Doc;
-using RStopwords = RDoc;
+  std::vector<BoundaryPoints> get_boundary_points(const Corpus& corpus, const Stopwords& stopwords);
 
-using CorpusTokenSequences = std::vector<std::vector<TokenSequence>>;
-using DocTokenSequences = std::vector<TokenSequence>;
+private:
+  std::size_t sentence_size;
+  std::size_t block_size;
 
-using TokenSequenceBlock = DocTokenSequences;
+  std::string method;
+  bool liberal;
 
-using Scores = std::vector<double>;
+  // Token Sequences
+  CorpusTokenSequences create_token_sequences_from_corpus(const Corpus& tokens,
+                                                          std::size_t sentence_size,
+                                                          const Stopwords& stopwords);
 
+  DocTokenSequences create_token_sequences_from_doc(const Doc& tokens,
+                                                    std::size_t sentence_size,
+                                                    const Vocabulary& stopwords);
 
-CorpusTokenSequences create_token_sequences(const RCorpus& tokens,
-                                            std::size_t sentence_size,
-                                            const RStopwords& stopwords);
-
-CorpusTokenSequences create_token_sequences(const Corpus& tokens,
-                                            std::size_t sentence_size,
-                                            const Stopwords& stopwords);
-
-DocTokenSequences create_token_sequences_for_doc(const Doc& tokens,
-                                                 std::size_t sentence_size,
-                                                 const Vocabulary& stopwords);
-
-// Calculating block scores
-Scores calculate_block_scores(const CorpusTokenSequences& token_sequences,
+  // Block Scores
+  CorpusScores calculate_block_scores_for_corpus(const CorpusTokenSequences& token_sequences,
+                                                 std::size_t block_size);
+  DocScores calculate_block_scores_for_doc(const DocTokenSequences& token_sequences,
                                            std::size_t block_size);
-TokenSequence create_token_sequence_from_block(const TokenSequenceBlock& block);
-std::size_t bs_calculate_numerator(const TokenSequence& left, const TokenSequence& right);
-double bs_calculate_denominator(const TokenSequence& left, const TokenSequence& right);
-std::size_t bs_compute_sum(const std::vector<std::size_t>& v);
-std::size_t bs_compute_square_sum(const std::vector<std::size_t>& v);
+  TokenSequence create_token_sequence_from_block(const BlockTokenSequences& block);
+  Score bs_calculate_score(const TokenSequence& left, const TokenSequence& right);
+  std::size_t bs_calculate_numerator(const TokenSequence& left, const TokenSequence& right);
+  double bs_calculate_denominator(const TokenSequence& left, const TokenSequence& right);
 
-// Calculating vocabulary scores
-Scores calculate_vocabulary_scores(const CorpusTokenSequences& token_sequences,
+  // Vocabulary Scores
+  CorpusScores calculate_vocabulary_scores_for_corpus(const CorpusTokenSequences& token_sequences,
+                                                      std::size_t sentence_size);
+  DocScores calculate_vocabulary_scores_for_doc(const DocTokenSequences& token_sequences,
                                                 std::size_t sentence_size);
 
+
+  // Boundary Points
+  BoundaryPoints find_gap_boundaries_from_doc_scores(const DocScores& lexical_scores,
+                                                     bool liberal);
+  double get_depth_cutoff_score(const DocScores& lexical_scores,
+                                bool liberal);
+  double get_depth_score_by_side(const DocScores& lexical_scores,
+                                 unsigned gap,
+                                 bool left);
+
+};
+
+
+CorpusTokenSequences create_token_sequences_from_corpus(const RCorpus& tokens,
+                                                        std::size_t sentence_size,
+                                                        const RStopwords& stopwords);
+
+CorpusTokenSequences create_token_sequences_from_corpus(const Corpus& tokens,
+                                                        std::size_t sentence_size,
+                                                        const Stopwords& stopwords);
+
+DocTokenSequences create_token_sequences_from_doc(const Doc& tokens,
+                                                  std::size_t sentence_size,
+                                                  const Vocabulary& stopwords);
+
+// Calculating block scores
+CorpusScores calculate_block_scores_for_corpus(const CorpusTokenSequences& token_sequences,
+                                               std::size_t block_size);
+DocScores calculate_block_scores_for_doc(const DocTokenSequences& token_sequences,
+                                         std::size_t block_size);
+TokenSequence create_token_sequence_from_block(const BlockTokenSequences& block);
+Score bs_calculate_score(const TokenSequence& left, const TokenSequence& right);
+std::size_t bs_calculate_numerator(const TokenSequence& left, const TokenSequence& right);
+double bs_calculate_denominator(const TokenSequence& left, const TokenSequence& right);
+
+// Calculating vocabulary scores
+CorpusScores calculate_vocabulary_scores_for_corpus(const CorpusTokenSequences& token_sequences,
+                                                    std::size_t sentence_size);
+DocScores calculate_vocabulary_scores_for_doc(const DocTokenSequences& token_sequences,
+                                              std::size_t sentence_size);
+
 // Finding gap boundaries
-Rcpp::IntegerVector find_gap_boundaries_cpp(Rcpp::NumericVector& lexical_scores,
-                                            bool liberal);
-double get_depth_cutoff_score(Rcpp::NumericVector& lexical_scores,
+BoundaryPoints find_gap_boundaries_from_doc_scores(const DocScores& lexical_scores,
+                                                   bool liberal);
+double get_depth_cutoff_score(const DocScores& lexical_scores,
                               bool liberal);
-double get_depth_score_by_side(Rcpp::NumericVector& lexical_scores,
+double get_depth_score_by_side(const DocScores& lexical_scores,
                                unsigned gap,
                                bool left);
 

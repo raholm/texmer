@@ -9,10 +9,12 @@
 
 class Vocabulary {
 public:
+  using Token = std::string;
+
   Vocabulary() = default;
   Vocabulary(const Vocabulary& v) = default;
   Vocabulary(Vocabulary&& v) = default;
-  Vocabulary(const std::vector<std::string>& tokens);
+  Vocabulary(const std::vector<Token>& tokens);
   Vocabulary(const Rcpp::StringVector& tokens);
 
   Vocabulary operator+(const Vocabulary& rhs) const;
@@ -26,7 +28,7 @@ public:
   void print() const;
 
 private:
-  std::set<std::string> vocabulary;
+  std::set<Token> vocabulary;
 };
 
 #endif // VOCABULARY_H

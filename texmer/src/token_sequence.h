@@ -8,12 +8,15 @@
 
 #include "vocabulary.h"
 
+
 class TokenSequence {
 public:
+  using Token = std::string;
+
   TokenSequence() = default;
   TokenSequence(const TokenSequence& ts) = default;
   TokenSequence(TokenSequence&& ts) = default;
-  TokenSequence(const std::vector<std::string>& tokens);
+  TokenSequence(const std::vector<Token>& tokens);
   TokenSequence(const Rcpp::StringVector& tokens);
 
   ~TokenSequence() = default;
@@ -38,9 +41,9 @@ public:
   void print() const;
 
 private:
-  std::map<std::string, std::size_t> type_count;
+  std::map<Token, std::size_t> type_count;
 
-  void insert_or_add_element(const std::pair<std::string, std::size_t>& element);
+  void insert_or_add_element(const std::pair<Token, std::size_t>& element);
 
 };
 

@@ -5,18 +5,6 @@
 
 using namespace Rcpp;
 
-// find_gap_boundaries_cpp
-Rcpp::IntegerVector find_gap_boundaries_cpp(Rcpp::NumericVector& lexical_scores, bool liberal);
-RcppExport SEXP _texmer_find_gap_boundaries_cpp(SEXP lexical_scoresSEXP, SEXP liberalSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type lexical_scores(lexical_scoresSEXP);
-    Rcpp::traits::input_parameter< bool >::type liberal(liberalSEXP);
-    rcpp_result_gen = Rcpp::wrap(find_gap_boundaries_cpp(lexical_scores, liberal));
-    return rcpp_result_gen;
-END_RCPP
-}
 // generate_texttile_segment_ids_from_boundry_points_cpp
 Rcpp::IntegerVector generate_texttile_segment_ids_from_boundry_points_cpp(Rcpp::IntegerVector& boundary_pts, unsigned n);
 RcppExport SEXP _texmer_generate_texttile_segment_ids_from_boundry_points_cpp(SEXP boundary_ptsSEXP, SEXP nSEXP) {
@@ -53,7 +41,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_texmer_find_gap_boundaries_cpp", (DL_FUNC) &_texmer_find_gap_boundaries_cpp, 2},
     {"_texmer_generate_texttile_segment_ids_from_boundry_points_cpp", (DL_FUNC) &_texmer_generate_texttile_segment_ids_from_boundry_points_cpp, 2},
     {"_texmer_tokensequence_test", (DL_FUNC) &_texmer_tokensequence_test, 0},
     {"_texmer_generate_token_segment_ids_cpp", (DL_FUNC) &_texmer_generate_token_segment_ids_cpp, 3},

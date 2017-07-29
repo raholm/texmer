@@ -31,26 +31,24 @@ CorpusSegments TextTile::get_segments(const Corpus& corpus, const Stopwords& sto
   }
 
   auto corpus_ts = ts_create(corpus, voc_stopwords);
-  // auto scores = (method == "block") ? bs_calculate(corpus_ts) : vs_calculate(corpus_ts);
-  // auto boundaries = bp_find_boundaries(scores);
-  // auto segments = seg_generate(boundaries, n_tokens);
-
-  CorpusSegments segments;
+  auto scores = (method == "block") ? bs_calculate(corpus_ts) : vs_calculate(corpus_ts);
+  auto boundaries = bp_find_boundaries(scores);
+  auto segments = seg_generate(boundaries, n_tokens);
 
   return segments;
 }
 
-// DocSegments TextTile::get_segments(const Doc& doc, const Stopwords& stopwords) {
-//   Vocabulary voc_stopwords(stopwords);
-//   std::size_t n_tokens = doc.size();
+DocSegments TextTile::get_segments(const Doc& doc, const Stopwords& stopwords) {
+  Vocabulary voc_stopwords(stopwords);
+  std::size_t n_tokens = doc.size();
 
-//   auto doc_ts = ts_create(doc, voc_stopwords);
-//   auto scores = (method == "block") ? bs_calculate(doc_ts) : vs_calculate(doc_ts);
-//   auto boundaries = bp_find_boundaries(scores);
-//   auto segments = seg_generate(boundaries, n_tokens);
+  auto doc_ts = ts_create(doc, voc_stopwords);
+  auto scores = (method == "block") ? bs_calculate(doc_ts) : vs_calculate(doc_ts);
+  auto boundaries = bp_find_boundaries(scores);
+  auto segments = seg_generate(boundaries, n_tokens);
 
-//   return segments;
-// }
+  return segments;
+}
 
 CorpusTokenSequences TextTile::ts_create(const Corpus& corpus,
                                          const Vocabulary& stopwords) {
@@ -279,4 +277,20 @@ void TextTile::seg_fill(DocSegments* segments, std::size_t* from, int with, int 
     vec[idx++] = with;
   }
   *from = idx;
+}
+
+// [[Rcpp::export]]
+Rcpp::List get_segments_cpp(const Rcpp::List& rtokens,
+                            const Rcpp::StringVector& rstopwords,
+                            std::size_t sentence_size,
+                            std::size_t block_size,
+                            const Rcpp::CharacterVector& method,
+                            bool liberal) {
+  auto tokens  = convert_from_R(rtokens);
+  auto stopwords = convert_from_R(rstopwords);
+  auto texttile = TextTile(sentence_size, block_size,
+                           Rcpp::as<std::string>(method),
+                           liberal);
+  auto segments = texttile.get_segments(tokens, stopwords);
+  return convert_to_R(segments);
 }

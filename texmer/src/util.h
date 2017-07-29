@@ -42,7 +42,13 @@ double sd(const std::vector<double>& v, bool corrected=true) {
                          }) / (v.size() - corrected);
 }
 
-Corpus convert_corpus_from_R(const RCorpus& rcorpus) {
+std::string to_lower(const std::string& s) {
+  std::string l;
+  std::transform(s.cbegin(), s.cend(), l.begin(), ::tolower);
+  return l;
+}
+
+Corpus convert_from_R(const Rcpp::List& rcorpus) {
   Corpus corpus;
 
   for (auto const& doc : rcorpus) {
@@ -52,14 +58,12 @@ Corpus convert_corpus_from_R(const RCorpus& rcorpus) {
   return corpus;
 }
 
-Stopwords convert_stopwords_from_R(const RStopwords& rstopwords) {
+Stopwords convert_from_R(const Rcpp::StringVector& rstopwords) {
   return Rcpp::as<Stopwords>(rstopwords);
 }
 
-std::string to_lower(const std::string& s) {
-  std::string l;
-  std::transform(s.cbegin(), s.cend(), l.begin(), ::tolower);
-  return l;
+Rcpp::List convert_to_R(const CorpusSegments& segments) {
+  return Rcpp::wrap(segments);
 }
 
 #endif // UTIL_H

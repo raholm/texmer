@@ -51,11 +51,11 @@ private:
 
 };
 
-// RCorpusSegments get_segments_cpp(const RCorpus& tokens,
-//                                  const RStopwords& stopwords,
-//                                  std::size_t sentence_size,
-//                                  std::size_t block_size,
-//                                  const Rcpp::CharacterVector& method,
-//                                  bool liberal);
+Rcpp::List get_segments_cpp(const Rcpp::List& rtokens,
+                            const Rcpp::StringVector& rstopwords,
+                            std::size_t sentence_size,
+                            std::size_t block_size,
+                            const Rcpp::CharacterVector& method,
+                            bool liberal);
 
 #endif // TEXTTILE_H

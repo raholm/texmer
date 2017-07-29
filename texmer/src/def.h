@@ -25,6 +25,4 @@ using BoundaryPoints = std::vector<std::size_t>;
 using DocSegments = std::vector<std::size_t>;
 using CorpusSegments = std::vector<DocSegments>;
 
-#include "Rdef.h"
-
 #endif // DEF_H

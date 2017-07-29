@@ -1,6 +1,7 @@
 #ifndef VOCABULARY_H
 #define VOCABULARY_H
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <set>
@@ -24,10 +25,10 @@ public:
 
   std::size_t length() const;
 
-  void print() const;
+  std::ostream& print(std::ostream& out=std::cout) const;
 
 private:
-  std::set<Token> vocabulary;
+  std::set<Token> vocabulary_;
 
 };
 

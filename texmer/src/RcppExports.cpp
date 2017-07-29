@@ -5,19 +5,19 @@
 
 using namespace Rcpp;
 
-// get_segments_cpp
-Rcpp::List get_segments_cpp(const Rcpp::List& rtokens, const Rcpp::StringVector& rstopwords, std::size_t sentence_size, std::size_t block_size, const Rcpp::CharacterVector& method, bool liberal);
-RcppExport SEXP _texmer_get_segments_cpp(SEXP rtokensSEXP, SEXP rstopwordsSEXP, SEXP sentence_sizeSEXP, SEXP block_sizeSEXP, SEXP methodSEXP, SEXP liberalSEXP) {
+// get_texttile_segments_cpp
+Rcpp::List get_texttile_segments_cpp(const Rcpp::List& tokens, const Rcpp::StringVector& stopwords, std::size_t sentence_size, std::size_t block_size, const Rcpp::CharacterVector& method, bool liberal);
+RcppExport SEXP _texmer_get_texttile_segments_cpp(SEXP tokensSEXP, SEXP stopwordsSEXP, SEXP sentence_sizeSEXP, SEXP block_sizeSEXP, SEXP methodSEXP, SEXP liberalSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type rtokens(rtokensSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::StringVector& >::type rstopwords(rstopwordsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type tokens(tokensSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::StringVector& >::type stopwords(stopwordsSEXP);
     Rcpp::traits::input_parameter< std::size_t >::type sentence_size(sentence_sizeSEXP);
     Rcpp::traits::input_parameter< std::size_t >::type block_size(block_sizeSEXP);
     Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type method(methodSEXP);
     Rcpp::traits::input_parameter< bool >::type liberal(liberalSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_segments_cpp(rtokens, rstopwords, sentence_size, block_size, method, liberal));
+    rcpp_result_gen = Rcpp::wrap(get_texttile_segments_cpp(tokens, stopwords, sentence_size, block_size, method, liberal));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -36,7 +36,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_texmer_get_segments_cpp", (DL_FUNC) &_texmer_get_segments_cpp, 6},
+    {"_texmer_get_texttile_segments_cpp", (DL_FUNC) &_texmer_get_texttile_segments_cpp, 6},
     {"_texmer_generate_token_segment_ids_cpp", (DL_FUNC) &_texmer_generate_token_segment_ids_cpp, 3},
     {NULL, NULL, 0}
 };

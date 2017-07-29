@@ -1,6 +1,7 @@
 #ifndef TOKEN_SEQUENCE_H
 #define TOKEN_SEQUENCE_H
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
@@ -35,10 +36,10 @@ public:
   Vocabulary get_vocabulary() const;
   std::vector<std::size_t> get_counts() const;
 
-  void print() const;
+  std::ostream& print(std::ostream& out=std::cout) const;
 
 private:
-  std::map<Token, std::size_t> type_count;
+  std::map<Token, std::size_t> type_count_;
 
   void insert_or_add_element(const std::pair<Token, std::size_t>& element);
 

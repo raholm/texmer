@@ -43,7 +43,7 @@ double sd(const std::vector<double>& v, bool corrected=true) {
 }
 
 std::string to_lower(const std::string& s) {
-  std::string l;
+  std::string l{s};
   std::transform(s.cbegin(), s.cend(), l.begin(), ::tolower);
   return l;
 }

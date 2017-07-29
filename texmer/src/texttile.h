@@ -16,11 +16,11 @@ public:
   DocSegments get_segments(const Doc& doc, const Stopwords& stopwords);
 
 private:
-  std::size_t sentence_size;
-  std::size_t block_size;
+  std::size_t sentence_size_;
+  std::size_t block_size_;
 
-  std::string method;
-  bool liberal;
+  std::string method_;
+  bool liberal_;
 
   // Token Sequences
   CorpusTokenSequences ts_create(const Corpus& tokens, const Vocabulary& stopwords);
@@ -47,15 +47,15 @@ private:
   // Segments
   CorpusSegments seg_generate(const std::vector<BoundaryPoints>& boundaries, std::vector<std::size_t> n_tokens);
   DocSegments seg_generate(const BoundaryPoints& boundaries, std::size_t n_tokens);
-  void seg_fill(DocSegments* segments, std::size_t* from, int with, int times);
+  void seg_fill(DocSegments& segments, std::size_t& from, int with, int times);
 
 };
 
-Rcpp::List get_segments_cpp(const Rcpp::List& rtokens,
-                            const Rcpp::StringVector& rstopwords,
-                            std::size_t sentence_size,
-                            std::size_t block_size,
-                            const Rcpp::CharacterVector& method,
-                            bool liberal);
+Rcpp::List get_texttile_segments_cpp(const Rcpp::List& tokens,
+                                     const Rcpp::StringVector& stopwords,
+                                     std::size_t sentence_size,
+                                     std::size_t block_size,
+                                     const Rcpp::CharacterVector& method,
+                                     bool liberal);
 
 #endif // TEXTTILE_H

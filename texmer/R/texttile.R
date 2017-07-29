@@ -43,6 +43,41 @@ tf_texttile <- function(corpus, stopwords,
                           sentence_size ,block_size,
                           method, liberal_depth_cutoff)
 
+    library(dplyr)
+
+    compile <- function() {
+        devtools::build()
+        devtools::load_all()
+    }
+
+    corpus <- dplyr::data_frame(id=c("1", "2", "3", "4"),
+                                text=c("what are you doing out here friend",
+                                       "this is not a stream of fresh water",
+                                       "hello",
+                                       "hello world"))
+    seg_size <- 2
+
+    tokens <- corpus %>%
+        texcur::tf_lowercase() %>%
+        texcur::tf_tokenize()
+
+    texttile_tokens <- tokens %>%
+        dplyr::group_by(id) %>%
+        dplyr::summarise(tokens=list(token))
+    texttile_tokens <- texttile_tokens$tokens
+
+    stopwords <- c("hello")
+
+    sentence_size <- 2
+    block_size <- 1
+    method <- "block"
+    liberal <- TRUE
+
+    compile()
+    get_texttile_segments_cpp(texttile_tokens, stopwords,
+                              sentence_size, block_size,
+                              method, liberal)
+
     result <- dplyr::data_frame()
 
     for (i in 1:nrow(corpus)) {
@@ -262,6 +297,3 @@ tf_texttile <- function(corpus, stopwords,
     checkr::assert_choice(method, c("block", "vocabulary"))
     checkr::assert_logical(liberal_depth_cutoff, len=1)
 }
-
-## run_testthat_tests()
-## tokensequence_test()

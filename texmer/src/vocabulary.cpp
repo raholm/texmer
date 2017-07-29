@@ -1,9 +1,7 @@
 #include "vocabulary.h"
 
-#include <iostream>
-
 Vocabulary::Vocabulary(const std::vector<Token>& tokens) {
-  vocabulary.insert(tokens.cbegin(), tokens.cend());
+  vocabulary_.insert(tokens.cbegin(), tokens.cend());
 }
 
 Vocabulary Vocabulary::operator+(const Vocabulary& rhs) const {
@@ -12,7 +10,7 @@ Vocabulary Vocabulary::operator+(const Vocabulary& rhs) const {
 }
 
 Vocabulary& Vocabulary::operator+=(const Vocabulary& rhs) {
-  vocabulary.insert(rhs.vocabulary.cbegin(), rhs.vocabulary.cend());
+  vocabulary_.insert(rhs.vocabulary_.cbegin(), rhs.vocabulary_.cend());
   return *this;
 }
 
@@ -22,21 +20,26 @@ Vocabulary Vocabulary::operator-(const Vocabulary& rhs) const {
 }
 
 Vocabulary& Vocabulary::operator-=(const Vocabulary& rhs) {
-  vocabulary.erase(rhs.vocabulary.cbegin(), rhs.vocabulary.cend());
+  vocabulary_.erase(rhs.vocabulary_.cbegin(), rhs.vocabulary_.cend());
   return *this;
 }
 
 bool Vocabulary::find(const Token& token) const {
-  return vocabulary.find(token) != vocabulary.end();
+  return vocabulary_.find(token) != vocabulary_.end();
 }
 
 std::size_t Vocabulary::length() const {
-  return vocabulary.size();
+  return vocabulary_.size();
 }
 
-void Vocabulary::print() const {
-  for (auto const& token : vocabulary) {
-    std::cout << token << " ";
+std::ostream& Vocabulary::print(std::ostream& out) const {
+  out << "{";
+  unsigned count = 0;
+  for (auto const& token : vocabulary_) {
+    out << token;
+    if (++count != length())
+      out << ", ";
   }
-  std::cout << std::endl;
+  out << "}";
+  return out;
 }

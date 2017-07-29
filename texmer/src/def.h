@@ -11,6 +11,7 @@ using Token = std::string;
 using Doc = std::vector<Token>;
 using Corpus = std::vector<Doc>;
 using Stopwords = Doc;
+using Segment = Doc;
 
 using DocTokenSequences = std::vector<TokenSequence>;
 using CorpusTokenSequences = std::vector<DocTokenSequences>;

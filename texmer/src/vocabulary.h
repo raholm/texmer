@@ -15,6 +15,11 @@ public:
   Vocabulary(Vocabulary&& v) = default;
   Vocabulary(const std::vector<Token>& tokens);
 
+  ~Vocabulary() = default;
+
+  Vocabulary& operator=(const Vocabulary& other) = default;
+  Vocabulary& operator=(Vocabulary&& other) = default;
+
   Vocabulary operator+(const Vocabulary& rhs) const;
   Vocabulary& operator+=(const Vocabulary& rhs);
 
@@ -23,6 +28,7 @@ public:
 
   bool find(const Token& token) const;
 
+  std::size_t size() const;
   std::size_t length() const;
 
   std::ostream& print(std::ostream& out=std::cout) const;

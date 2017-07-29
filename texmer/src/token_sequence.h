@@ -31,6 +31,7 @@ public:
   TokenSequence operator-(const Vocabulary& rhs) const;
   TokenSequence& operator-=(const Vocabulary& rhs);
 
+  std::size_t size() const;
   std::size_t length() const;
 
   Vocabulary get_vocabulary() const;

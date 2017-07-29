@@ -49,6 +49,9 @@ TokenSequence& TokenSequence::operator-=(const Vocabulary& rhs) {
   return *this;
 }
 
+std::size_t TokenSequence::size() const {
+  return type_count_.size();
+}
 
 std::size_t TokenSequence::length() const {
   return std::accumulate(type_count_.cbegin(), type_count_.cend(), 0,

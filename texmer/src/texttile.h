@@ -37,6 +37,7 @@ private:
   // Vocabulary Scores
   CorpusScores vs_calculate(const CorpusTokenSequences& token_sequences);
   DocScores vs_calculate(const DocTokenSequences& token_sequences);
+  std::vector<Vocabulary> vs_get_vocabularies(const DocTokenSequences& token_sequences);
 
   // Boundary Points
   std::vector<BoundaryPoints> bp_find_boundaries(const CorpusScores& lexical_scores);

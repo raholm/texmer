@@ -238,9 +238,51 @@ CorpusScores TextTile::vs_calculate(const CorpusTokenSequences& token_sequences)
 
 DocScores TextTile::vs_calculate(const DocTokenSequences& token_sequences) {
   std::size_t n = token_sequences.size();
+
+  if (n == 0 || n == 1)
+    return DocScores{0};
+
   DocScores scores(n, 0);
+  double denom = 2 * sentence_size_;
+  std::size_t n_gaps = n - 1;
+
+  std::vector<Vocabulary> vocabularies = vs_get_vocabularies(token_sequences);
+
+  Vocabulary left_tokens_seen;
+  Vocabulary right_tokens_seen = vocabularies.at(0);
+
+  Vocabulary left_new_tokens, right_new_tokens;
+  Vocabulary left_tokens, right_tokens;
+
+  for (unsigned gap = 0; gap < n_gaps; ++gap) {
+    left_tokens = vocabularies.at(gap);
+    right_tokens = vocabularies.at(gap + 1);
+
+    left_new_tokens = left_tokens - left_tokens_seen;
+    right_new_tokens = right_tokens - right_tokens_seen;
+
+    scores.at(gap) = (left_new_tokens.size() + right_new_tokens.size()) / denom;
+
+    left_tokens_seen += left_tokens;
+    right_tokens_seen += right_tokens;
+  }
+
+  // Last score where we only look at the last token-sequence
+  right_new_tokens = vocabularies.at(n_gaps) - left_tokens_seen;
+  scores.at(n_gaps) = right_new_tokens.size() / denom;
 
   return scores;
+}
+
+std::vector<Vocabulary> TextTile::vs_get_vocabularies(const DocTokenSequences& token_sequences) {
+  std::size_t n = token_sequences.size();
+  std::vector<Vocabulary> vocabularies(n);
+
+  for (unsigned i = 0; i < n; ++i) {
+    vocabularies.at(i) = token_sequences.at(i).get_vocabulary();
+  }
+
+  return vocabularies;
 }
 
 std::vector<BoundaryPoints> TextTile::bp_find_boundaries(const CorpusScores& lexical_scores) {

@@ -38,10 +38,10 @@
 tf_texttile <- function(corpus, stopwords,
                         sentence_size, block_size,
                         method="block",
-                        liberal_depth_cutoff=TRUE) {
+                        liberal=TRUE) {
     .check_input_texttile(corpus, stopwords,
                           sentence_size ,block_size,
-                          method, liberal_depth_cutoff)
+                          method, liberal)
     tokens <- corpus %>%
         texcur::tf_lowercase() %>%
         texcur::tf_tokenize()
@@ -268,11 +268,11 @@ tf_texttile <- function(corpus, stopwords,
 
 .check_input_texttile <- function(corpus, stopwords,
                                   sentence_size, block_size,
-                                  method, liberal_depth_cutoff) {
+                                  method, liberal) {
     checkr::assert_tidy_table(corpus, c("id", "text"))
     checkr::assert_character(stopwords)
     checkr::assert_integer(sentence_size, len=1, lower=1)
     checkr::assert_integer(block_size, len=1, lower=1)
     checkr::assert_choice(method, c("block", "vocabulary"))
-    checkr::assert_logical(liberal_depth_cutoff, len=1)
+    checkr::assert_logical(liberal, len=1)
 }

@@ -55,13 +55,13 @@ CorpusSegments TextTile::get_segments(const Corpus& corpus, const Stopwords& sto
 
   auto boundaries = bp_find_boundaries(scores);
 
-  Rcpp::Rcout << "Boundaries:" << std::endl;
-  for (auto const& doc_boundaries : boundaries) {
-    Rcpp::Rcout << "Doc:" << std::endl;
-    for (auto const& bound : doc_boundaries)
-      Rcpp::Rcout << bound << " ";
-    Rcpp::Rcout << std::endl;
-  }
+  // Rcpp::Rcout << "Boundaries:" << std::endl;
+  // for (auto const& doc_boundaries : boundaries) {
+  //   Rcpp::Rcout << "Doc:" << std::endl;
+  //   for (auto const& bound : doc_boundaries)
+  //     Rcpp::Rcout << bound << " ";
+  //   Rcpp::Rcout << std::endl;
+  // }
 
   auto segments = seg_generate(boundaries, n_tokens);
 

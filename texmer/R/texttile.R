@@ -43,19 +43,10 @@ tf_texttile <- function(corpus, stopwords,
                           sentence_size ,block_size,
                           method, liberal_depth_cutoff)
 
-    library(dplyr)
-
     compile <- function() {
         devtools::build()
         devtools::load_all()
     }
-
-    corpus <- dplyr::data_frame(id=c("1", "2", "3", "4"),
-                                text=c("what are you doing out here friend",
-                                       "this is not a stream of fresh water",
-                                       "hello",
-                                       "hello world"))
-    seg_size <- 2
 
     tokens <- corpus %>%
         texcur::tf_lowercase() %>%
@@ -66,35 +57,44 @@ tf_texttile <- function(corpus, stopwords,
         dplyr::summarise(tokens=list(token))
     texttile_tokens <- texttile_tokens$tokens
 
-    stopwords <- c("hello")
+    segments <- get_texttile_segments_cpp(texttile_tokens, stopwords,
+                                          sentence_size, block_size,
+                                          method, liberal) %>%
+        reshape2::melt(res) %>%
+        dplyr::rename(segid=value) %>%
+        dplyr::select(segid) %>%
+        dplyr::mutate(segid=as.character(segid))
 
-    sentence_size <- 2
-    block_size <- 1
-    method <- "block"
-    liberal <- TRUE
+    segmented_tokens <- tokens %>% dplyr::bind_cols(res)
 
-    compile()
-    get_texttile_segments_cpp(texttile_tokens, stopwords,
-                              sentence_size, block_size,
-                              method, liberal)
+    segmented_tokens %>%
+        dplyr::rename(docid=id, id=segid) %>%
+        dplyr::group_by(docid) %>%
+        dplyr::summarise(text=dplyr::lst(texcur::tf_merge_tokens(dplyr::data_frame(id, token))))
 
-    result <- dplyr::data_frame()
+    ## a$text
 
-    for (i in 1:nrow(corpus)) {
-        id <- corpus$id[i]
-        document <- corpus$text[i]
 
-        segments <- .tf_texttile_doc(document, stopwords,
-                                     sentence_size, block_size,
-                                     method, liberal_depth_cutoff)
-        segments$docid <- id
+    ## tokens %>%
+    ##     dplyr::semi_join(res, by="id")
 
-        result <- result %>%
-            rbind(segments)
-    }
+    ## result <- dplyr::data_frame()
 
-    result$id <- 1:nrow(result)
-    result
+    ## for (i in 1:nrow(corpus)) {
+    ##     id <- corpus$id[i]
+    ##     document <- corpus$text[i]
+
+    ##     segments <- .tf_texttile_doc(document, stopwords,
+    ##                                  sentence_size, block_size,
+    ##                                  method, liberal_depth_cutoff)
+    ##     segments$docid <- id
+
+    ##     result <- result %>%
+    ##         rbind(segments)
+    ## }
+
+    ## result$id <- 1:nrow(result)
+    ## result
 }
 
 .tf_texttile_doc <- function(document, stopwords,

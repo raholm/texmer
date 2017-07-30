@@ -5,7 +5,7 @@
 \title{Segmenting text into multi-paragraph subtopic passages.}
 \usage{
 tf_texttile(corpus, stopwords, sentence_size, block_size, method = "block",
-  liberal_depth_cutoff = TRUE)
+  liberal = TRUE)
 }
 \arguments{
 \item{corpus}{A data frame}

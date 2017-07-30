@@ -7,8 +7,8 @@
 
 // [[Rcpp::export]]
 Rcpp::IntegerVector get_token_segment_ids_cpp(const Rcpp::IntegerVector& n_tokens_per_doc,
-                                                   const Rcpp::IntegerVector& n_segs_per_doc,
-                                                   const Rcpp::IntegerVector& segsize_per_doc) {
+                                              const Rcpp::IntegerVector& n_segs_per_doc,
+                                              const Rcpp::IntegerVector& segsize_per_doc) {
   int n = Rcpp::sum(n_tokens_per_doc);
 
   Rcpp::IntegerVector ids(n), id_repeat_counts;

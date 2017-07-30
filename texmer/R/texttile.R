@@ -46,34 +46,20 @@ tf_texttile <- function(corpus, stopwords,
         texcur::tf_lowercase() %>%
         texcur::tf_tokenize()
 
-    tokens <- clean_corpus %>%
-        texcur::tf_lowercase() %>%
-        texcur::tf_tokenize()
-
     texttile_tokens <- tokens %>%
         dplyr::group_by(id) %>%
-        dplyr::summarise(tokens=list(token))
+        dplyr::summarise(tokens=list(token)) %>%
+        dplyr::select(tokens)
     texttile_tokens <- texttile_tokens$tokens
 
     segments <- get_texttile_segments_cpp(texttile_tokens, stopwords,
                                           sentence_size, block_size,
                                           method, liberal) %>%
         reshape2::melt() %>%
-        dplyr::rename(segid=value) %>%
-        dplyr::select(segid) %>%
-        dplyr::mutate(segid=as.character(segid))
-
-    segmented_tokens <- tokens %>% dplyr::bind_cols(segments)
-
-    segmented_corpus <- segmented_tokens %>%
-        dplyr::rename(docid=id, id=segid) %>%
-        dplyr::group_by(docid) %>%
-        dplyr::summarise(text=dplyr::lst(texcur::tf_merge_tokens(dplyr::data_frame(id, token)) %>%
-                                         dplyr::select(text))) %>%
-        tidyr::unnest(text) %>%
+        dplyr::rename(text=value, docid=L1) %>%
         dplyr::mutate(id=row_number())
 
-    segmented_corpus
+    segments
 }
 
 .tf_texttile_doc <- function(document, stopwords,

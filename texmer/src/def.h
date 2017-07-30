@@ -8,22 +8,27 @@ class TokenSequence;
 
 using Token = std::string;
 
-using Doc = std::vector<Token>;
-using Corpus = std::vector<Doc>;
-using Stopwords = Doc;
-using Segment = Doc;
+using Document = std::vector<Token>;
+using Corpus = std::vector<Document>;
 
-using DocTokenSequences = std::vector<TokenSequence>;
-using CorpusTokenSequences = std::vector<DocTokenSequences>;
-using BlockTokenSequences = DocTokenSequences;
+using DocumentTokenSequences = std::vector<TokenSequence>;
+using CorpusTokenSequences = std::vector<DocumentTokenSequences>;
+using BlockTokenSequences = DocumentTokenSequences;
 
 using Score = double;
-using DocScores = std::vector<Score>;
-using CorpusScores = std::vector<DocScores>;
+using DocumentScores = std::vector<Score>;
+using CorpusScores = std::vector<DocumentScores>;
 
 using BoundaryPoints = std::vector<std::size_t>;
 
-using DocSegments = std::vector<std::size_t>;
-using CorpusSegments = std::vector<DocSegments>;
+using DocumentSegments = std::vector<std::string>;
+using CorpusSegments = std::vector<DocumentSegments>;
+
+// Math
+using DoubleMatrix = std::vector<std::vector<double>>;
+using IntMatrix = std::vector<std::vector<std::size_t>>;
+using DoubleVector = std::vector<double>;
+using IntVector = std::vector<std::size_t>;
+
 
 #endif // DEF_H

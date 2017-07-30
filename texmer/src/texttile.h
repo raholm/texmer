@@ -18,10 +18,15 @@ public:
   DocumentSegments segment(const Document& tokens, const Document& stopwords) const;
 
 private:
+  std::size_t sentence_size_;
+
   TokenTransformer transformer_;
   LexicalEvaluator* evaluator_;
   BoundaryIdentifier identifier_;
   TokenSegmenter segmenter_;
+
+  void adjust_boundaries_by_sentence_size(IntMatrix& boundaries) const;
+  void adjust_boundaries_by_sentence_size(IntVector& boundaries) const;
 
 };
 

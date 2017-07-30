@@ -42,6 +42,7 @@ tf_texttile <- function(corpus, stopwords,
     .check_input_texttile(corpus, stopwords,
                           sentence_size ,block_size,
                           method, liberal)
+
     tokens <- corpus %>%
         texcur::tf_lowercase() %>%
         texcur::tf_tokenize()

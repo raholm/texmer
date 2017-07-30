@@ -18,7 +18,7 @@ tf_texttile(corpus, stopwords, sentence_size, block_size, method = "block",
 
 \item{method}{The method for lexical scoring; currently are 'block' and 'vocabulary' supported.}
 
-\item{liberal_depth_cutoff}{A logical. If 'TRUE' (the default) the depth cutoff will be more liberal. See 'Details' for more information.}
+\item{liberal}{A logical. If 'TRUE' (the default) the depth cutoff will be more liberal. See 'Details' for more information.}
 }
 \description{
 TextTiling is segmenting text into multi-paragraph subtopic passages.

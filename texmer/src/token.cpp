@@ -60,6 +60,6 @@ Rcpp::IntegerVector get_repeat_counts(int n_tokens, int segsize) {
 
 void print(const Rcpp::IntegerVector& vec) {
   for (unsigned i = 0; i < vec.size(); ++i) {
-    std::cout << vec[i] << " ";
+    Rcpp::Rcout << vec[i] << " ";
   }
 }

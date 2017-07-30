@@ -30,7 +30,7 @@
 #' @param sentence_size The pseudo-sentence size, the number of tokens in a sentence. See 'Details' for more information.
 #' @param block_size The block size as defined in the paper. See 'Details' for more information.
 #' @param method The method for lexical scoring; currently are 'block' and 'vocabulary' supported.
-#' @param liberal_depth_cutoff A logical. If 'TRUE' (the default) the depth cutoff will be more liberal. See 'Details' for more information.
+#' @param liberal A logical. If 'TRUE' (the default) the depth cutoff will be more liberal. See 'Details' for more information.
 #'
 #' @importFrom stats sd
 #'

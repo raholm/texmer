@@ -1,4 +1,4 @@
-// #include <testthat.h>
+// #include <catch.hpp>
 
 // #include "texttile.h"
 

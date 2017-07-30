@@ -1,7 +1,7 @@
-#include <testthat.h>
+#include <catch.hpp>
 
 #include "token.h"
 
-context("Token segmentation routines") {
+SCENARIO("Token segmentation routines", "[TokenSegmenter]") {
 
 }

@@ -32,7 +32,7 @@ Vocabulary& Vocabulary::operator-=(const Vocabulary& rhs) {
   return *this;
 }
 
-bool Vocabulary::find(const Token& token) const {
+bool Vocabulary::is_in(const Token& token) const {
   return vocabulary_.find(token) != vocabulary_.end();
 }
 

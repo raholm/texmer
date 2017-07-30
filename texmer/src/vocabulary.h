@@ -26,7 +26,7 @@ public:
   Vocabulary operator-(const Vocabulary& rhs) const;
   Vocabulary& operator-=(const Vocabulary& rhs);
 
-  bool find(const Token& token) const;
+  bool is_in(const Token& token) const;
 
   std::size_t size() const;
   std::size_t length() const;

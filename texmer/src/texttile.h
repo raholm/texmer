@@ -7,12 +7,14 @@
 #include "boundary_identifier.h"
 #include "token_segmenter.h"
 
+#include <memory>
+
 class TextTile {
 public:
   TextTile(std::size_t sentence_size, std::size_t block_size,
            const std::string& method, bool liberal);
 
-  ~TextTile();
+  ~TextTile() = default;
 
   CorpusSegments segment(const Corpus& tokens, const Document& stopwords) const;
   DocumentSegments segment(const Document& tokens, const Document& stopwords) const;
@@ -21,7 +23,7 @@ private:
   std::size_t sentence_size_;
 
   TokenTransformer transformer_;
-  LexicalEvaluator* evaluator_;
+  std::unique_ptr<LexicalEvaluator> evaluator_;
   BoundaryIdentifier identifier_;
   TokenSegmenter segmenter_;
 

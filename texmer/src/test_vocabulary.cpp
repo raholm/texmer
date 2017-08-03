@@ -1,23 +1,9 @@
 #include <catch.hpp>
 
 #include "vocabulary.h"
+#include "test_helper.h"
 
 using Document = std::vector<Vocabulary::Token>;
-
-static void check_size(const Vocabulary& vocabulary, std::size_t size) {
-  REQUIRE(vocabulary.size() == size);
-  REQUIRE(vocabulary.size() == vocabulary.length());
-}
-
-static void check_contains(const Vocabulary& vocabulary, const Document& document) {
-  for (auto const& token : document)
-    REQUIRE(vocabulary.contains(token));
-}
-
-static void check_not_contains(const Vocabulary& vocabulary, const Document& document) {
-  for (auto const& token : document)
-    REQUIRE(!vocabulary.contains(token));
-}
 
 SCENARIO("vocabularies can be constructed in various ways", "[constructor]") {
   Document d{"t1", "t2", "t1"};

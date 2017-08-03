@@ -4,19 +4,7 @@
 
 #include "lexical_evaluator.h"
 
-static void check_equality(const DocumentScores& s1, const DocumentScores& s2) {
-  REQUIRE(s1.size() == s2.size());
-
-  for (unsigned i = 0; i < s1.size(); ++i)
-    REQUIRE(s1.at(i) == Approx(s2.at(i)));
-}
-
-static void check_equality(const CorpusScores& s1, const CorpusScores& s2) {
-  REQUIRE(s1.size() == s2.size());
-
-  for (unsigned i = 0; i < s1.size(); ++i)
-    check_equality(s1.at(i), s2.at(i));
-}
+#include "test_helper.h"
 
 SCENARIO("a block evaluator construction", "[constructor]") {
   GIVEN("a block size less than 1") {
@@ -46,8 +34,9 @@ SCENARIO("a block evaluator evaluates", "[evaluate]") {
       TokenSequence({"here", "here", "good", "good", "good", "good", "what", "what", "what"})
       };
 
-  DocumentScores document_expected_scores{0,
-      (6 * 1 + 3 * 1 + 3* 2) / sqrt((1 + 1 + 1 + 4) * (36 + 9 + 4 + 9)),
+  DocumentScores document_expected_scores{
+    0,
+      (6 * 1 + 3 * 1 + 3 * 2) / sqrt((1 + 1 + 1 + 4) * (36 + 9 + 4 + 9)),
       (2 * 4) / sqrt((4 + 9) * (4 + 16 + 9)),
       0};
 

@@ -1,20 +1,7 @@
 #include <catch.hpp>
 
 #include "lexical_evaluator.h"
-
-static void check_equality(const DocumentScores& s1, const DocumentScores& s2) {
-  REQUIRE(s1.size() == s2.size());
-
-  for (unsigned i = 0; i < s1.size(); ++i)
-    REQUIRE(s1.at(i) == s2.at(i));
-}
-
-static void check_equality(const CorpusScores& s1, const CorpusScores& s2) {
-  REQUIRE(s1.size() == s2.size());
-
-  for (unsigned i = 0; i < s1.size(); ++i)
-    check_equality(s1.at(i), s2.at(i));
-}
+#include "test_helper.h"
 
 SCENARIO("a vocabulary evaluator construction", "[constructor]") {
   GIVEN("a sentence size less than 1") {

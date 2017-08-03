@@ -70,7 +70,7 @@ IntVector TokenSegmenter::get_segment_ids(const IntVector& boundaries,
 }
 
 void TokenSegmenter::fill_with_segment_ids(IntVector& segment_ids, std::size_t& from,
-                                           int with, int times) const {
+                                           int with, unsigned times) const {
   for (unsigned i = 0; i < times; ++i) {
     segment_ids.at(from++) = with;
   }

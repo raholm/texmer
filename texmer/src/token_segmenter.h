@@ -19,7 +19,7 @@ private:
   IntVector get_segment_ids(const IntVector& boundaries,
                             std::size_t n_tokens) const;
   void fill_with_segment_ids(IntVector& segment_ids, std::size_t& from,
-                             int with, int times) const;
+                             int with, unsigned times) const;
 
 };
 

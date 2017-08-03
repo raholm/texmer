@@ -27,11 +27,12 @@ TokenSequence TokenSequence::operator*(const TokenSequence& rhs) const {
 }
 
 TokenSequence& TokenSequence::operator*=(const TokenSequence& rhs) {
-  for (auto const& p : rhs.type_count_) {
-    auto it = type_count_.find(p.first);
-    if (it != type_count_.end()) {
-      type_count_.at(it->first) = it->second * p.second;
-    }
+  for (auto it = type_count_.cbegin(); it != type_count_.cend();) {
+    auto rit = rhs.type_count_.find(it->first);
+    if (rit != rhs.type_count_.end()) {
+      type_count_.at(it->first) = it->second * rit->second;
+      it++;
+    } else it = type_count_.erase(it);
   }
   return *this;
 }

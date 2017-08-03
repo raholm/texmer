@@ -2,14 +2,14 @@
 
 #include "lexical_evaluator.h"
 
-void check_equality(const DocumentScores& s1, const DocumentScores& s2) {
+static void check_equality(const DocumentScores& s1, const DocumentScores& s2) {
   REQUIRE(s1.size() == s2.size());
 
   for (unsigned i = 0; i < s1.size(); ++i)
     REQUIRE(s1.at(i) == s2.at(i));
 }
 
-void check_equality(const CorpusScores& s1, const CorpusScores& s2) {
+static void check_equality(const CorpusScores& s1, const CorpusScores& s2) {
   REQUIRE(s1.size() == s2.size());
 
   for (unsigned i = 0; i < s1.size(); ++i)

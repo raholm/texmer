@@ -4,17 +4,17 @@
 
 using Document = std::vector<Vocabulary::Token>;
 
-void check_size(const Vocabulary& vocabulary, std::size_t size) {
+static void check_size(const Vocabulary& vocabulary, std::size_t size) {
   REQUIRE(vocabulary.size() == size);
   REQUIRE(vocabulary.size() == vocabulary.length());
 }
 
-void check_contains(const Vocabulary& vocabulary, const Document& document) {
+static void check_contains(const Vocabulary& vocabulary, const Document& document) {
   for (auto const& token : document)
     REQUIRE(vocabulary.contains(token));
 }
 
-void check_not_contains(const Vocabulary& vocabulary, const Document& document) {
+static void check_not_contains(const Vocabulary& vocabulary, const Document& document) {
   for (auto const& token : document)
     REQUIRE(!vocabulary.contains(token));
 }

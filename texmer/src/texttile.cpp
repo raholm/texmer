@@ -36,6 +36,7 @@ DocumentSegments TextTile::segment(const Document& doc,
                                    const Document& stopwords) const {
   auto doc_ts = transformer_.transform(doc, stopwords);
   auto scores = evaluator_->evaluate(doc_ts);
+  // TODO: Do we have to do something regarding gap index 0?
   auto boundaries = identifier_.get_boundaries(scores);
   adjust_boundaries_by_sentence_size(boundaries);
   auto segments = segmenter_.segment(doc, boundaries);
@@ -51,4 +52,11 @@ void TextTile::adjust_boundaries_by_sentence_size(IntMatrix& boundaries) const {
 void TextTile::adjust_boundaries_by_sentence_size(IntVector& boundaries) const {
   for (auto& boundary : boundaries)
     boundary *= sentence_size_;
+
+  // TODO: Potential fix to transform gap index to token index
+  // for (auto& boundary : boundaries) {
+  //   ++boundary;
+  //   boundary *= sentence_size_;
+  //   --boundary;
+  // }
 }

@@ -1,1 +1,1 @@
-PKG_CPPFLAGS=-I/usr/local/include/catch
+PKG_CPPFLAGS=-I../inst/include/

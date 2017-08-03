@@ -1,9 +1,11 @@
-#include "token.h"
-
+#include <Rcpp.h>
 #include <iostream>
 #include <algorithm>
 #include <iterator>
 #include <cmath>
+
+Rcpp::IntegerVector get_repeat_counts(int n_tokens, int segsize);
+void print(const Rcpp::IntegerVector& vec);
 
 // [[Rcpp::export]]
 Rcpp::IntegerVector get_token_segment_ids_cpp(const Rcpp::IntegerVector& n_tokens_per_doc,

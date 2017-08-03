@@ -31,7 +31,7 @@ IntVector BoundaryIdentifier::get_boundaries(const DoubleVector& scores) const {
     depth_score = left_depth_score + right_depth_score;
 
     if (depth_score >= cutoff_score)
-      boundaries.push_back(gap + 1);
+      boundaries.push_back(gap);
   }
 
   return boundaries;
@@ -53,8 +53,8 @@ double BoundaryIdentifier::get_depth_by_side(const DoubleVector& scores,
   while ((scores.at(current_gap) - scores.at(gap)) >= depth_score) {
     depth_score = scores.at(current_gap) - scores.at(gap);
 
-    if (left) --current_gap;
-    else ++current_gap;
+    if (left) current_gap--;
+    else current_gap++;
 
     if (current_gap < 0 || current_gap >= scores.size()) break;
   }

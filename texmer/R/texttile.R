@@ -58,7 +58,10 @@ tf_texttile <- function(corpus, stopwords,
                                           method, liberal) %>%
         reshape2::melt() %>%
         dplyr::rename(text=value, docid=L1) %>%
-        dplyr::mutate(id=row_number())
+        dplyr::mutate(id=as.character(row_number()),
+                      text=as.character(text),
+                      docid=as.character(docid)) %>%
+        dplyr::as_data_frame()
 
     segments
 }

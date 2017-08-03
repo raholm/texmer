@@ -24,13 +24,13 @@ SCENARIO("a vocabulary evaluator construction", "[constructor]") {
   }
 
   GIVEN("a sentence size equal 1") {
-    THEN("it should throw invalid argument exception") {
+    THEN("it should not throw invalid argument exception") {
       REQUIRE_NOTHROW(VocabularyEvaluator(1));
     }
   }
 
   GIVEN("a sentence size greater than 1") {
-    THEN("it should throw invalid argument exception") {
+    THEN("it should not throw invalid argument exception") {
       REQUIRE_NOTHROW(VocabularyEvaluator(2));
     }
   }

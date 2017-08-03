@@ -43,7 +43,7 @@ TokenSequence TokenSequence::operator-(const Vocabulary& rhs) const {
 
 TokenSequence& TokenSequence::operator-=(const Vocabulary& rhs) {
   for (auto it = type_count_.cbegin(); it != type_count_.cend();) {
-    if (rhs.is_in(it->first)) it = type_count_.erase(it);
+    if (rhs.contains(it->first)) it = type_count_.erase(it);
     else ++it;
   }
   return *this;

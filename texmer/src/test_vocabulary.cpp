@@ -95,6 +95,8 @@ SCENARIO("vocabularies can be added and subtracted", "[operators]") {
     Document d2{"t3", "t2"};
     Vocabulary v2{d2};
 
+    Vocabulary v3;
+
     REQUIRE(v1.size() == 2);
     REQUIRE(v1.length() == 2);
     REQUIRE(v1.size() == v1.length());
@@ -103,6 +105,9 @@ SCENARIO("vocabularies can be added and subtracted", "[operators]") {
     REQUIRE(v2.size() == 2);
     REQUIRE(v2.length() == 2);
     REQUIRE(v2.size() == v2.length());
+
+    REQUIRE(v3.size() == 0);
+    REQUIRE(v3.size() == v3.length());
 
     WHEN("it is subtracted by another vocabulary") {
       v1 = v1 - v2;
@@ -126,6 +131,18 @@ SCENARIO("vocabularies can be added and subtracted", "[operators]") {
       }
     }
 
+    WHEN("it is subtracted by an empty vocabulary") {
+      v1 -= v3;
+
+      THEN("nothing changes") {
+        REQUIRE(v1.size() == 2);
+        REQUIRE(v1.size() == v1.length());
+        REQUIRE(v1.is_in("t1"));
+        REQUIRE(v1.is_in("t2"));
+        REQUIRE(!v1.is_in("t3"));
+      }
+    }
+
     WHEN("it is added by another vocabulary") {
       v1 = v1 + v2;
 
@@ -143,6 +160,18 @@ SCENARIO("vocabularies can be added and subtracted", "[operators]") {
         REQUIRE(v1.size() == 3);
         REQUIRE(v1.length() == v1.size());
         REQUIRE(v1.is_in("t3"));
+      }
+    }
+
+    WHEN("it is added by an empty vocabulary") {
+      v1 += v3;
+
+      THEN("nothing changes") {
+        REQUIRE(v1.size() == 2);
+        REQUIRE(v1.size() == v1.length());
+        REQUIRE(v1.is_in("t1"));
+        REQUIRE(v1.is_in("t2"));
+        REQUIRE(!v1.is_in("t3"));
       }
     }
   }

@@ -22,11 +22,9 @@ IntVector BoundaryIdentifier::get_boundaries(const DoubleVector& scores) const {
   IntVector boundaries;
 
   double cutoff_score = get_depth_cutoff(scores);
-  double score, depth_score, left_depth_score, right_depth_score;
+  double depth_score, left_depth_score, right_depth_score;
 
   for (unsigned gap = 0; gap < scores.size(); ++gap) {
-    score = scores.at(gap);
-
     left_depth_score = get_depth_by_side(scores, gap, true);
     right_depth_score = get_depth_by_side(scores, gap, false);
 

@@ -9,7 +9,7 @@
 
 template<typename T>
 T sum(const std::vector<T>& v) {
-  return std::accumulate(v.cbegin(), v.cend(), (T) 0,
+  return std::accumulate(v.cbegin(), v.cend(), 0.0,
                          [](const T acc,
                             const T val) {
                            return acc + val;
@@ -18,19 +18,15 @@ T sum(const std::vector<T>& v) {
 
 template<typename T>
 T square_sum(const std::vector<T>& v) {
-  return std::accumulate(v.cbegin(), v.cend(), (T) 0,
-                         [](const T acc,
-                            const T val) {
-                           return acc + val * val;
-                         });
+  return std::inner_product(v.cbegin(), v.cend(), v.cbegin(), 0.0);
 }
 
 template<typename T>
 double mean(const std::vector<T>& v) {
-  int n;
+  int n = 0;
   double mean = 0.0;
 
-  for (auto x : v) {
+  for (auto const& x : v) {
     mean += (x - mean) / ++n;
   }
 
@@ -40,10 +36,10 @@ double mean(const std::vector<T>& v) {
 template<typename T>
 double sd(const std::vector<T>& v, bool corrected=true) {
   double avg = mean(v);
-  return std::accumulate(v.cbegin(), v.cend(), (double) 0.0,
-                         [avg](double acc, double val) {
-                           return acc + pow(val - avg, 2);
-                         }) / (v.size() - corrected);
+  return sqrt(std::accumulate(v.cbegin(), v.cend(), 0.0,
+                              [avg](double acc, T val) {
+                                return acc + pow(val - avg, 2);
+                              }) / (v.size() - corrected));
 }
 
 inline std::string to_lower(const std::string& s) {

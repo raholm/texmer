@@ -4,6 +4,7 @@
 #include <catch.hpp>
 
 #include "def.h"
+#include "vocabulary.h"
 
 template<typename T>
 void check_equality(const std::vector<T>& v1, const std::vector<T>& v2) {

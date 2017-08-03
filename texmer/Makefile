@@ -24,6 +24,8 @@ all: $(BUILD_DIR)/$(TARGET_EXEC)
 run: all
 	$(BUILD_DIR)/$(TARGET_EXEC)
 
+test: run
+
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 

@@ -28,6 +28,13 @@ private:
   void adjust_boundaries_by_sentence_size(IntMatrix& boundaries) const;
   void adjust_boundaries_by_sentence_size(IntVector& boundaries) const;
 
+  TextTile() = delete;
+  TextTile(const TextTile& other) = delete;
+  TextTile(TextTile&& other) = delete;
+
+  TextTile& operator=(const TextTile& rhs) = delete;
+  TextTile& operator=(TextTile&& rhs) = delete;
+
 };
 
 #endif // TEXTTILE_H

@@ -32,6 +32,7 @@ DocumentTokenSequences TokenTransformer::transform(const Document& tokens, const
 DocumentTokenSequences TokenTransformer::transform(const Document& tokens, const Vocabulary& stopwords) const {
   std::size_t n_segs = ceil(tokens.size() / sentence_size_);
   DocumentTokenSequences token_sequences;
+  token_sequences.reserve(n_segs);
 
   std::size_t start, end;
   Document segment;
@@ -46,6 +47,8 @@ DocumentTokenSequences TokenTransformer::transform(const Document& tokens, const
     token_sequence = TokenSequence(segment);
     token_sequence -= stopwords;
 
+    // TODO: Is this what we want? Maybe there is sentence_size many stopwords
+    // or at the end part.
     if (token_sequence.length() == 0)
       continue;
 

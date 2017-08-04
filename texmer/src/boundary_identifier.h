@@ -5,19 +5,45 @@
 
 class BoundaryIdentifier {
 public:
-  BoundaryIdentifier(bool liberal);
+  BoundaryIdentifier() = default;
 
-  ~BoundaryIdentifier() = default;
+  virtual ~BoundaryIdentifier() = default;
 
-  IntMatrix get_boundaries(const DoubleMatrix& scores) const;
-  IntVector get_boundaries(const DoubleVector& scores) const;
+  virtual IntMatrix get_boundaries(const DoubleMatrix& scores) const = 0;
+  virtual IntVector get_boundaries(const DoubleVector& scores) const = 0;
+
+};
+
+class TextTileBoundaryIdentifier : public BoundaryIdentifier {
+public:
+  TextTileBoundaryIdentifier(bool liberal);
+
+  ~TextTileBoundaryIdentifier() = default;
+
+  IntMatrix get_boundaries(const DoubleMatrix& scores) const override;
+  IntVector get_boundaries(const DoubleVector& scores) const override;
 
 private:
   bool liberal_;
 
-  double get_depth_cutoff(const DoubleVector& scores) const;
-  double get_depth_by_side(const DoubleVector& scores,
-                           unsigned gap, bool left) const;
+};
+
+class TopicTileBoundaryIdentifier : public BoundaryIdentifier {
+public:
+  TopicTileBoundaryIdentifier(std::size_t n_boundaries, bool liberal);
+
+  ~TopicTileBoundaryIdentifier() = default;
+
+  IntMatrix get_boundaries(const DoubleMatrix& scores) const override;
+  IntVector get_boundaries(const DoubleVector& scores) const override;
+
+private:
+  std::size_t n_boundaries_;
+  bool liberal_;
+
+  IntVector get_boundaries_by_heuristic(const DoubleVector& scores) const;
+  IntVector get_boundaries_by_fixed_count(const DoubleVector& scores) const;
+
 };
 
 #endif // BOUNDARY_IDENTIFIER_H

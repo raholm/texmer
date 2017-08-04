@@ -1,15 +1,42 @@
 #include "boundary_identifier.h"
 
+#include <algorithm>
+
 #include "util.h"
 
-BoundaryIdentifier::BoundaryIdentifier(bool liberal)
+static double get_depth_cutoff(const DoubleVector& scores, bool liberal) {
+  double avg = mean(scores);
+  double stdev = sd(scores);
+
+  if (liberal) return avg - stdev;
+  else return avg - stdev / 2;
+}
+
+static double get_depth_by_side(const DoubleVector& scores, unsigned gap, bool left) {
+  double depth_score = 0;
+  unsigned current_gap = gap;
+
+  while ((scores.at(current_gap) - scores.at(gap)) >= depth_score) {
+    depth_score = scores.at(current_gap) - scores.at(gap);
+
+    if (left) current_gap--;
+    else current_gap++;
+
+    if (current_gap < 0 || current_gap >= scores.size()) break;
+  }
+
+  return depth_score;
+}
+
+TextTileBoundaryIdentifier::TextTileBoundaryIdentifier(bool liberal)
   : liberal_(liberal)
 {
 
 }
 
-IntMatrix BoundaryIdentifier::get_boundaries(const DoubleMatrix& scores) const {
+IntMatrix TextTileBoundaryIdentifier::get_boundaries(const DoubleMatrix& scores) const {
   IntMatrix boundaries;
+  boundaries.reserve(scores.size());
 
   for (auto const& score : scores) {
     boundaries.push_back(get_boundaries(score));
@@ -18,10 +45,10 @@ IntMatrix BoundaryIdentifier::get_boundaries(const DoubleMatrix& scores) const {
   return boundaries;
 }
 
-IntVector BoundaryIdentifier::get_boundaries(const DoubleVector& scores) const {
+IntVector TextTileBoundaryIdentifier::get_boundaries(const DoubleVector& scores) const {
   IntVector boundaries;
 
-  double cutoff_score = get_depth_cutoff(scores);
+  double cutoff_score = get_depth_cutoff(scores, liberal_);
   double depth_score, left_depth_score, right_depth_score;
 
   for (unsigned gap = 0; gap < scores.size(); ++gap) {
@@ -37,27 +64,71 @@ IntVector BoundaryIdentifier::get_boundaries(const DoubleVector& scores) const {
   return boundaries;
 }
 
-double BoundaryIdentifier::get_depth_cutoff(const DoubleVector& scores) const {
-  double avg = mean(scores);
-  double stdev = sd(scores);
+TopicTileBoundaryIdentifier::TopicTileBoundaryIdentifier(std::size_t n_boundaries, bool liberal)
+  : n_boundaries_{n_boundaries}, liberal_{liberal}
+{
 
-  if (liberal_) return avg - stdev;
-  else return avg - stdev / 2;
 }
 
-double BoundaryIdentifier::get_depth_by_side(const DoubleVector& scores,
-                                             unsigned gap, bool left) const {
-  double depth_score = 0;
-  unsigned current_gap = gap;
+IntMatrix TopicTileBoundaryIdentifier::get_boundaries(const DoubleMatrix& scores) const {
+  IntMatrix boundaries;
+  boundaries.reserve(scores.size());
 
-  while ((scores.at(current_gap) - scores.at(gap)) >= depth_score) {
-    depth_score = scores.at(current_gap) - scores.at(gap);
+  for (auto const& score : scores)
+    boundaries.push_back(get_boundaries(score));
 
-    if (left) current_gap--;
-    else current_gap++;
+  return boundaries;
+}
 
-    if (current_gap < 0 || current_gap >= scores.size()) break;
+IntVector TopicTileBoundaryIdentifier::get_boundaries(const DoubleVector& scores) const {
+  if (n_boundaries_ == 0) return get_boundaries_by_heuristic(scores);
+  else return get_boundaries_by_fixed_count(scores);
+}
+
+IntVector TopicTileBoundaryIdentifier::get_boundaries_by_fixed_count(const DoubleVector& scores) const {
+  IntVector boundaries;
+  boundaries.reserve(n_boundaries_);
+
+  std::vector<std::pair<unsigned, double>> gap_depth;
+  double depth_score, left_depth_score, right_depth_score;
+
+  for (unsigned gap = 0; gap < scores.size(); ++gap) {
+    left_depth_score = get_depth_by_side(scores, gap, true);
+    right_depth_score = get_depth_by_side(scores, gap, false);
+
+    depth_score = (left_depth_score + right_depth_score) / 2;
+
+    gap_depth.push_back(std::make_pair(gap, depth_score));
   }
 
-  return depth_score;
+  std::sort(gap_depth.begin(), gap_depth.end(),
+            [](auto const& p1, auto const& p2) {
+              return p1.second > p2.second;
+            });
+
+  std::transform(gap_depth.cbegin(),
+                 gap_depth.cbegin() + std::min(n_boundaries_, scores.size()),
+                 boundaries.begin(),
+                 [](auto const& p) { return p.first; });
+
+  return boundaries;
+}
+
+IntVector TopicTileBoundaryIdentifier::get_boundaries_by_heuristic(const DoubleVector& scores) const {
+  IntVector boundaries;
+
+  double cutoff_score = get_depth_cutoff(scores, liberal_);
+  double depth_score, left_depth_score, right_depth_score;
+
+  for (unsigned gap = 0; gap < scores.size(); ++gap) {
+    left_depth_score = get_depth_by_side(scores, gap, true);
+    right_depth_score = get_depth_by_side(scores, gap, false);
+
+    depth_score = (left_depth_score + right_depth_score) / 2;
+
+    if (depth_score >= cutoff_score)
+      boundaries.push_back(gap);
+  }
+
+  return boundaries;
 }

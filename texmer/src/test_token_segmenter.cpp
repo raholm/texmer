@@ -42,8 +42,14 @@ SCENARIO("a token segmenter can segment text") {
   }
 
   GIVEN("a document of tokens and a vector of boundaries") {
+    TokenSegmenter s;
+
     THEN("if a boundary point is out of range") {
-      REQUIRE_THROWS_AS(TokenSegmenter().segment(Document{"hello", "world"}, IntVector{2}), std::out_of_range);
+      REQUIRE_THROWS_AS(s.segment(Document{"hello", "world"}, IntVector{2}), std::out_of_range);
+    }
+
+    THEN("if a boundary point is out of range") {
+      REQUIRE_THROWS_AS(s.segment(Document{"hello", "world"}, IntVector{0, 1, 2}), std::out_of_range);
     }
   }
 }

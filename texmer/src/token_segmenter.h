@@ -20,6 +20,7 @@ private:
                             std::size_t n_tokens) const;
   void fill_with_segment_ids(IntVector& segment_ids, std::size_t& from,
                              int with, unsigned times) const;
+  void check_boundaries(const IntVector& boundaries, std::size_t limit) const;
 
 };
 

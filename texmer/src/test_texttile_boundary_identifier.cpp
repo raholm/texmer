@@ -3,7 +3,7 @@
 #include "boundary_identifier.h"
 #include "test_helper.h"
 
-SCENARIO("a boundary identifier gets scores to find boundaries", "[boundary]") {
+SCENARIO("a texttile boundary identifier gets scores to find boundaries", "[boundary]") {
   DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
 
   DoubleMatrix mscores;
@@ -12,8 +12,8 @@ SCENARIO("a boundary identifier gets scores to find boundaries", "[boundary]") {
   mscores.push_back(vscores);
   mscores.push_back(vscores);
 
-  GIVEN("a liberal boundary identifier and a vector of scores") {
-    BoundaryIdentifier identifier{true};
+  GIVEN("a liberal texttile boundary identifier and a vector of scores") {
+    TextTileBoundaryIdentifier identifier{true};
 
     THEN("it gets the right boundaries") {
       auto boundaries = identifier.get_boundaries(vscores);
@@ -21,8 +21,8 @@ SCENARIO("a boundary identifier gets scores to find boundaries", "[boundary]") {
     }
   }
 
-  GIVEN("a liberal boundary identifier and a matrix of scores") {
-    BoundaryIdentifier identifier{true};
+  GIVEN("a liberal texttile boundary identifier and a matrix of scores") {
+    TextTileBoundaryIdentifier identifier{true};
 
     THEN("it gets the right boundaries") {
       auto boundaries = identifier.get_boundaries(mscores);
@@ -31,8 +31,8 @@ SCENARIO("a boundary identifier gets scores to find boundaries", "[boundary]") {
     }
   }
 
-  GIVEN("a non-liberal boundary identifier and a vector of scores") {
-    BoundaryIdentifier identifier{false};
+  GIVEN("a non-liberal texttile boundary identifier and a vector of scores") {
+    TextTileBoundaryIdentifier identifier{false};
 
     THEN("it gets the right boundaries") {
       auto boundaries = identifier.get_boundaries(vscores);
@@ -40,8 +40,8 @@ SCENARIO("a boundary identifier gets scores to find boundaries", "[boundary]") {
     }
   }
 
-  GIVEN("a non-liberal boundary identifier and a matrix of scores") {
-    BoundaryIdentifier identifier{false};
+  GIVEN("a non-liberal texttile boundary identifier and a matrix of scores") {
+    TextTileBoundaryIdentifier identifier{false};
 
     THEN("it gets the right boundaries") {
       auto boundaries = identifier.get_boundaries(mscores);

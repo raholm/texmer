@@ -24,7 +24,7 @@ private:
 
   TokenTransformer transformer_;
   std::unique_ptr<LexicalEvaluator> evaluator_;
-  BoundaryIdentifier identifier_;
+  TextTileBoundaryIdentifier identifier_;
   TokenSegmenter segmenter_;
 
   void adjust_boundaries_by_sentence_size(IntMatrix& boundaries) const;

@@ -42,7 +42,7 @@ SCENARIO("a token transformer should transform tokens to token sequences", "[tra
     TokenTransformer trans{sentence_size};
     THEN("it should return token sequences") {
       auto ts = trans.transform(corpus, stopwords);
-      check_equality(ts, CorpusTokenSequences{
+      check_equality(ts, CorpusTokenSequences{{
           TokenSequence({"good"}),
             TokenSequence({"what", "are"}),
             TokenSequence({"doing"}),

@@ -3,7 +3,7 @@
 #include "token_segmenter.h"
 #include "test_helper.h"
 
-SCENARIO("a token segmenter can segment text") {
+SCENARIO("a token segmenter can segment text", "[segment]") {
   Document d{"hello", "world",
       "what", "are", "you", "doing", "tonight",
       "is", "that", "a", "fishstick"};

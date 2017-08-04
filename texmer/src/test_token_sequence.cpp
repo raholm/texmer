@@ -64,6 +64,44 @@ SCENARIO("token sequences have getters", "[getters]") {
   }
 }
 
+SCENARIO("token sequences can be compared", "[comparison]") {
+  GIVEN("two empty token sequences") {
+    TokenSequence ts1;
+    TokenSequence ts2;
+
+    THEN("they should be equal") {
+      REQUIRE(ts1 == ts2);
+    }
+  }
+
+  GIVEN("two equal non-empty token sequences") {
+    TokenSequence ts1({"hello", "world", "hello"});
+    TokenSequence ts2({"hello", "world", "hello"});
+
+    THEN("they should be equal regardless of token order") {
+      REQUIRE(ts1 == ts2);
+    }
+  }
+
+  GIVEN("two equal non-empty token sequences") {
+    TokenSequence ts1({"hello", "world", "hello"});
+    TokenSequence ts2({"hello", "hello", "world"});
+
+    THEN("they should be equal") {
+      REQUIRE(ts1 == ts2);
+    }
+  }
+
+  GIVEN("two non-equal non-empty token sequences") {
+    TokenSequence ts1({"hello", "world", "hello"});
+    TokenSequence ts2({"hello", "hello"});
+
+    THEN("they should not be equal") {
+      REQUIRE(ts1 != ts2);
+    }
+  }
+}
+
 SCENARIO("token sequences can added, subtracted, and multiplied", "[operator]") {
   TokenSequence ts1({"hello", "world", "hello", "hello"});
   TokenSequence ts2({"hello", "hello", "what", "what"});

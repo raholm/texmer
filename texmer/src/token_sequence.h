@@ -31,6 +31,9 @@ public:
   TokenSequence operator-(const Vocabulary& rhs) const;
   TokenSequence& operator-=(const Vocabulary& rhs);
 
+  bool operator==(const TokenSequence& rhs) const;
+  bool operator!=(const TokenSequence& rhs) const;
+
   std::size_t size() const;
   std::size_t length() const;
 

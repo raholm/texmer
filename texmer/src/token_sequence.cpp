@@ -50,6 +50,16 @@ TokenSequence& TokenSequence::operator-=(const Vocabulary& rhs) {
   return *this;
 }
 
+bool TokenSequence::operator==(const TokenSequence& rhs) const {
+  return type_count_.size() == rhs.type_count_.size() &&
+    std::equal(type_count_.cbegin(), type_count_.cend(),
+               rhs.type_count_.cbegin());
+}
+
+bool TokenSequence::operator!=(const TokenSequence& rhs) const {
+  return !(*this == rhs);
+}
+
 std::size_t TokenSequence::size() const {
   return type_count_.size();
 }

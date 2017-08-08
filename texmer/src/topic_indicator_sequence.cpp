@@ -3,7 +3,9 @@
 #include <algorithm>
 #include <numeric>
 
-TopicIndicatorSequence::TopicIndicatorSequence(const std::vector<TopicIndicatorSequence::Topic>& topics) {
+using Topic = TopicIndicatorSequence::Topic;
+
+TopicIndicatorSequence::TopicIndicatorSequence(const std::vector<Topic>& topics) {
   for (auto const& topic : topics)
     insert_or_add_element(std::make_pair(topic, 1));
 }
@@ -36,11 +38,9 @@ TopicIndicatorSequence& TopicIndicatorSequence::operator*=(const TopicIndicatorS
   return *this;
 }
 
-
 bool TopicIndicatorSequence::operator==(const TopicIndicatorSequence& rhs) const {
   return topic_count_.size() == rhs.topic_count_.size() &&
-    std::equal(topic_count_.cbegin(), topic_count_.cend(),
-               rhs.topic_count_.cbegin());
+    std::equal(topic_count_.cbegin(), topic_count_.cend(), rhs.topic_count_.cbegin());
 }
 
 bool TopicIndicatorSequence::operator!=(const TopicIndicatorSequence& rhs) const {
@@ -59,8 +59,8 @@ std::size_t TopicIndicatorSequence::length() const {
                          });
 }
 
-std::vector<TopicIndicatorSequence::Topic> TopicIndicatorSequence::get_topics() const {
-  std::vector<TopicIndicatorSequence::Topic> topics;
+std::vector<Topic> TopicIndicatorSequence::get_topics() const {
+  std::vector<Topic> topics;
   topics.reserve(size());
   std::transform(topic_count_.cbegin(), topic_count_.cend(), std::back_inserter(topics),
                  [](auto const& pair) {
@@ -79,9 +79,8 @@ std::vector<std::size_t> TopicIndicatorSequence::get_counts() const {
   return counts;
 }
 
-
-void TopicIndicatorSequence::insert_or_add_element(const std::pair<TopicIndicatorSequence::Topic, std::size_t>& element) {
+void TopicIndicatorSequence::insert_or_add_element(const std::pair<Topic, std::size_t>& element) {
   if (!topic_count_.insert(element).second) {
-    topic_count_[element.first] += element.second;
+    topic_count_.at(element.first) += element.second;
   }
 }

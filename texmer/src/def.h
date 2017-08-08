@@ -5,6 +5,7 @@
 #include <vector>
 
 class TokenSequence;
+class TopicIndicatorSequence;
 
 using Token = std::string;
 
@@ -14,6 +15,9 @@ using Corpus = std::vector<Document>;
 using DocumentTokenSequences = std::vector<TokenSequence>;
 using CorpusTokenSequences = std::vector<DocumentTokenSequences>;
 using BlockTokenSequences = DocumentTokenSequences;
+
+using DocumentTopicIndicatorSequences = std::vector<TopicIndicatorSequence>;
+using CorpusTopicIndicatorSequences = std::vector<DocumentTopicIndicatorSequences>;
 
 using Score = double;
 using DocumentScores = std::vector<Score>;

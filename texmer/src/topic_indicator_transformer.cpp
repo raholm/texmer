@@ -8,7 +8,8 @@ TopicIndicatorTransformer::TopicIndicatorTransformer(std::size_t sentence_size)
   }
 }
 
-CorpusTopicIndicatorSequences transform(const Corpus& tokens, const TypeTopicIndicatorMode& modes) const {
+CorpusTopicIndicatorSequences TopicIndicatorTransformer::transform(const Corpus& tokens,
+                                                                   const TypeTopicIndicatorMode& modes) const {
   CorpusTopicIndicatorSequences topic_indicator_sequences(tokens.size());
 
   for (unsigned i = 0; i < tokens.size(); ++i) {
@@ -18,7 +19,8 @@ CorpusTopicIndicatorSequences transform(const Corpus& tokens, const TypeTopicInd
   return topic_indicator_sequences;
 }
 
-DocumenTopicIndicatorSequences transform(const Document& tokens, const TypeTopicIndicatorMode& modes) const {
+DocumenTopicIndicatorSequences TopicIndicatorTransformer::transform(const Document& tokens,
+                                                                    const TypeTopicIndicatorMode& modes) const {
   std::size_t n_segs = ceil(tokens.size() / sentence_size_);
   DocumenTopicIndicatorSequences topic_indicator_sequences;
   topic_indicator_sequences.reserve(n_segs);
@@ -45,8 +47,9 @@ DocumenTopicIndicatorSequences transform(const Document& tokens, const TypeTopic
   return topic_indicator_sequences;
 }
 
-TopicIndicatorSequence tokens_to_topic_indicators(const Document& tokens,
-                                                  const TypeTopicIndicatorMode& modes) const {
+TopicIndicatorSequence
+TopicIndicatorTransformer::tokens_to_topic_indicators(const Document& tokens,
+                                                      const TypeTopicIndicatorMode& modes) const {
   std::vectort<TopicIndicatorSequence::Topic> topics;
   topics.reserve(tokens.size());
 

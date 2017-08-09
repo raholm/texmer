@@ -25,6 +25,10 @@ std::size_t TypeTopicIndicatorMode::size() const {
   return type_topic_mode_.size();
 }
 
+bool TypeTopicIndicatorMode::contains(const Type& type) const {
+  return type_topic_mode_.find(type) != type_topic_mode_.end();
+}
+
 TopicIndicator TypeTopicIndicatorMode::get_mode(const Type& type) const {
   return type_topic_mode_.at(type);
 }

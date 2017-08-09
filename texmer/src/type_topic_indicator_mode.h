@@ -23,6 +23,8 @@ public:
 
   std::size_t size() const;
 
+  bool contains(const Type& type) const;
+
   TopicIndicator get_mode(const Type& type) const;
 
 private:

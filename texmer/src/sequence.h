@@ -45,4 +45,13 @@ private:
 
 #include "sequence.hpp"
 
+template<typename T>
+using DocumentSequences = std::vector<T>;
+
+template<typename T>
+using CorpusSequences = std::vector<DocumentSequences<T>>;
+
+template<typename T>
+using BlockSequences = DocumentSequences<T>;
+
 #endif // SEQUENCE_H

@@ -3,7 +3,7 @@
 
 #include "def.h"
 #include "token_transformer.h"
-#include "lexical_evaluator.h"
+#include "evaluator.h"
 #include "boundary_identifier.h"
 #include "token_segmenter.h"
 
@@ -14,7 +14,7 @@ public:
   TextTile(std::size_t sentence_size, std::size_t block_size,
            const std::string& method, bool liberal);
 
-  ~TextTile() = default;
+  ~TextTile();
 
   CorpusSegments segment(const Corpus& tokens, const Document& stopwords) const;
   DocumentSegments segment(const Document& tokens, const Document& stopwords) const;
@@ -23,7 +23,7 @@ private:
   std::size_t sentence_size_;
 
   TokenTransformer transformer_;
-  std::unique_ptr<LexicalEvaluator> evaluator_;
+  LexicalEvaluator* evaluator_;
   TextTileBoundaryIdentifier identifier_;
   TokenSegmenter segmenter_;
 

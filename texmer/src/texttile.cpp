@@ -13,17 +13,27 @@ TextTile::TextTile(std::size_t sentence_size, std::size_t block_size,
   }
 
   if (to_lower(method) == "block")
-    evaluator_ = std::unique_ptr<LexicalEvaluator>(new BlockEvaluator(block_size));
+    evaluator_ = new TextTileBlockEvaluator(block_size);
   else if (to_lower(method) == "vocabulary")
-    evaluator_ = std::unique_ptr<LexicalEvaluator>(new VocabularyEvaluator(sentence_size));
+    evaluator_ = new TextTileVocabularyEvaluator(sentence_size);
   else
     throw std::invalid_argument("Invalid choice of method: '" + method + "'.");
+}
+
+TextTile::~TextTile() {
+  delete evaluator_;
 }
 
 CorpusSegments TextTile::segment(const Corpus& corpus,
                                  const Document& stopwords) const {
   auto corpus_ts = transformer_.transform(corpus, stopwords);
-  auto scores = evaluator_->evaluate(corpus_ts);
+
+  CorpusScores scores;
+  if (TextTileBlockEvaluator* e = dynamic_cast<TextTileBlockEvaluator*>(evaluator_))
+    scores = e->evaluate(corpus_ts);
+  else if (TextTileVocabularyEvaluator* e = dynamic_cast<TextTileVocabularyEvaluator*>(evaluator_))
+    scores = e->evaluate(corpus_ts);
+
   // TODO: Do we have to do something regarding gap index 0?
   auto boundaries = identifier_.get_boundaries(scores);
   adjust_boundaries_by_sentence_size(boundaries);
@@ -35,7 +45,13 @@ CorpusSegments TextTile::segment(const Corpus& corpus,
 DocumentSegments TextTile::segment(const Document& doc,
                                    const Document& stopwords) const {
   auto doc_ts = transformer_.transform(doc, stopwords);
-  auto scores = evaluator_->evaluate(doc_ts);
+
+  DocumentScores scores;
+  if (TextTileBlockEvaluator* e = dynamic_cast<TextTileBlockEvaluator*>(evaluator_))
+    scores = e->evaluate(doc_ts);
+  else if (TextTileVocabularyEvaluator* e = dynamic_cast<TextTileVocabularyEvaluator*>(evaluator_))
+    scores = e->evaluate(doc_ts);
+
   // TODO: Do we have to do something regarding gap index 0?
   auto boundaries = identifier_.get_boundaries(scores);
   adjust_boundaries_by_sentence_size(boundaries);

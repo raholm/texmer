@@ -2,26 +2,25 @@
 
 #include <cmath>
 
-#include "lexical_evaluator.h"
-
+#include "evaluator.h"
 #include "test_helper.h"
 
 SCENARIO("a block evaluator construction", "[constructor]") {
   GIVEN("a block size less than 1") {
     THEN("it should throw invalid argument exception") {
-      REQUIRE_THROWS_AS(BlockEvaluator(0), std::invalid_argument);
+      REQUIRE_THROWS_AS(TextTileBlockEvaluator(0), std::invalid_argument);
     }
   }
 
   GIVEN("a block size equal 1") {
     THEN("it should not throw invalid argument exception") {
-      REQUIRE_NOTHROW(BlockEvaluator(1));
+      REQUIRE_NOTHROW(TextTileBlockEvaluator(1));
     }
   }
 
   GIVEN("a block size greater than 1") {
     THEN("it should not throw invalid argument exception") {
-      REQUIRE_NOTHROW(BlockEvaluator(2));
+      REQUIRE_NOTHROW(TextTileBlockEvaluator(2));
     }
   }
 }
@@ -53,7 +52,7 @@ SCENARIO("a block evaluator evaluates", "[evaluate]") {
   corpus_expected_scores.push_back(document_expected_scores);
 
   GIVEN("a document of token sequences and sentence size 2") {
-    BlockEvaluator eval(2);
+    TextTileBlockEvaluator eval(2);
 
     THEN("the scores are as expected") {
       DocumentScores actual = eval.evaluate(document_token_sequences);
@@ -63,7 +62,7 @@ SCENARIO("a block evaluator evaluates", "[evaluate]") {
   }
 
   GIVEN("a corpus of token sequences and sentence size 2") {
-    BlockEvaluator eval(2);
+    TextTileBlockEvaluator eval(2);
 
     THEN("the scores are as expected") {
       CorpusScores actual = eval.evaluate(corpus_token_sequences);

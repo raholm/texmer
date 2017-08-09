@@ -18,6 +18,8 @@ using BoundaryPoints = std::vector<std::size_t>;
 using DocumentSegments = std::vector<std::string>;
 using CorpusSegments = std::vector<DocumentSegments>;
 
+using StringVector = Document;
+
 // Math
 using DoubleMatrix = std::vector<std::vector<double>>;
 using IntMatrix = std::vector<std::vector<std::size_t>>;

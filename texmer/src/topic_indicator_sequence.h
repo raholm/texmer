@@ -59,7 +59,7 @@ public:
 
 };
 
-using DocumentTopicIndicatorSequences = std::vector<TopicIndicatorSequence>;
+using DocumentTopicIndicatorSequences = DocumentSequences<TopicIndicatorSequence>;
 using CorpusTopicIndicatorSequences = std::vector<DocumentTopicIndicatorSequences>;
 
 #endif // TOPIC_INDICATORSEQUENCE_H

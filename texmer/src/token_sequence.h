@@ -67,7 +67,7 @@ public:
 
 };
 
-using DocumentTokenSequences = std::vector<TokenSequence>;
+using DocumentTokenSequences = DocumentSequences<TokenSequence>;
 using CorpusTokenSequences = std::vector<DocumentTokenSequences>;
 using BlockTokenSequences = DocumentTokenSequences;
 

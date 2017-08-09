@@ -4,20 +4,10 @@
 #include <string>
 #include <vector>
 
-class TokenSequence;
-class TopicIndicatorSequence;
-
 using Token = std::string;
 
 using Document = std::vector<Token>;
 using Corpus = std::vector<Document>;
-
-using DocumentTokenSequences = std::vector<TokenSequence>;
-using CorpusTokenSequences = std::vector<DocumentTokenSequences>;
-using BlockTokenSequences = DocumentTokenSequences;
-
-using DocumentTopicIndicatorSequences = std::vector<TopicIndicatorSequence>;
-using CorpusTopicIndicatorSequences = std::vector<DocumentTopicIndicatorSequences>;
 
 using Score = double;
 using DocumentScores = std::vector<Score>;
@@ -33,6 +23,5 @@ using DoubleMatrix = std::vector<std::vector<double>>;
 using IntMatrix = std::vector<std::vector<std::size_t>>;
 using DoubleVector = std::vector<double>;
 using IntVector = std::vector<std::size_t>;
-
 
 #endif // DEF_H

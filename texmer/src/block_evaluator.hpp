@@ -78,7 +78,7 @@ SEQUENCE_T BlockEvaluator<SEQUENCE_T, T>::create_sequence(const BlockSequences<S
 
 template<class SEQUENCE_T, typename T>
 Score BlockEvaluator<SEQUENCE_T, T>::compute_score(const BlockSequences<SEQUENCE_T>& left,
-                                                const BlockSequences<SEQUENCE_T>& right) const {
+                                                   const BlockSequences<SEQUENCE_T>& right) const {
   SEQUENCE_T left_ts = create_sequence(left);
   SEQUENCE_T right_ts = create_sequence(right);
 
@@ -90,14 +90,14 @@ Score BlockEvaluator<SEQUENCE_T, T>::compute_score(const BlockSequences<SEQUENCE
 
 template<class SEQUENCE_T, typename T>
 std::size_t BlockEvaluator<SEQUENCE_T, T>::compute_numerator(const SEQUENCE_T& left,
-                                                          const SEQUENCE_T& right) const {
+                                                             const SEQUENCE_T& right) const {
   SEQUENCE_T ts = left * right;
   return sum(ts.get_values());
 }
 
 template<class SEQUENCE_T, typename T>
 double BlockEvaluator<SEQUENCE_T, T>::compute_denominator(const SEQUENCE_T& left,
-                                                       const SEQUENCE_T& right) const {
+                                                          const SEQUENCE_T& right) const {
   std::vector<std::size_t> left_counts = left.get_values();
   std::vector<std::size_t> right_counts = right.get_values();
 

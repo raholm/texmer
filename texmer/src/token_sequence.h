@@ -6,47 +6,69 @@
 #include <vector>
 #include <map>
 
+#include "sequence.h"
 #include "vocabulary.h"
 
-class TokenSequence {
+class TokenSequence : public Sequence<std::string> {
 public:
-  using Token = std::string;
+  using base = Sequence<std::string>;
+  using token = typename base::key;
+  using count = typename base::value;
 
-  TokenSequence() = default;
-  TokenSequence(const TokenSequence& ts) = default;
-  TokenSequence(TokenSequence&& ts) = default;
-  TokenSequence(const std::vector<Token>& tokens);
+  TokenSequence() : base() {}
+  TokenSequence(const TokenSequence& other) : base(other) {}
+  TokenSequence(TokenSequence&& other) : base(std::move(other)) {}
+  TokenSequence(const std::vector<token>& tokens) : base(tokens) {}
 
   ~TokenSequence() = default;
 
-  TokenSequence& operator=(const TokenSequence& other) = default;
-  TokenSequence& operator=(TokenSequence&& other) = default;
+  inline TokenSequence& operator=(const TokenSequence& rhs) {
+    base::operator=(rhs);
+    return *this;
+  }
 
-  TokenSequence operator+(const TokenSequence& rhs) const;
-  TokenSequence& operator+=(const TokenSequence& rhs);
+  inline TokenSequence& operator=(TokenSequence&& rhs) {
+    base::operator=(std::move(rhs));
+    return *this;
+  }
 
-  TokenSequence operator*(const TokenSequence& rhs) const;
-  TokenSequence& operator*=(const TokenSequence& rhs);
+  inline TokenSequence operator+(const TokenSequence& rhs) const {
+    TokenSequence copy(*this);
+    return copy += rhs;
+  }
+
+  inline TokenSequence& operator+=(const TokenSequence& rhs) {
+    base::operator+=(rhs);
+    return *this;
+  }
+
+  inline TokenSequence operator*(const TokenSequence& rhs) const {
+    TokenSequence copy(*this);
+    return copy *= rhs;
+  }
+
+  inline TokenSequence& operator*=(const TokenSequence& rhs) {
+    base::operator*=(rhs);
+    return *this;
+  }
+
+  inline bool operator==(const TokenSequence& rhs) const {
+    return base::operator==(rhs);
+  }
+
+  inline bool operator!=(const TokenSequence& rhs) const {
+    return base::operator!=(rhs);
+  }
 
   TokenSequence operator-(const Vocabulary& rhs) const;
   TokenSequence& operator-=(const Vocabulary& rhs);
 
-  bool operator==(const TokenSequence& rhs) const;
-  bool operator!=(const TokenSequence& rhs) const;
-
-  std::size_t size() const;
-  std::size_t length() const;
-
   Vocabulary get_vocabulary() const;
-  std::vector<std::size_t> get_counts() const;
-
-  std::ostream& print(std::ostream& out=std::cout) const;
-
-private:
-  std::map<Token, std::size_t> type_count_;
-
-  void insert_or_add_element(const std::pair<Token, std::size_t>& element);
 
 };
+
+using DocumentTokenSequences = std::vector<TokenSequence>;
+using CorpusTokenSequences = std::vector<DocumentTokenSequences>;
+using BlockTokenSequences = DocumentTokenSequences;
 
 #endif // TOKEN_SEQUENCE_H

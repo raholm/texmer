@@ -4,39 +4,62 @@
 #include <vector>
 #include <map>
 
-class TopicIndicatorSequence {
+#include "sequence.h"
+
+class TopicIndicatorSequence : public Sequence<std::size_t> {
 public:
-  using Topic = std::size_t;
-  using Count = std::size_t;
+  using base = Sequence<std::size_t>;
+  using topic_indicator = typename base::key;
+  using count = typename base::value;
 
-  TopicIndicatorSequence() = default;
-  TopicIndicatorSequence(const std::vector<Topic>& topics);
-
-  TopicIndicatorSequence(const TopicIndicatorSequence& other) = default;
-  TopicIndicatorSequence(TopicIndicatorSequence&& other) = default;
+  TopicIndicatorSequence() : base() {}
+  TopicIndicatorSequence(const TopicIndicatorSequence& other) : base(other) {}
+  TopicIndicatorSequence(TopicIndicatorSequence&& other) : base(std::move(other)) {}
+  TopicIndicatorSequence(const std::vector<topic_indicator>& topic_indicators) : base(topic_indicators) {}
 
   ~TopicIndicatorSequence() = default;
 
-  TopicIndicatorSequence operator+(const TopicIndicatorSequence& rhs) const;
-  TopicIndicatorSequence& operator+=(const TopicIndicatorSequence& rhs);
+  inline TopicIndicatorSequence& operator=(const TopicIndicatorSequence& rhs) {
+    base::operator=(rhs);
+    return *this;
+  }
 
-  TopicIndicatorSequence operator*(const TopicIndicatorSequence& rhs) const;
-  TopicIndicatorSequence& operator*=(const TopicIndicatorSequence& rhs);
+  inline TopicIndicatorSequence& operator=(TopicIndicatorSequence&& rhs) {
+    base::operator=(std::move(rhs));
+    return *this;
+  }
 
-  bool operator==(const TopicIndicatorSequence& rhs) const;
-  bool operator!=(const TopicIndicatorSequence& rhs) const;
+  inline TopicIndicatorSequence operator+(const TopicIndicatorSequence& rhs) const {
+    TopicIndicatorSequence copy(*this);
+    return copy += rhs;
+  }
 
-  std::size_t size() const;
-  std::size_t length() const;
+  inline TopicIndicatorSequence& operator+=(const TopicIndicatorSequence& rhs) {
+    base::operator+=(rhs);
+    return *this;
+  }
 
-  std::vector<Topic> get_topics() const;
-  std::vector<Count> get_counts() const;
+  inline TopicIndicatorSequence operator*(const TopicIndicatorSequence& rhs) const {
+    TopicIndicatorSequence copy(*this);
+    return copy *= rhs;
+  }
 
-private:
-  std::map<Topic, Count> topic_count_;
+  inline TopicIndicatorSequence& operator*=(const TopicIndicatorSequence& rhs) {
+    base::operator*=(rhs);
+    return *this;
+  }
 
-  void insert_or_add_element(const std::pair<Topic, std::size_t>& element);
+  inline bool operator==(const TopicIndicatorSequence& rhs) const {
+    return base::operator==(rhs);
+  }
+
+  inline bool operator!=(const TopicIndicatorSequence& rhs) const {
+    return base::operator!=(rhs);
+  }
 
 };
+
+using DocumentTopicIndicatorSequences = std::vector<TopicIndicatorSequence>;
+using CorpusTopicIndicatorSequences = std::vector<DocumentTopicIndicatorSequences>;
 
 #endif // TOPIC_INDICATORSEQUENCE_H

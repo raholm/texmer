@@ -57,7 +57,7 @@ DocumentScores BlockEvaluator::evaluate(const DocumentTokenSequences& token_sequ
     right_block = BlockTokenSequences(token_sequences.cbegin() + right_start_offset,
                                       token_sequences.cbegin() + right_end_offset);
 
-    scores[gap] = compute_score(left_block, right_block);
+    scores.at(gap) = compute_score(left_block, right_block);
   }
 
   return scores;
@@ -74,7 +74,8 @@ TokenSequence BlockEvaluator::create_token_sequence(const BlockTokenSequences& b
 }
 
 
-Score BlockEvaluator::compute_score(const BlockTokenSequences& left, const BlockTokenSequences& right) const {
+Score BlockEvaluator::compute_score(const BlockTokenSequences& left,
+                                    const BlockTokenSequences& right) const {
   TokenSequence left_ts = create_token_sequence(left);
   TokenSequence right_ts = create_token_sequence(right);
 
@@ -84,14 +85,16 @@ Score BlockEvaluator::compute_score(const BlockTokenSequences& left, const Block
   return numerator / denominator;
 }
 
-std::size_t BlockEvaluator::compute_numerator(const TokenSequence& left, const TokenSequence& right) const {
+std::size_t BlockEvaluator::compute_numerator(const TokenSequence& left,
+                                              const TokenSequence& right) const {
   TokenSequence ts = left * right;
-  return sum(ts.get_counts());
+  return sum(ts.get_values());
 }
 
-double BlockEvaluator::compute_denominator(const TokenSequence& left, const TokenSequence& right) const {
-  std::vector<std::size_t> left_counts = left.get_counts();
-  std::vector<std::size_t> right_counts = right.get_counts();
+double BlockEvaluator::compute_denominator(const TokenSequence& left,
+                                           const TokenSequence& right) const {
+  std::vector<std::size_t> left_counts = left.get_values();
+  std::vector<std::size_t> right_counts = right.get_values();
 
   std::size_t left_sq_sum = square_sum(left_counts);
   std::size_t right_sq_sum = square_sum(right_counts);
@@ -107,7 +110,6 @@ VocabularyEvaluator::VocabularyEvaluator(std::size_t sentence_size)
   }
 
 }
-
 
 CorpusScores VocabularyEvaluator::evaluate(const CorpusTokenSequences& token_sequences) const {
   std::size_t n = token_sequences.size();

@@ -4,8 +4,8 @@
 #include "test_helper.h"
 
 SCENARIO("a token sequence construction", "[constructor]") {
-  std::vector<TokenSequence::Token> tokens{"hello", "world", "hello"};
-  TokenSequence copy{tokens};
+  std::vector<TokenSequence::token> tokens{"hello", "world", "hello"};
+  TokenSequence copy(tokens);
 
   REQUIRE(copy.size() == 2);
   REQUIRE(copy.length() == 3);
@@ -52,7 +52,7 @@ SCENARIO("token sequences have getters", "[getters]") {
 
   GIVEN("a token sequence") {
     THEN("its counts is a vector corresponding to the token counts") {
-      auto counts = ts.get_counts();
+      auto counts = ts.get_values();
       std::sort(counts.begin(), counts.end());
       check_equality(counts, {1, 2});
     }
@@ -112,7 +112,7 @@ SCENARIO("token sequences can added, subtracted, and multiplied", "[operator]") 
     THEN("if added to each other") {
       ts3 = ts1 + ts2;
 
-      auto counts = ts3.get_counts();
+      auto counts = ts3.get_values();
       std::sort(counts.begin(), counts.end());
       check_equality(counts, {1, 2, 5});
 
@@ -125,7 +125,7 @@ SCENARIO("token sequences can added, subtracted, and multiplied", "[operator]") 
     THEN("if multiplied to each other") {
       ts3 = ts1 * ts2;
 
-      auto counts = ts3.get_counts();
+      auto counts = ts3.get_values();
       std::sort(counts.begin(), counts.end());
       check_equality(counts, {6});
 
@@ -139,7 +139,7 @@ SCENARIO("token sequences can added, subtracted, and multiplied", "[operator]") 
     THEN("if subtracted to each other") {
       ts3 = ts1 - v;
 
-      auto counts = ts3.get_counts();
+      auto counts = ts3.get_values();
       std::sort(counts.begin(), counts.end());
       check_equality(counts, {1});
 

@@ -1,5 +1,7 @@
 #include "topic_indicator_transformer.h"
 
+#include <cmath>
+
 TopicIndicatorTransformer::TopicIndicatorTransformer(std::size_t sentence_size)
   : sentence_size_(sentence_size)
 {
@@ -19,10 +21,10 @@ CorpusTopicIndicatorSequences TopicIndicatorTransformer::transform(const Corpus&
   return topic_indicator_sequences;
 }
 
-DocumenTopicIndicatorSequences TopicIndicatorTransformer::transform(const Document& tokens,
-                                                                    const TypeTopicIndicatorMode& modes) const {
+DocumentTopicIndicatorSequences TopicIndicatorTransformer::transform(const Document& tokens,
+                                                                     const TypeTopicIndicatorMode& modes) const {
   std::size_t n_segs = ceil(tokens.size() / sentence_size_);
-  DocumenTopicIndicatorSequences topic_indicator_sequences;
+  DocumentTopicIndicatorSequences topic_indicator_sequences;
   topic_indicator_sequences.reserve(n_segs);
 
   std::size_t start, end;
@@ -50,9 +52,10 @@ DocumenTopicIndicatorSequences TopicIndicatorTransformer::transform(const Docume
 TopicIndicatorSequence
 TopicIndicatorTransformer::tokens_to_topic_indicators(const Document& tokens,
                                                       const TypeTopicIndicatorMode& modes) const {
-  std::vectort<TopicIndicatorSequence::Topic> topics;
+  std::vector<TopicIndicatorSequence::key> topics;
   topics.reserve(tokens.size());
 
+  // TODO: Check that token has a mode?
   for (const auto& token : tokens)
     topics.push_back(modes.get_mode(token));
 

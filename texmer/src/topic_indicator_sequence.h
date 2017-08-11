@@ -1,65 +1,68 @@
-#ifndef TOPIC_INDICATOR_SEQUENCE_H
-#define TOPIC_INDICATOR_SEQUENCE_H
-
-#include <vector>
-#include <map>
+#ifndef TEXMER_TOPIC_INDICATOR_SEQUENCE_H_
+#define TEXMER_TOPIC_INDICATOR_SEQUENCE_H_
 
 #include "sequence.h"
+#include "def.h"
 
-class TopicIndicatorSequence : public Sequence<std::size_t> {
-public:
-  using base = Sequence<std::size_t>;
-  using topic_indicator = typename base::key;
-  using count = typename base::value;
+namespace texmer {
 
-  TopicIndicatorSequence() : base() {}
-  TopicIndicatorSequence(const TopicIndicatorSequence& other) : base(other) {}
-  TopicIndicatorSequence(TopicIndicatorSequence&& other) : base(std::move(other)) {}
-  TopicIndicatorSequence(const std::vector<topic_indicator>& topic_indicators) : base(topic_indicators) {}
+  // class TopicIndicatorSequence : public Sequence<size_t> {
+  // public:
+  //   using base_class = Sequence<size_t>;
+  //   using key = base_class::key;
+  //   using value = base_class::value;
 
-  ~TopicIndicatorSequence() = default;
+  //   TopicIndicatorSequence() : base_class() {}
+  //   TopicIndicatorSequence(const TopicIndicatorSequence& other) : base_class(other) {}
+  //   TopicIndicatorSequence(TopicIndicatorSequence&& other) : base_class(std::move(other)) {}
+  //   TopicIndicatorSequence(const Vector<key>& topic_indicators) : base_class(topic_indicators) {}
 
-  inline TopicIndicatorSequence& operator=(const TopicIndicatorSequence& rhs) {
-    base::operator=(rhs);
-    return *this;
-  }
+  //   ~TopicIndicatorSequence() = default;
 
-  inline TopicIndicatorSequence& operator=(TopicIndicatorSequence&& rhs) {
-    base::operator=(std::move(rhs));
-    return *this;
-  }
+  //   inline TopicIndicatorSequence& operator=(const TopicIndicatorSequence& rhs) {
+  //     base_class::operator=(rhs);
+  //     return *this;
+  //   }
 
-  inline TopicIndicatorSequence operator+(const TopicIndicatorSequence& rhs) const {
-    TopicIndicatorSequence copy(*this);
-    return copy += rhs;
-  }
+  //   inline TopicIndicatorSequence& operator=(TopicIndicatorSequence&& rhs) {
+  //     base_class::operator=(std::move(rhs));
+  //     return *this;
+  //   }
 
-  inline TopicIndicatorSequence& operator+=(const TopicIndicatorSequence& rhs) {
-    base::operator+=(rhs);
-    return *this;
-  }
+  //   inline TopicIndicatorSequence operator+(const TopicIndicatorSequence& rhs) const {
+  //     TopicIndicatorSequence copy(*this);
+  //     return copy += rhs;
+  //   }
 
-  inline TopicIndicatorSequence operator*(const TopicIndicatorSequence& rhs) const {
-    TopicIndicatorSequence copy(*this);
-    return copy *= rhs;
-  }
+  //   inline TopicIndicatorSequence& operator+=(const TopicIndicatorSequence& rhs) {
+  //     base_class::operator+=(rhs);
+  //     return *this;
+  //   }
 
-  inline TopicIndicatorSequence& operator*=(const TopicIndicatorSequence& rhs) {
-    base::operator*=(rhs);
-    return *this;
-  }
+  //   inline TopicIndicatorSequence operator*(const TopicIndicatorSequence& rhs) const {
+  //     TopicIndicatorSequence copy(*this);
+  //     return copy *= rhs;
+  //   }
 
-  inline bool operator==(const TopicIndicatorSequence& rhs) const {
-    return base::operator==(rhs);
-  }
+  //   inline TopicIndicatorSequence& operator*=(const TopicIndicatorSequence& rhs) {
+  //     base_class::operator*=(rhs);
+  //     return *this;
+  //   }
 
-  inline bool operator!=(const TopicIndicatorSequence& rhs) const {
-    return base::operator!=(rhs);
-  }
+  //   inline bool operator==(const TopicIndicatorSequence& rhs) const {
+  //     return base_class::operator==(rhs);
+  //   }
 
-};
+  //   inline bool operator!=(const TopicIndicatorSequence& rhs) const {
+  //     return base_class::operator!=(rhs);
+  //   }
 
-using DocumentTopicIndicatorSequences = DocumentSequences<TopicIndicatorSequence>;
-using CorpusTopicIndicatorSequences = std::vector<DocumentTopicIndicatorSequences>;
+  // };
 
-#endif // TOPIC_INDICATORSEQUENCE_H
+  using TopicIndicatorSequence = Sequence<size_t>;
+  using DocumentTopicIndicatorSequences = DocumentSequences<TopicIndicatorSequence>;
+  using CorpusTopicIndicatorSequences = Vector<DocumentTopicIndicatorSequences>;
+
+} // namespace texmer
+
+#endif // TEXMER_TOPIC_INDICATORSEQUENCE_H_

@@ -1,38 +1,54 @@
-#ifndef TYPE_TOPIC_INDICATOR_MODE_H
-#define TYPE_TOPIC_INDICATOR_MODE_H
+#ifndef TEXMER_TYPE_TOPIC_INDICATOR_MODE_H_
+#define TEXMER_TYPE_TOPIC_INDICATOR_MODE_H_
 
-#include <vector>
-#include <map>
+#include "def.h"
 
-class TypeTopicIndicatorMode {
-public:
-  using Type = std::string;
-  using TopicIndicator = std::size_t;
-  using Count = std::size_t;
-  using TTPair = std::pair<Type, TopicIndicator>;
-  using TTCPair = std::pair<TTPair, Count>;
+namespace texmer {
 
-  TypeTopicIndicatorMode(const std::vector<Type>& types,
-                         const std::vector<TopicIndicator>& topic_indicators);
-  TypeTopicIndicatorMode(const std::vector<TTPair>& type_topic_indicators);
+  class TypeTopicIndicatorMode {
+  public:
+    using type = String;
+    using topic_indicator = size_t;
+    using type_topic_indicator_pair = Pair<type, topic_indicator>;
 
-  TypeTopicIndicatorMode(const TypeTopicIndicatorMode& other) = default;
-  TypeTopicIndicatorMode(TypeTopicIndicatorMode&& other) = default;
+    using type_vector = Vector<type>;
+    using topic_indicator_vector = Vector<topic_indicator>;
+    using type_topic_indicator_pair_vector = Vector<type_topic_indicator_pair>;
 
-  ~TypeTopicIndicatorMode() = default;
+  private:
+    using count = size_t;
+    using type_topic_indicator_count_pair = Pair<type_topic_indicator_pair, count>;
 
-  std::size_t size() const;
+  public:
+    TypeTopicIndicatorMode(const type_vector& types,
+                           const topic_indicator_vector& topic_indicators);
+    TypeTopicIndicatorMode(const type_topic_indicator_pair_vector& type_topic_indicators);
 
-  bool contains(const Type& type) const;
+    TypeTopicIndicatorMode(const TypeTopicIndicatorMode& other) = default;
+    TypeTopicIndicatorMode(TypeTopicIndicatorMode&& other) = default;
 
-  TopicIndicator get_mode(const Type& type) const;
+    ~TypeTopicIndicatorMode() = default;
 
-private:
-  std::map<Type, TopicIndicator> type_topic_mode_;
-  std::map<TTPair, Count> type_topic_count_;
+    inline size_t size() const {
+      return type_topic_mode_.size();
+    }
 
-  void insert_or_add_element(const TTCPair& pair);
+    inline bool contains(const type& type) const {
+      return type_topic_mode_.find(type) != type_topic_mode_.end();
+    }
 
-};
+    inline topic_indicator get_mode(const type& type) const {
+      return type_topic_mode_.find(type)->second;
+    }
 
-#endif
+  private:
+    Map<type, topic_indicator> type_topic_mode_;
+    Map<type_topic_indicator_pair, count> type_topic_count_;
+
+    void insert_or_add_element(const type_topic_indicator_count_pair& pair);
+
+  };
+
+} // namespace texmer
+
+#endif // TEXMER_TYPE_TOPIC_INDICATOR_MODE_H_

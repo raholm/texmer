@@ -1,24 +1,37 @@
-#ifndef TOKEN_TRANSFORMER_H
-#define TOKEN_TRANSFORMER_H
+#ifndef TEXMER_TOKEN_TRANSFORMER_H_
+#define TEXMER_TOKEN_TRANSFORMER_H_
+
+#include <exception>
+#include <string>
 
 #include "def.h"
 #include "token_sequence.h"
 
-class TokenTransformer {
- public:
-  TokenTransformer(std::size_t sentence_size);
+namespace texmer {
 
-  ~TokenTransformer() = default;
+  class TokenTransformer {
+  public:
+    explicit TokenTransformer(size_t sentence_size)
+      : sentence_size_(sentence_size) {
+      if (sentence_size_ < 1) {
+        throw std::invalid_argument("Invalid sentence size: '" + std::to_string(sentence_size_) + "'.");
+      }
+    }
 
-  CorpusTokenSequences transform(const Corpus& tokens, const Document& stopwords) const;
-  CorpusTokenSequences transform(const Corpus& tokens, const Vocabulary& stopwords) const;
 
-  DocumentTokenSequences transform(const Document& tokens, const Document& stopwords) const;
-  DocumentTokenSequences transform(const Document& tokens, const Vocabulary& stopwords) const;
+    ~TokenTransformer() = default;
 
-private:
-  std::size_t sentence_size_;
+    CorpusTokenSequences transform(const Corpus& tokens, const Document& stopwords) const;
+    CorpusTokenSequences transform(const Corpus& tokens, const Vocabulary& stopwords) const;
 
-};
+    DocumentTokenSequences transform(const Document& tokens, const Document& stopwords) const;
+    DocumentTokenSequences transform(const Document& tokens, const Vocabulary& stopwords) const;
 
-#endif // TOKEN_TRANSFORMER_H
+  private:
+    size_t sentence_size_;
+
+  };
+
+} // namespace texmer
+
+#endif // TEXMER_TOKEN_TRANSFORMER_H_

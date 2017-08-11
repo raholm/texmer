@@ -1,57 +1,127 @@
-#ifndef SEQUENCE_H
-#define SEQUENCE_H
+#ifndef TEXMER_SEQUENCE_H_
+#define TEXMER_SEQUENCE_H_
 
-#include <vector>
-#include <map>
+#include <algorithm>
+#include <numeric>
 
-template<typename K>
-class Sequence {
-public:
-  using key = K;
-  using value = std::size_t;
+#include "def.h"
 
-  Sequence() = default;
-  Sequence(const Sequence& other) = default;
-  Sequence(Sequence&& other) = default;
-  Sequence(const std::vector<key>& keys);
+namespace texmer {
 
-  virtual ~Sequence() = default;
+  class SequenceBase {
+  public:
+    virtual ~SequenceBase() = default;
 
-  Sequence& operator=(const Sequence& other) = default;
-  Sequence& operator=(Sequence&& other) = default;
+  };
 
-  Sequence operator+(const Sequence& rhs) const;
-  Sequence& operator+=(const Sequence& rhs);
+  template<typename Key>
+  class Sequence : public SequenceBase {
+  public:
+    using key = Key;
+    using value = size_t;
 
-  Sequence operator*(const Sequence& rhs) const;
-  Sequence& operator*=(const Sequence& rhs);
+    Sequence() = default;
+    Sequence(const Sequence& other) = default;
+    Sequence(Sequence&& other) = default;
+    Sequence(const Vector<key>& keys) {
+      for (auto const& key : keys)
+        insert_or_add_element(std::make_pair(key, 1));
+    }
 
-  bool operator==(const Sequence& rhs) const;
-  bool operator!=(const Sequence& rhs) const;
+    ~Sequence() = default;
 
-  std::size_t size() const;
-  std::size_t length() const;
+    Sequence& operator=(const Sequence& other) = default;
+    Sequence& operator=(Sequence&& other) = default;
 
-  std::vector<key> get_keys() const;
-  std::vector<value> get_values() const;
+    inline Sequence operator+(const Sequence& rhs) const {
+      Sequence tmp(*this);
+      return tmp += rhs;
+    }
 
-protected:
-  std::map<key, value> map_;
+    inline Sequence& operator+=(const Sequence& rhs) {
+      for (auto const &p : rhs.map_) {
+        insert_or_add_element(p);
+      }
+      return *this;
+    }
 
-private:
-  void insert_or_add_element(const std::pair<key, value>& element);
+    inline Sequence operator*(const Sequence& rhs) const {
+      Sequence tmp(*this);
+      return tmp *= rhs;
+    }
 
-};
+    inline Sequence& operator*=(const Sequence& rhs) {
+      for (auto it = map_.cbegin(); it != map_.cend();) {
+        auto rit = rhs.map_.find(it->first);
+        if (rit != rhs.map_.end()) {
+          map_.at(it->first) = it->second * rit->second;
+          it++;
+        } else it = map_.erase(it);
+      }
+      return *this;
+    }
 
-#include "sequence.hpp"
+    inline bool operator==(const Sequence& rhs) const {
+      return size() == rhs.size() &&
+        std::equal(map_.cbegin(), map_.cend(), rhs.map_.cbegin());
+    }
 
-template<typename T>
-using DocumentSequences = std::vector<T>;
+    inline bool operator!=(const Sequence& rhs) const {
+      return !(*this == rhs);
+    }
 
-template<typename T>
-using CorpusSequences = std::vector<DocumentSequences<T>>;
+    inline size_t size() const {
+      return map_.size();
+    }
 
-template<typename T>
-using BlockSequences = DocumentSequences<T>;
+    inline size_t length() const {
+      return std::accumulate(map_.cbegin(), map_.cend(), 0,
+                             [](const size_t acc,
+                                auto const& p) {
+                               return acc + p.second;
+                             });
+    }
 
-#endif // SEQUENCE_H
+    inline Vector<key> get_keys() const {
+      Vector<key> keys;
+      keys.reserve(size());
+      std::transform(map_.cbegin(), map_.cend(), std::back_inserter(keys),
+                     [](auto const& pair) {
+                       return pair.first;
+                     });
+      return keys;
+    }
+
+    inline Vector<value> get_values() const {
+      Vector<value> values;
+      values.reserve(size());
+      std::transform(map_.cbegin(), map_.cend(), std::back_inserter(values),
+                     [](auto const& pair) {
+                       return pair.second;
+                     });
+      return values;
+    }
+
+  protected:
+    Map<key, value> map_;
+
+  private:
+    inline void insert_or_add_element(const Pair<key, value>& element) {
+      if (!map_.insert(element).second)
+        map_.at(element.first) += element.second;
+    }
+
+  };
+
+  template<typename T>
+  using DocumentSequences = Vector<T>;
+
+  template<typename T>
+  using CorpusSequences = Vector<DocumentSequences<T>>;
+
+  template<typename T>
+  using BlockSequences = DocumentSequences<T>;
+
+} // namespace texmer
+
+#endif // TEXMER_SEQUENCE_H_

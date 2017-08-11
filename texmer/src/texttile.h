@@ -1,42 +1,46 @@
-#ifndef TEXTTILE_H
-#define TEXTTILE_H
-
-#include "def.h"
-#include "token_transformer.h"
-#include "evaluator.h"
-#include "boundary_identifier.h"
-#include "token_segmenter.h"
+#ifndef TEXMER_TEXTTILE_H_
+#define TEXMER_TEXTTILE_H_
 
 #include <memory>
 
-class TextTile {
-public:
-  TextTile(std::size_t sentence_size, std::size_t block_size,
-           const std::string& method, bool liberal);
+#include "def.h"
+#include "token_transformer.h"
+#include "lexical_evaluator.h"
+#include "boundary_identifier.h"
+#include "token_segmenter.h"
 
-  ~TextTile();
+namespace texmer {
 
-  CorpusSegments segment(const Corpus& tokens, const Document& stopwords) const;
-  DocumentSegments segment(const Document& tokens, const Document& stopwords) const;
+  class TextTile {
+  public:
+    explicit TextTile(size_t sentence_size, size_t block_size,
+                      const String& method, bool liberal);
 
-private:
-  std::size_t sentence_size_;
+    ~TextTile();
 
-  TokenTransformer transformer_;
-  LexicalEvaluator* evaluator_;
-  TextTileBoundaryIdentifier identifier_;
-  TokenSegmenter segmenter_;
+    CorpusSegments segment(const Corpus& tokens, const Document& stopwords) const;
+    DocumentSegments segment(const Document& tokens, const Document& stopwords) const;
 
-  void adjust_boundaries_by_sentence_size(IntMatrix& boundaries) const;
-  void adjust_boundaries_by_sentence_size(IntVector& boundaries) const;
+  private:
+    size_t sentence_size_;
 
-  TextTile() = delete;
-  TextTile(const TextTile& other) = delete;
-  TextTile(TextTile&& other) = delete;
+    TokenTransformer transformer_;
+    LexicalEvaluatorBase* evaluator_;
+    TextTileBoundaryIdentifier identifier_;
+    TokenSegmenter segmenter_;
 
-  TextTile& operator=(const TextTile& rhs) = delete;
-  TextTile& operator=(TextTile&& rhs) = delete;
+    void adjust_boundaries_by_sentence_size(IntMatrix& boundaries) const;
+    void adjust_boundaries_by_sentence_size(IntVector& boundaries) const;
 
-};
+    TextTile() = delete;
+    TextTile(const TextTile& other) = delete;
+    TextTile(TextTile&& other) = delete;
 
-#endif // TEXTTILE_H
+    TextTile& operator=(const TextTile& rhs) = delete;
+    TextTile& operator=(TextTile&& rhs) = delete;
+
+  };
+
+} // namespace texmer
+
+#endif // TEXMER_TEXTTILE_H_

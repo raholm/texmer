@@ -1,41 +1,72 @@
-#ifndef VOCABULARY_H
-#define VOCABULARY_H
+#ifndef TEXMER_VOCABULARY_H_
+#define TEXMER_VOCABULARY_H_
 
 #include <iostream>
-#include <string>
-#include <vector>
-#include <set>
+#include <algorithm>
 
-class Vocabulary {
-public:
-  using Token = std::string;
+#include "def.h"
 
-  Vocabulary() = default;
-  Vocabulary(const Vocabulary& v) = default;
-  Vocabulary(Vocabulary&& v) = default;
-  Vocabulary(const std::vector<Token>& tokens);
+namespace texmer {
 
-  ~Vocabulary() = default;
+  class Vocabulary {
+  public:
+    Vocabulary() = default;
+    Vocabulary(const Vocabulary& v) = default;
+    Vocabulary(Vocabulary&& v) = default;
+    explicit Vocabulary(const Vector<Token>& tokens) {
+      vocabulary_.insert(tokens.cbegin(), tokens.cend());
+    }
 
-  Vocabulary& operator=(const Vocabulary& other) = default;
-  Vocabulary& operator=(Vocabulary&& other) = default;
+    ~Vocabulary() = default;
 
-  Vocabulary operator+(const Vocabulary& rhs) const;
-  Vocabulary& operator+=(const Vocabulary& rhs);
+    Vocabulary& operator=(const Vocabulary& other) = default;
+    Vocabulary& operator=(Vocabulary&& other) = default;
 
-  Vocabulary operator-(const Vocabulary& rhs) const;
-  Vocabulary& operator-=(const Vocabulary& rhs);
+    inline Vocabulary operator+(const Vocabulary& rhs) const {
+      Vocabulary tmp(*this);
+      return tmp += rhs;
+    }
 
-  bool contains(const Token& token) const;
+    inline Vocabulary& operator+=(const Vocabulary& rhs) {
+      vocabulary_.insert(rhs.vocabulary_.cbegin(), rhs.vocabulary_.cend());
+      return *this;
+    }
 
-  std::size_t size() const;
-  std::size_t length() const;
+    inline Vocabulary operator-(const Vocabulary& rhs) const {
+      Vocabulary tmp(*this);
+      return tmp -= rhs;
+    }
 
-  std::ostream& print(std::ostream& out=std::cout) const;
+    inline Vocabulary& operator-=(const Vocabulary& rhs) {
+      Set<Token> tmp;
+      std::set_difference(std::make_move_iterator(vocabulary_.begin()),
+                          std::make_move_iterator(vocabulary_.end()),
+                          rhs.vocabulary_.cbegin(),
+                          rhs.vocabulary_.cend(),
+                          std::inserter(tmp, tmp.begin()));
+      vocabulary_.swap(tmp);
+      return *this;
+    }
 
-private:
-  std::set<Token> vocabulary_;
+    inline bool contains(const Token& token) const {
+      return vocabulary_.find(token) != vocabulary_.end();
+    }
 
-};
+    inline size_t size() const {
+      return vocabulary_.size();
+    }
 
-#endif // VOCABULARY_H
+    inline size_t length() const {
+      return size();
+    }
+
+    std::ostream& print(std::ostream& out=std::cout) const;
+
+  private:
+    Set<Token> vocabulary_;
+
+  };
+
+} // namespace texmer
+
+#endif // TEXMER_VOCABULARY_H_

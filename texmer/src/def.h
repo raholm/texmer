@@ -1,29 +1,49 @@
-#ifndef DEF_H
-#define DEF_H
+#ifndef TEXMER_DEF_H_
+#define TEXMER_DEF_H_
 
 #include <string>
 #include <vector>
+#include <set>
+#include <map>
 
-using Token = std::string;
+namespace texmer {
 
-using Document = std::vector<Token>;
-using Corpus = std::vector<Document>;
+  // General
+  using size_t = std::size_t;
+  using String = std::string;
 
-using Score = double;
-using DocumentScores = std::vector<Score>;
-using CorpusScores = std::vector<DocumentScores>;
+  template<typename T>
+  using Vector = std::vector<T>;
 
-using BoundaryPoints = std::vector<std::size_t>;
+  template<typename T>
+  using Set = std::set<T>;
 
-using DocumentSegments = std::vector<std::string>;
-using CorpusSegments = std::vector<DocumentSegments>;
+  template<typename Key, typename Value>
+  using Map = std::map<Key, Value>;
 
-using StringVector = Document;
+  template<typename First, typename Second>
+  using Pair = std::pair<First, Second>;
 
-// Math
-using DoubleMatrix = std::vector<std::vector<double>>;
-using IntMatrix = std::vector<std::vector<std::size_t>>;
-using DoubleVector = std::vector<double>;
-using IntVector = std::vector<std::size_t>;
+  // Text
+  using Token = String;
+  using StringVector = Vector<Token>;
 
-#endif // DEF_H
+  using Document = StringVector;
+  using Corpus = Vector<Document>;
+
+  using Score = double;
+  using DocumentScores = Vector<Score>;
+  using CorpusScores = Vector<DocumentScores>;
+
+  using DocumentSegments = Vector<String>;
+  using CorpusSegments = Vector<DocumentSegments>;
+
+  // Math
+  using IntVector = Vector<size_t>;
+  using DoubleVector = Vector<double>;
+  using DoubleMatrix = Vector<DoubleVector>;
+  using IntMatrix = Vector<IntVector>;
+
+} // namespace texmer
+
+#endif // TEXMER_DEF_H_

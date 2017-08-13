@@ -98,7 +98,7 @@ namespace texmer {
 
     std::transform(gap_depth.cbegin(),
                    gap_depth.cbegin() + std::min(n_boundaries_, scores.size()),
-                   boundaries.begin(),
+                   std::back_inserter(boundaries),
                    [](auto const& p) { return p.first; });
 
     return boundaries;

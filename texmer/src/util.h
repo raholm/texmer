@@ -1,11 +1,12 @@
 #ifndef TEXMER_UTIL_H_
 #define TEXMER_UTIL_H_
 
-#include "def.h"
-
+#include <iostream>
 #include <numeric>
 #include <algorithm>
 #include <cmath>
+
+#include "def.h"
 
 namespace texmer {
 
@@ -48,6 +49,14 @@ namespace texmer {
     String l{s};
     std::transform(s.cbegin(), s.cend(), l.begin(), ::tolower);
     return l;
+  }
+
+  template<typename T>
+  inline void print(const std::vector<T>& v, const std::string& message) {
+    std::cout << message << std::endl;
+    for (auto const& e : v)
+      std::cout << e << ", ";
+    std::cout << std::endl;
   }
 
 } // namespace texmer

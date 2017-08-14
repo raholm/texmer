@@ -6,6 +6,23 @@
 namespace texmer {
   namespace test {
 
+    SCENARIO("textile construction", "[constructor]") {
+      GIVEN("a sentence size of 0") {
+        REQUIRE_THROWS_AS(TextTile(0, 1, "vocabulary", true), std::invalid_argument);
+      }
+
+      GIVEN("a block size of 0 and block method") {
+        REQUIRE_THROWS_AS(TextTile(1, 0, "block", false), std::invalid_argument);
+      }
+
+      GIVEN("a block size of 0 and vocabulary method") {
+        REQUIRE_NOTHROW(TextTile(1, 0, "vocabulary", false));
+      }
+
+      GIVEN("a unknown method") {
+        REQUIRE_THROWS_AS(TextTile(1, 1, "unknown_method", true), std::invalid_argument);
+      }
+    }
 
     SCENARIO("a texttile segments document and corpus", "[segment]") {
       /*

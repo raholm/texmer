@@ -4,7 +4,7 @@
 #include "util.h"
 #include "texttile.h"
 
-using namespace tomer;
+using namespace texmer;
 
 inline Corpus convert_from_R(const Rcpp::List& corpus) {
   Corpus c;

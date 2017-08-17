@@ -8,7 +8,9 @@ License: CC0
 Encoding: UTF-8
 LazyData: true
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 Imports:
     dplyr,
     reshape2,
@@ -19,3 +21,4 @@ Imports:
 RoxygenNote: 6.0.1
 LinkingTo:
     Rcpp
+VignetteBuilder: knitr

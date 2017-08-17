@@ -1,0 +1,106 @@
+---
+title: "Segmenting Reddit Comments using TextTile"
+author: "Rasmus Holm"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+# Loading the required libraries
+```{r}
+## devtools::install_github("raholm/reddy", subdir="reddy")
+## devtools::install_github("raholm/texcur", subdir="texcur")
+
+suppressMessages(library(reddy))
+suppressMessages(library(texcur))
+suppressMessages(library(texmer))
+suppressMessages(library(dplyr))
+```
+
+# Reading corpus
+
+```{r}
+filename <- paste(system.file("extdata", package="reddy"),
+                  "RC_2008_100000_stream.json", sep="/")
+
+corpus <- read_reddit_stream(filename) %>%
+    select(c(id, body, link_id, subreddit, created_utc)) %>%
+    rename(text=body, thread=link_id, date=created_utc)
+
+largest_discussion_thread <- corpus %>%
+    group_by(thread) %>%
+    summarise(n=n()) %>%
+    arrange(desc(n)) %>%
+    filter(row_number() == 1) %>%
+    select(thread)
+
+comments <- corpus %>%
+    filter(thread==largest_discussion_thread$thread) %>%
+    arrange(date)
+```
+
+# Reading stopwords
+
+```{r}
+stopwords_filename <- paste(system.file("extdata", package="reddy"),
+                            "stopwords.txt", sep="/")
+
+stopwords <- read.table(stopwords_filename, stringsAsFactors=FALSE)$V1
+```
+
+# Text Curation
+
+```{r}
+curated_comments <- comments %>%
+    rm_emails() %>%
+    rm_numbers() %>%
+    rm_non_alphanumeric() %>%
+    rm_whitespace %>%
+    tf_lowercase()
+```
+
+# Merging
+
+```{r}
+document <- curated_comments %>%
+    rename(token=text) %>%
+    mutate(id=as.character(1)) %>%
+    tf_merge_tokens(delim="\n")
+```
+
+# Segmenting Document
+
+## Block Method
+
+```{r}
+segmented_document <- document %>%
+    tf_texttile(stopwords=stopwords,
+                sentence_size=20,
+                block_size=4,
+                method="block",
+                liberal=TRUE) %>%
+    rm_words(words=stopwords)
+
+head(segmented_document$text)
+```
+
+## Vocabulary Method
+
+```{r}
+segmented_document <- document %>%
+    tf_texttile(stopwords=stopwords,
+                sentence_size=20,
+                block_size=4,
+                method="vocabulary",
+                liberal=TRUE) %>%
+    rm_words(words=stopwords)
+
+head(segmented_document$text)
+```

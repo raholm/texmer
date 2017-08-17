@@ -1,0 +1,107 @@
+---
+title: "Segmenting Reddit Comments using TopicTile"
+author: "Rasmus Holm"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+# Loading the required libraries
+```{r}
+## devtools::install_github("raholm/reddy", subdir="reddy")
+## devtools::install_github("raholm/texcur", subdir="texcur")
+
+suppressMessages(library(reddy))
+suppressMessages(library(texcur))
+suppressMessages(library(texmer))
+suppressMessages(library(dplyr))
+suppressMessages(library(mallet))
+```
+
+# Reading corpus
+
+```{r}
+filename <- paste(system.file("extdata", package="reddy"),
+                  "RC_2008_100000_stream.json", sep="/")
+
+corpus <- read_reddit_stream(filename) %>%
+    select(c(id, body, link_id, subreddit, created_utc)) %>%
+    rename(text=body, thread=link_id, date=created_utc)
+```
+
+# Reading stopwords
+
+```{r}
+stopwords_filename <- paste(system.file("extdata", package="reddy"),
+                            "stopwords.txt", sep="/")
+
+stopwords <- read.table(stopwords_filename, stringsAsFactors=FALSE)$V1
+```
+
+# Creating the corpus
+
+```{r}
+discussion_threads <- corpus %>%
+    mutate(id=thread) %>%
+    tf_tokenize() %>%
+    arrange(date) %>%
+    tf_merge_tokens(delim=" ") %>%
+    filter(text != "deleted")
+
+curated_discussion_threads <- discussion_threads %>%
+    rm_emails() %>%
+    rm_numbers() %>%
+    rm_non_alphanumeric() %>%
+    rm_whitespace %>%
+    tf_lowercase()
+```
+
+# Creating the document to segment
+
+```{r}
+largest_discussion_thread <- corpus %>%
+    group_by(thread) %>%
+    summarise(n=n()) %>%
+    arrange(desc(n)) %>%
+    filter(row_number() == 1) %>%
+    select(thread)
+
+document <- curated_discussion_threads %>%
+    filter(thread==largest_discussion_thread$thread)
+```
+
+# LDA Topic Model
+
+```{r}
+mallet_instances <- mallet.import(corpus$id, corpus$text, stopwords_filename)
+n_topics <- 50
+alpha_sum <- 5
+beta <- 0.01
+
+topic_model <- MalletLDA(n_topics, alpha_sum, beta)
+topic_model$loadDocuments(mallet_instances)
+topic_model$train(50)
+```
+
+# Segmenting Document
+
+```{r}
+segmented_document <- document %>%
+    tf_topictile(stopwords=stopwords,
+                 model=topic_model,
+                 gibbs_iters=1,
+                 sentence_size=20,
+                 block_size=2,
+                 n_segments=0,
+                 liberal=TRUE) %>%
+    rm_words(words=stopwords)
+
+head(segmented_document$text, 2)
+```

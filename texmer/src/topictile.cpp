@@ -27,15 +27,11 @@ namespace texmer {
 
   }
   void TopicTile::adjust_boundaries_by_sentence_size(IntVector& boundaries) const {
-    for (auto& boundary : boundaries)
+    for (auto& boundary : boundaries) {
+      ++boundary;
       boundary *= sentence_size_;
-
-    // TODO: Potential fix to transform gap index to token index
-    // for (auto& boundary : boundaries) {
-    //   ++boundary;
-    //   boundary *= sentence_size_;
-    //   --boundary;
-    // }
+      --boundary;
+    }
   }
 
 } // namespace texmer

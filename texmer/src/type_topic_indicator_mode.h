@@ -20,6 +20,7 @@ namespace texmer {
     using type_topic_indicator_count_pair = Pair<type_topic_indicator_pair, count>;
 
   public:
+    TypeTopicIndicatorMode() = default;
     TypeTopicIndicatorMode(const type_vector& types,
                            const topic_indicator_vector& topic_indicators);
     TypeTopicIndicatorMode(const type_topic_indicator_pair_vector& type_topic_indicators);
@@ -28,6 +29,10 @@ namespace texmer {
     TypeTopicIndicatorMode(TypeTopicIndicatorMode&& other) = default;
 
     ~TypeTopicIndicatorMode() = default;
+
+    void update(const type_vector& types,
+                const topic_indicator_vector& topic_indicators);
+    void update(const type_topic_indicator_pair_vector& type_topic_indicators);
 
     inline size_t size() const {
       return type_topic_mode_.size();
@@ -38,7 +43,10 @@ namespace texmer {
     }
 
     inline topic_indicator get_mode(const type& type) const {
-      return type_topic_mode_.find(type)->second;
+      auto it = type_topic_mode_.find(type);
+      if (it == type_topic_mode_.end())
+        throw std::out_of_range("Type has no mode.");
+      return it->second;
     }
 
   private:

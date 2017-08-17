@@ -75,7 +75,7 @@ namespace texmer {
       mscores.push_back(vscores);
 
       GIVEN("a liberal topictile boundary identifier and a vector of scores") {
-        TopicTileBoundaryIdentifier identifier{0, true};
+        TopicTileBoundaryIdentifier identifier{-1, true};
 
         THEN("it gets the right boundaries") {
           auto boundaries = identifier.get_boundaries(vscores);
@@ -84,7 +84,7 @@ namespace texmer {
       }
 
       GIVEN("a liberal topictile boundary identifier and a matrix of scores") {
-        TopicTileBoundaryIdentifier identifier{0, true};
+        TopicTileBoundaryIdentifier identifier{-1, true};
 
         THEN("it gets the right boundaries") {
           auto boundaries = identifier.get_boundaries(mscores);
@@ -95,7 +95,7 @@ namespace texmer {
       }
 
       GIVEN("a non-liberal topictile boundary identifier and a vector of scores") {
-        TopicTileBoundaryIdentifier identifier{0, false};
+        TopicTileBoundaryIdentifier identifier{-1, false};
 
         THEN("it gets the right boundaries") {
           auto boundaries = identifier.get_boundaries(vscores);
@@ -104,7 +104,7 @@ namespace texmer {
       }
 
       GIVEN("a non-liberal topictile boundary identifier and a matrix of scores") {
-        TopicTileBoundaryIdentifier identifier{0, false};
+        TopicTileBoundaryIdentifier identifier{-1, false};
 
         THEN("it gets the right boundaries") {
           auto boundaries = identifier.get_boundaries(mscores);

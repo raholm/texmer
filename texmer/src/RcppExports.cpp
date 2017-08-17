@@ -35,9 +35,12 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP _rcpp_module_boot_mod_topictile();
+
 static const R_CallMethodDef CallEntries[] = {
     {"_texmer_get_texttile_segments_cpp", (DL_FUNC) &_texmer_get_texttile_segments_cpp, 6},
     {"_texmer_get_token_segment_ids_cpp", (DL_FUNC) &_texmer_get_token_segment_ids_cpp, 3},
+    {"_rcpp_module_boot_mod_topictile", (DL_FUNC) &_rcpp_module_boot_mod_topictile, 0},
     {NULL, NULL, 0}
 };
 

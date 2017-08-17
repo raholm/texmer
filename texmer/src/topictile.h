@@ -22,7 +22,7 @@ namespace texmer {
         modes_{modes},
         transformer_{sentence_size},
         evaluator_{block_size},
-        identifier_{n_segments, liberal},
+        identifier_{(int) n_segments - 1, liberal},
         segmenter_{} {
           if (sentence_size_ < 1) {
             throw std::invalid_argument("Invalid sentence size: '" + std::to_string(sentence_size_) + "'.");

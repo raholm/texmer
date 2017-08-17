@@ -34,7 +34,7 @@ namespace texmer {
 
   class TopicTileBoundaryIdentifier : public BoundaryIdentifier {
   public:
-    explicit TopicTileBoundaryIdentifier(size_t n_boundaries, bool liberal)
+    explicit TopicTileBoundaryIdentifier(int n_boundaries, bool liberal)
       : n_boundaries_{n_boundaries},
         liberal_{liberal} {}
 
@@ -45,7 +45,7 @@ namespace texmer {
     IntVector get_boundaries(const DoubleVector& scores) const override;
 
   private:
-    size_t n_boundaries_;
+    int n_boundaries_;
     bool liberal_;
 
     IntVector get_boundaries_by_heuristic(const DoubleVector& scores) const;

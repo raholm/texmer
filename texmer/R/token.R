@@ -3,8 +3,11 @@
 #' @description
 #' Segments each document in a corpus based on a fixed maximum number of tokens per segment.
 #'
-#' @param corpus A data frame containing columns 'id' and 'token'.
-#' @param seg_size An integer determining the maximum number of tokens per segment
+#' @details
+#' The input corpus is expected to have a column 'id' that is equal for each token of the same document, i.e., it identifies which document each token is part of.
+#'
+#' @param corpus A data frame containing columns 'id' and 'token'. See 'details' for more information.
+#' @param seg_size An integer determining the maximum number of tokens per segment.
 #' @return A data frame with 'token' replaced by the segments in 'text'. 'id' contains the new ids and the old ids are preserved in 'docid'.
 #'
 #' @export
@@ -36,5 +39,5 @@ tf_token_seg <- function(corpus, seg_size) {
     checkr::assert_tidy_table(corpus, c("id", "token"))
     checkr::assert_character(corpus$id)
     checkr::assert_character(corpus$token)
-    checkr::assert_integer(seg_size, lower=1)
+    checkr::assert_integer(seg_size, len=1, lower=1)
 }

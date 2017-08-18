@@ -3,17 +3,15 @@
 #' @description
 #' Segments each document in a corpus based on a fixed maximum number of tokens per segment.
 #'
-#' @param corpus A data frame containing columns 'id' and 'text'
+#' @param corpus A data frame containing columns 'id' and 'token'.
 #' @param seg_size An integer determining the maximum number of tokens per segment
-#' @param token The definition of token. See \code{\link[tidytext]{unnest_tokens}} for options.
-#' @param ... Options to \code{\link[tidytext]{unnest_tokens}}.
+#' @return A data frame with 'token' replaced by the segments in 'text'. 'id' contains the new ids and the old ids are preserved in 'docid'.
 #'
 #' @export
-tf_token_seg <- function(corpus, seg_size, token="words", ...) {
+tf_token_seg <- function(corpus, seg_size) {
     .check_input_token_seg(corpus, seg_size)
 
     tokens <- corpus %>%
-        texcur::tf_tokenize(token=token, ...) %>%
         dplyr::mutate(docid=id)
 
     seg_stats <- tokens %>%
@@ -30,13 +28,13 @@ tf_token_seg <- function(corpus, seg_size, token="words", ...) {
     tokens$id <- ids
 
     tokens %>%
-        texcur::tf_merge_tokens(delim=" ")
+        texcur::tf_merge_tokens(delim=" ") %>%
+        dplyr::as_data_frame()
 }
 
 .check_input_token_seg <- function(corpus, seg_size) {
-    checkr::assert_type(corpus, "tbl_df")
-    checkr::assert_subset(c("id", "text"), names(corpus))
-    ## checkr::assert_factor(corpus$id)
-    checkr::assert_character(corpus$text)
+    checkr::assert_tidy_table(corpus, c("id", "token"))
+    checkr::assert_character(corpus$id)
+    checkr::assert_character(corpus$token)
     checkr::assert_integer(seg_size, lower=1)
 }

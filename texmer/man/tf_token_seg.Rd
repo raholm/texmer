@@ -4,17 +4,19 @@
 \alias{tf_token_seg}
 \title{Segment text into segments with fixed number of tokens.}
 \usage{
-tf_token_seg(corpus, seg_size, token = "words", ...)
+tf_token_seg(corpus, seg_size)
 }
 \arguments{
-\item{corpus}{A data frame containing columns 'id' and 'text'}
+\item{corpus}{A data frame containing columns 'id' and 'token'. See 'details' for more information.}
 
-\item{seg_size}{An integer determining the maximum number of tokens per segment}
-
-\item{token}{The definition of token. See \code{\link[tidytext]{unnest_tokens}} for options.}
-
-\item{...}{Options to \code{\link[tidytext]{unnest_tokens}}.}
+\item{seg_size}{An integer determining the maximum number of tokens per segment.}
+}
+\value{
+A data frame with 'token' replaced by the segments in 'text'. 'id' contains the new ids and the old ids are preserved in 'docid'.
 }
 \description{
 Segments each document in a corpus based on a fixed maximum number of tokens per segment.
+}
+\details{
+The input corpus is expected to have a column 'id' that is equal for each token of the same document, i.e., it identifies which document each token is part of.
 }

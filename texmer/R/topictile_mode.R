@@ -111,5 +111,5 @@ generate_samples_from <- function(model, filename) {
 }
 
 get_topictile_module <- function() {
-    Module("mod_topictile", "texmer")
+    Rcpp::Module("mod_topictile", "texmer")
 }

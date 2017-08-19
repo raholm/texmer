@@ -42,6 +42,10 @@ namespace texmer {
       return type_topic_mode_.find(type) != type_topic_mode_.end();
     }
 
+    inline Vector<type_topic_indicator_pair> get_data() const {
+      return Vector<type_topic_indicator_pair>{type_topic_mode_.cbegin(), type_topic_mode_.cend()};
+    }
+
     inline topic_indicator get_mode(const type& type) const {
       auto it = type_topic_mode_.find(type);
       if (it == type_topic_mode_.end())

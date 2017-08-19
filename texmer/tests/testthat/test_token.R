@@ -8,6 +8,7 @@ test_that("tf_token_seg raises an error for invalid input", {
     expect_error(tf_token_seg(dplyr::data_frame(id=c("1", "2"), token=c(1, 2)), 1))
     expect_error(tf_token_seg(dplyr::data_frame(id=c("1", "2"), token=c("a", "b")), 0))
     expect_error(tf_token_seg(dplyr::data_frame(id=c("1", "2"), token=c("a", "b")), ""))
+    expect_error(tf_token_seg(dplyr::data_frame(id=c("1", "2"), token=c("1", "2")), c(1, 1)))
 })
 
 test_that("tf_token_seg does not raise an error for valid input", {

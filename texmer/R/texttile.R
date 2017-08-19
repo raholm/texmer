@@ -23,14 +23,15 @@
 #' The vocabulary method uses the vocabulary to find lexical similatiry between pairs of token-sequences. The lexical score is based on the number of new terms up to that point, i.e., occuring for the first time in the document, between adjacent token-sequences. That is if there are few new terms then the score will be low and vice-verse.
 #'
 #' @section Boundary Identification:
-#' Segmenting the document is equivalent to finding boundary points of subtopics in the document which is based on the lexical scores. The boundary indentification algorithm assigns a depth score, the depth of the valley if one occurs, to each lexical score. A deep valley means that, based on the lexical score, there have been a change in topic at that point. The \code{liberal_depth_cutoff} is used to determine if the valley is deep enough for a boundary point. As the name suggests if it is set to 'TRUE' it will be more liberal. When the boundary points have been identified the document is segmented at those points.
+#' Segmenting the document is equivalent to finding boundary points of subtopics in the document which is based on the lexical scores. The boundary identification algorithm assigns a depth score, the depth of the valley if one occurs, to each lexical score. A deep valley means that, based on the lexical score, there have been a change in topic at that point. The \code{liberal_depth_cutoff} is used to determine if the valley is deep enough for a boundary point. As the name suggests if it is set to 'TRUE' it will be more liberal. When the boundary points have been identified the document is segmented at those points.
 #'
-#' @param corpus A data frame
+#' @param corpus A data frame with columns 'id' and 'token'.
 #' @param stopwords A character vector of stopwords.
 #' @param sentence_size The pseudo-sentence size, the number of tokens in a sentence. See 'Details' for more information.
 #' @param block_size The block size as defined in the paper. See 'Details' for more information.
 #' @param method The method for lexical scoring; currently are 'block' and 'vocabulary' supported.
 #' @param liberal A logical. If 'TRUE' (the default) the depth cutoff will be more liberal. See 'Details' for more information.
+#' @return A data frame with 'token' replaced by the segments in 'text'. 'id' contains the new ids and the old ids are preserved in 'docid'.
 #'
 #' @importFrom stats sd
 #'
@@ -43,11 +44,7 @@ tf_texttile <- function(corpus, stopwords,
                           sentence_size ,block_size,
                           method, liberal)
 
-    tokens <- corpus %>%
-        texcur::tf_lowercase() %>%
-        texcur::tf_tokenize()
-
-    texttile_tokens <- tokens %>%
+    texttile_tokens <- corpus %>%
         dplyr::group_by(id) %>%
         dplyr::summarise(tokens=list(token)) %>%
         dplyr::select(tokens)
@@ -69,7 +66,7 @@ tf_texttile <- function(corpus, stopwords,
 .check_input_texttile <- function(corpus, stopwords,
                                   sentence_size, block_size,
                                   method, liberal) {
-    checkr::assert_tidy_table(corpus, c("id", "text"))
+    checkr::assert_tidy_table(corpus, c("id", "token"))
     checkr::assert_character(stopwords)
     checkr::assert_integer(sentence_size, len=1, lower=1)
     checkr::assert_integer(block_size, len=1, lower=1)

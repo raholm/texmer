@@ -8,7 +8,7 @@ tf_texttile(corpus, stopwords, sentence_size, block_size, method = "block",
   liberal = TRUE)
 }
 \arguments{
-\item{corpus}{A data frame}
+\item{corpus}{A data frame with columns 'id' and 'token'.}
 
 \item{stopwords}{A character vector of stopwords.}
 
@@ -19,6 +19,9 @@ tf_texttile(corpus, stopwords, sentence_size, block_size, method = "block",
 \item{method}{The method for lexical scoring; currently are 'block' and 'vocabulary' supported.}
 
 \item{liberal}{A logical. If 'TRUE' (the default) the depth cutoff will be more liberal. See 'Details' for more information.}
+}
+\value{
+A data frame with 'token' replaced by the segments in 'text'. 'id' contains the new ids and the old ids are preserved in 'docid'.
 }
 \description{
 TextTiling is segmenting text into multi-paragraph subtopic passages.
@@ -50,6 +53,6 @@ The vocabulary method uses the vocabulary to find lexical similatiry between pai
 
 \section{Boundary Identification}{
 
-Segmenting the document is equivalent to finding boundary points of subtopics in the document which is based on the lexical scores. The boundary indentification algorithm assigns a depth score, the depth of the valley if one occurs, to each lexical score. A deep valley means that, based on the lexical score, there have been a change in topic at that point. The \code{liberal_depth_cutoff} is used to determine if the valley is deep enough for a boundary point. As the name suggests if it is set to 'TRUE' it will be more liberal. When the boundary points have been identified the document is segmented at those points.
+Segmenting the document is equivalent to finding boundary points of subtopics in the document which is based on the lexical scores. The boundary identification algorithm assigns a depth score, the depth of the valley if one occurs, to each lexical score. A deep valley means that, based on the lexical score, there have been a change in topic at that point. The \code{liberal_depth_cutoff} is used to determine if the valley is deep enough for a boundary point. As the name suggests if it is set to 'TRUE' it will be more liberal. When the boundary points have been identified the document is segmented at those points.
 }
 

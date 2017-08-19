@@ -10,7 +10,9 @@ LazyData: true
 Suggests:
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    reddy,
+    mallet
 Imports:
     dplyr,
     reshape2,

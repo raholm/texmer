@@ -17,11 +17,13 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```{r}
 ## devtools::install_github("raholm/reddy", subdir="reddy")
 ## devtools::install_github("raholm/texcur", subdir="texcur")
+## devtools::install_github("raholm/texmer", subdir="texmer")
 
 suppressMessages(library(reddy))
 suppressMessages(library(texcur))
 suppressMessages(library(texmer))
 suppressMessages(library(dplyr))
+suppressMessages(library(Rcpp))
 ```
 
 # Reading corpus
@@ -75,12 +77,19 @@ document <- curated_comments %>%
     tf_merge_tokens(delim="\n")
 ```
 
+# Tokenize
+
+```{r}
+tokens <- document %>%
+    tf_tokenize()
+```
+
 # Segmenting Document
 
 ## Block Method
 
 ```{r}
-segmented_document <- document %>%
+segmented_document <- tokens %>%
     tf_texttile(stopwords=stopwords,
                 sentence_size=20,
                 block_size=4,
@@ -94,7 +103,7 @@ head(segmented_document$text)
 ## Vocabulary Method
 
 ```{r}
-segmented_document <- document %>%
+segmented_document <- tokens %>%
     tf_texttile(stopwords=stopwords,
                 sentence_size=20,
                 block_size=4,

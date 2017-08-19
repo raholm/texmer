@@ -17,12 +17,14 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```{r}
 ## devtools::install_github("raholm/reddy", subdir="reddy")
 ## devtools::install_github("raholm/texcur", subdir="texcur")
+## devtools::install_github("raholm/texmer", subdir="texmer")
 
 suppressMessages(library(reddy))
 suppressMessages(library(texcur))
 suppressMessages(library(texmer))
 suppressMessages(library(dplyr))
 suppressMessages(library(mallet))
+suppressMessages(library(Rcpp))
 ```
 
 # Reading corpus
@@ -84,22 +86,29 @@ mallet_instances <- mallet.import(corpus$id, corpus$text, stopwords_filename)
 n_topics <- 50
 alpha_sum <- 5
 beta <- 0.01
+train_iters <- 100
 
 topic_model <- MalletLDA(n_topics, alpha_sum, beta)
 topic_model$loadDocuments(mallet_instances)
-topic_model$train(50)
+topic_model$train(train_iters)
 ```
 
 # Segmenting Document
 
 ```{r}
-segmented_document <- document %>%
+gibbs_iters <- 2
+mode <- get_topictile_mode_from_model(topic_model, gibbs_iters,
+                                      "./mallet_state_file_topictile_reddit_vignette_tmp.txt")
+
+tokens <- document %>%
+    tf_tokenize()
+
+segmented_document <- tokens %>%
     tf_topictile(stopwords=stopwords,
-                 model=topic_model,
-                 gibbs_iters=1,
+                 mode=mode,
                  sentence_size=20,
                  block_size=2,
-                 n_segments=0,
+                 nsegments=0,
                  liberal=TRUE) %>%
     rm_words(words=stopwords)
 

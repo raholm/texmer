@@ -79,7 +79,7 @@ get_topictile_mode_from_model <- function(model, gibbs_iters, dst) {
 #' @export
 write_topictile_mode_to_file <- function(mode, dst) {
     data <- mode$data()
-    write.table(x=data, file=dst)
+    write.table(x=data, file=dst, row.names=FALSE)
 }
 
 #' @title

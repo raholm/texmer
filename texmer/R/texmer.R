@@ -4,7 +4,7 @@
 #' An R package for segmenting text
 #'
 #' @useDynLib texmer
-#' @importFrom Rcpp sourceCpp
+#' @import Rcpp
 #'
 #' @docType package
 #' @name texmer

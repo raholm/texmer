@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <testthat.h>
 
 #include "texttile.h"
 #include "test_helper.h"
@@ -6,25 +6,14 @@
 namespace texmer {
   namespace test {
 
-    SCENARIO("textile construction", "[constructor]") {
-      GIVEN("a sentence size of 0") {
-        REQUIRE_THROWS_AS(TextTile(0, 1, "vocabulary", true), std::invalid_argument);
+    context("textile") {
+      test_that("construction works properly") {
+        expect_error_as(TextTile(0, 1, "vocabulary", true), std::invalid_argument);
+        expect_error_as(TextTile(1, 0, "block", false), std::invalid_argument);
+        expect_no_error(TextTile(1, 0, "vocabulary", false));
+        expect_error_as(TextTile(1, 1, "unknown_method", true), std::invalid_argument);
       }
 
-      GIVEN("a block size of 0 and block method") {
-        REQUIRE_THROWS_AS(TextTile(1, 0, "block", false), std::invalid_argument);
-      }
-
-      GIVEN("a block size of 0 and vocabulary method") {
-        REQUIRE_NOTHROW(TextTile(1, 0, "vocabulary", false));
-      }
-
-      GIVEN("a unknown method") {
-        REQUIRE_THROWS_AS(TextTile(1, 1, "unknown_method", true), std::invalid_argument);
-      }
-    }
-
-    SCENARIO("a texttile segments document and corpus", "[segment]") {
       /*
         The token sequences are:
         {hello, world}, {what}, {hello}, {what, hello}, {what, what}
@@ -106,96 +95,140 @@ namespace texmer {
         {hello world what is, that hello, what hello, what what}
       */
 
-      Document doc{"hello", "world",
-          "what", "is",
-          "that", "hello",
-          "what", "hello",
-          "what", "what"};
-      size_t sentence_size = 2;
-      size_t block_size = 2;
-      Document stopwords{"is", "that"};
+      test_that("texttile liberal block method segments document correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
 
-      Corpus corpus{doc, doc};
-
-
-      GIVEN("a liberal block texttile and a document + stopwords") {
         TextTile texttile{sentence_size, block_size, "block", true};
-
-        THEN("it segments correctly") {
-          auto segments = texttile.segment(doc, stopwords);
-          check_equality(segments, {"hello world", "what is", "that hello what hello", "what what"});
-        }
+        auto segments = texttile.segment(doc, stopwords);
+        check_equality(segments, {"hello world", "what is", "that hello what hello", "what what"});
       }
 
-      GIVEN("a liberal block texttile and a corpus + stopwords") {
+      test_that("texttile liberal block method segments corpus correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
+        Corpus corpus{doc, doc};
+
         TextTile texttile{sentence_size, block_size, "block", true};
-
-        THEN("it segments correctly") {
-          auto segments = texttile.segment(corpus, stopwords);
-          check_equality(segments, {
-              {"hello world", "what is", "that hello what hello", "what what"},
-                {"hello world", "what is", "that hello what hello", "what what"}});
-        }
+        auto segments = texttile.segment(corpus, stopwords);
+        check_equality(segments, {
+            {"hello world", "what is", "that hello what hello", "what what"},
+              {"hello world", "what is", "that hello what hello", "what what"}});
       }
 
-      GIVEN("a non-liberal block texttile and a document + stopwords") {
+      test_that("texttile non-liberal block method segments document correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
+
         TextTile texttile{sentence_size, block_size, "block", false};
-
-        THEN("it segments correctly") {
-          auto segments = texttile.segment(doc, stopwords);
-          check_equality(segments, {"hello world", "what is that hello what hello what what"});
-        }
+        auto segments = texttile.segment(doc, stopwords);
+        check_equality(segments, {"hello world", "what is that hello what hello what what"});
       }
 
-      GIVEN("a non-liberal block texttile and a corpus + stopwords") {
+      test_that("texttile non-liberal block method segments corpus correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
+        Corpus corpus{doc, doc};
+
         TextTile texttile{sentence_size, block_size, "block", false};
-
-        THEN("it segments correctly") {
-          auto segments = texttile.segment(corpus, stopwords);
-          check_equality(segments, {
-              {"hello world", "what is that hello what hello what what"},
-                {"hello world", "what is that hello what hello what what"}});
-        }
+        auto segments = texttile.segment(corpus, stopwords);
+        check_equality(segments, {
+            {"hello world", "what is that hello what hello what what"},
+              {"hello world", "what is that hello what hello what what"}});
       }
 
-      GIVEN("a liberal vocabulary texttile and a document + stopwords") {
+      test_that("texttile liberal vocabulary method segments document correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
+
         TextTile texttile{sentence_size, block_size, "vocabulary", true};
+        auto segments = texttile.segment(doc, stopwords);
+        check_equality(segments, {"hello world", "what is", "that hello", "what hello", "what what"});
 
-        THEN("it segments correctly") {
-          auto segments = texttile.segment(doc, stopwords);
-          check_equality(segments, {"hello world", "what is", "that hello", "what hello", "what what"});
-        }
       }
 
-      GIVEN("a liberal vocabulary texttile and a corpus + stopwords") {
+      test_that("texttile liberal vocabulary method segments corpus correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
+        Corpus corpus{doc, doc};
+
         TextTile texttile{sentence_size, block_size, "vocabulary", true};
+        auto segments = texttile.segment(corpus, stopwords);
+        check_equality(segments, {
+            {"hello world", "what is", "that hello", "what hello", "what what"},
+              {"hello world", "what is", "that hello", "what hello", "what what"}});
 
-        THEN("it segments correctly") {
-          auto segments = texttile.segment(corpus, stopwords);
-          check_equality(segments, {
-              {"hello world", "what is", "that hello", "what hello", "what what"},
-                {"hello world", "what is", "that hello", "what hello", "what what"}});
-        }
       }
 
-      GIVEN("a non-liberal vocabulary texttile and a document + stopwords") {
-        TextTile texttile{sentence_size, block_size, "vocabulary", false};
+      test_that("texttile non-liberal vocabulary method segments document correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
 
-        THEN("it segments correctly") {
-          auto segments = texttile.segment(doc, stopwords);
-          check_equality(segments, {"hello world what is", "that hello", "what hello", "what what"});
-        }
+        TextTile texttile{sentence_size, block_size, "vocabulary", false};
+        auto segments = texttile.segment(doc, stopwords);
+        check_equality(segments, {"hello world what is", "that hello", "what hello", "what what"});
+
       }
 
-      GIVEN("a non-liberal vocabulary texttile and a corpus + stopwords") {
-        TextTile texttile{sentence_size, block_size, "vocabulary", false};
+      test_that("texttile non-liberal vocabulary method segments corpus correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
+        Corpus corpus{doc, doc};
 
-        THEN("it segments correctly") {
-          auto segments = texttile.segment(corpus, stopwords);
-          check_equality(segments, {
-              {"hello world what is", "that hello", "what hello", "what what"},
-                {"hello world what is", "that hello", "what hello", "what what"}});
-        }
+        TextTile texttile{sentence_size, block_size, "vocabulary", false};
+        auto segments = texttile.segment(corpus, stopwords);
+        check_equality(segments, {
+            {"hello world what is", "that hello", "what hello", "what what"},
+              {"hello world what is", "that hello", "what hello", "what what"}});
+
       }
     }
 

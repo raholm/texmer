@@ -1,133 +1,111 @@
-#include <catch.hpp>
+#include <testthat.h>
 
 #include "boundary_identifier.h"
 #include "test_helper.h"
 
 namespace texmer {
   namespace test {
-
-    SCENARIO("a texttile boundary identifier gets scores to find boundaries", "[boundary]") {
+    context("texttile boundary identifier") {
       /*
         The depth scores are {0, 4, 0, 7, 7, 2, 0, 2}
         The liberal depth cutoff score is 1.417749
         the non-liberal depth cutoff score is 2.333875
-       */
+      */
 
-      DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
+      test_that("liberal texttile boundary identifier finds correct boundaries in a vector of scores") {
+        DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
 
-      DoubleMatrix mscores;
-      mscores.push_back(vscores);
-      mscores.push_back(vscores);
-      mscores.push_back(vscores);
-      mscores.push_back(vscores);
-
-      GIVEN("a liberal texttile boundary identifier and a vector of scores") {
         TextTileBoundaryIdentifier identifier{true};
-
-        THEN("it gets the right boundaries") {
-          auto boundaries = identifier.get_boundaries(vscores);
-          check_equality(boundaries, {1, 3, 4, 5, 7});
-        }
+        auto boundaries = identifier.get_boundaries(vscores);
+        check_equality(boundaries, {1, 3, 4, 5, 7});
       }
 
-      GIVEN("a liberal texttile boundary identifier and a matrix of scores") {
+      test_that("liberal texttile boundary identifier finds correct boundaries in a matrix of scores") {
+        DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
+        DoubleMatrix mscores{vscores, vscores, vscores, vscores};
+
         TextTileBoundaryIdentifier identifier{true};
-
-        THEN("it gets the right boundaries") {
-          auto boundaries = identifier.get_boundaries(mscores);
-          check_equality(boundaries, {{1, 3, 4, 5, 7},
-                {1, 3, 4, 5, 7}, {1, 3, 4, 5, 7}, {1, 3, 4, 5, 7}});
-        }
+        auto boundaries = identifier.get_boundaries(mscores);
+        check_equality(boundaries, {{1, 3, 4, 5, 7},
+              {1, 3, 4, 5, 7}, {1, 3, 4, 5, 7}, {1, 3, 4, 5, 7}});
       }
 
-      GIVEN("a non-liberal texttile boundary identifier and a vector of scores") {
-        TextTileBoundaryIdentifier identifier{false};
+      test_that("non-liberal texttile boundary identifier finds correct boundaries in a vector of scores") {
+        DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
 
-        THEN("it gets the right boundaries") {
-          auto boundaries = identifier.get_boundaries(vscores);
-          check_equality(boundaries, {1, 3, 4});
-        }
+        TextTileBoundaryIdentifier identifier{false};
+        auto boundaries = identifier.get_boundaries(vscores);
+        check_equality(boundaries, {1, 3, 4});
       }
 
-      GIVEN("a non-liberal texttile boundary identifier and a matrix of scores") {
-        TextTileBoundaryIdentifier identifier{false};
+      test_that("non-liberal texttile boundary identifier finds correct boundaries in a matrix of scores") {
+        DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
+        DoubleMatrix mscores{vscores, vscores, vscores, vscores};
 
-        THEN("it gets the right boundaries") {
-          auto boundaries = identifier.get_boundaries(mscores);
-          check_equality(boundaries, {{1, 3, 4}, {1, 3, 4}, {1, 3, 4}, {1, 3, 4}});
-        }
+        TextTileBoundaryIdentifier identifier{false};
+        auto boundaries = identifier.get_boundaries(mscores);
+        check_equality(boundaries, {{1, 3, 4}, {1, 3, 4}, {1, 3, 4}, {1, 3, 4}});
       }
     }
 
-    SCENARIO("a topictile boundary identifier gets scores to find boundaries", "[boundary]") {
+    context("topictile boundary identifier") {
       /*
         The depth scores are {0, 2, 0, 3,5, 3.5, 1, 0, 1}
         The liberal depth cutoff score is 1.417749
         the non-liberal depth cutoff score is 2.333875
       */
 
-      DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
+      test_that("liberal topictile boundary identifier finds correct boundaries in a vector of scores") {
+        DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
 
-      DoubleMatrix mscores;
-      mscores.push_back(vscores);
-      mscores.push_back(vscores);
-      mscores.push_back(vscores);
-      mscores.push_back(vscores);
-
-      GIVEN("a liberal topictile boundary identifier and a vector of scores") {
         TopicTileBoundaryIdentifier identifier{-1, true};
-
-        THEN("it gets the right boundaries") {
-          auto boundaries = identifier.get_boundaries(vscores);
-          check_equality(boundaries, {1, 3, 4});
-        }
+        auto boundaries = identifier.get_boundaries(vscores);
+        check_equality(boundaries, {1, 3, 4});
       }
 
-      GIVEN("a liberal topictile boundary identifier and a matrix of scores") {
+      test_that("liberal topictile boundary identifier finds correct boundaries in a matrix of scores") {
+        DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
+        DoubleMatrix mscores{vscores, vscores, vscores, vscores};
+
         TopicTileBoundaryIdentifier identifier{-1, true};
-
-        THEN("it gets the right boundaries") {
-          auto boundaries = identifier.get_boundaries(mscores);
-          check_equality(boundaries, {
-              {1, 3, 4}, {1, 3, 4}, {1, 3, 4}, {1, 3, 4}
-            });
-        }
+        auto boundaries = identifier.get_boundaries(mscores);
+        check_equality(boundaries, {
+            {1, 3, 4}, {1, 3, 4}, {1, 3, 4}, {1, 3, 4}
+          });
       }
 
-      GIVEN("a non-liberal topictile boundary identifier and a vector of scores") {
+      test_that("non-liberal topictile boundary identifier finds correct boundaries in a vector of scores") {
+        DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
+
         TopicTileBoundaryIdentifier identifier{-1, false};
-
-        THEN("it gets the right boundaries") {
-          auto boundaries = identifier.get_boundaries(vscores);
-          check_equality(boundaries, {3, 4});
-        }
+        auto boundaries = identifier.get_boundaries(vscores);
+        check_equality(boundaries, {3, 4});
       }
 
-      GIVEN("a non-liberal topictile boundary identifier and a matrix of scores") {
+      test_that("non-liberal topictile boundary identifier finds correct boundaries in a matrix of scores") {
+        DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
+        DoubleMatrix mscores{vscores, vscores, vscores, vscores};
+
         TopicTileBoundaryIdentifier identifier{-1, false};
-
-        THEN("it gets the right boundaries") {
-          auto boundaries = identifier.get_boundaries(mscores);
-          check_equality(boundaries, {{3, 4}, {3, 4}, {3, 4}, {3, 4}});
-        }
+        auto boundaries = identifier.get_boundaries(mscores);
+        check_equality(boundaries, {{3, 4}, {3, 4}, {3, 4}, {3, 4}});
       }
 
-      GIVEN("a topictile boundary identifier with fixed number of segments and a vector of scores") {
-        TopicTileBoundaryIdentifier identifier{2, false};
+      test_that("topictile boundary identifier with fixed number of segments finds correct boundaries in a vector of scores") {
+        DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
 
-        THEN("it gets the right boundaries") {
-          auto boundaries = identifier.get_boundaries(vscores);
-          check_equality(boundaries, {3, 4});
-        }
+        TopicTileBoundaryIdentifier identifier{2, false};
+        auto boundaries = identifier.get_boundaries(vscores);
+        check_equality(boundaries, {3, 4});
       }
 
-      GIVEN("a topictile boundary identifier with fixed number of segments and a matrix of scores") {
-        TopicTileBoundaryIdentifier identifier{2, false};
+      test_that("topictile boundary identifier with fixed number of segments finds correct boundaries in a matrix of scores") {
+        DoubleVector vscores{5, 2, 3, 1, 1, 4, 6, 4};
+        DoubleMatrix mscores{vscores, vscores, vscores, vscores};
 
-        THEN("it gets the right boundaries") {
-          auto boundaries = identifier.get_boundaries(mscores);
-          check_equality(boundaries, {{3, 4}, {3, 4}, {3, 4}, {3, 4}});
-        }
+        TopicTileBoundaryIdentifier identifier{2, false};
+        auto boundaries = identifier.get_boundaries(mscores);
+        check_equality(boundaries, {{3, 4}, {3, 4}, {3, 4}, {3, 4}});
       }
     }
 

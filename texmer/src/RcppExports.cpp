@@ -34,12 +34,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// run_testthat_tests
+bool run_testthat_tests();
+RcppExport SEXP _texmer_run_testthat_tests() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(run_testthat_tests());
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP _rcpp_module_boot_mod_topictile();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_texmer_get_texttile_segments_cpp", (DL_FUNC) &_texmer_get_texttile_segments_cpp, 6},
     {"_texmer_get_token_segment_ids_cpp", (DL_FUNC) &_texmer_get_token_segment_ids_cpp, 3},
+    {"_texmer_run_testthat_tests", (DL_FUNC) &_texmer_run_testthat_tests, 0},
     {"_rcpp_module_boot_mod_topictile", (DL_FUNC) &_rcpp_module_boot_mod_topictile, 0},
     {NULL, NULL, 0}
 };

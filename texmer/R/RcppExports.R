@@ -9,3 +9,7 @@ get_token_segment_ids_cpp <- function(n_tokens_per_doc, n_segs_per_doc, segsize_
     .Call('_texmer_get_token_segment_ids_cpp', PACKAGE = 'texmer', n_tokens_per_doc, n_segs_per_doc, segsize_per_doc)
 }
 
+run_testthat_tests <- function() {
+    .Call('_texmer_run_testthat_tests', PACKAGE = 'texmer')
+}
+

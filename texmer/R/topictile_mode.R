@@ -18,8 +18,6 @@ type_to_topic_indicators <- function(types, mode) {
 #' @description
 #' Creates an empty topictile mode.
 #'
-#' @importFrom methods new
-#'
 #' @export
 get_topictile_mode <- function() {
     module <- get_topictile_module()

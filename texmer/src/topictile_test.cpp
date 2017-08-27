@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <testthat.h>
 
 #include "topictile.h"
 #include "test_helper.h"

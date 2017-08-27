@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <testthat.h>
 
 #include <cmath>
 
@@ -8,133 +8,99 @@
 namespace texmer {
   namespace test {
 
-    SCENARIO("a block evaluator construction", "[constructor]") {
-      GIVEN("a block size less than 1") {
-        THEN("it should throw invalid argument exception") {
-          REQUIRE_THROWS_AS(TextTileBlockEvaluator(0), std::invalid_argument);
-        }
+    context("block evaluator") {
+      test_that("block evaluator constructs correctly") {
+          expect_error_as(TextTileBlockEvaluator(0), std::invalid_argument);
+          expect_no_error(TextTileBlockEvaluator(1));
+          expect_no_error(TextTileBlockEvaluator(2));
       }
 
-      GIVEN("a block size equal 1") {
-        THEN("it should not throw invalid argument exception") {
-          REQUIRE_NOTHROW(TextTileBlockEvaluator(1));
-        }
-      }
-
-      GIVEN("a block size greater than 1") {
-        THEN("it should not throw invalid argument exception") {
-          REQUIRE_NOTHROW(TextTileBlockEvaluator(2));
-        }
-      }
-    }
-
-    SCENARIO("a block evaluator evaluates", "[evaluate]") {
-      DocumentTokenSequences document_token_sequences{
-        TokenSequence({"good"}),
-          TokenSequence({"what", "are", "doing", "doing"}),
-          TokenSequence({"good", "good", "doing", "doing", "doing"}),
-          TokenSequence({"here", "here", "good", "good", "good", "good", "what", "what", "what"})
-          };
-
-      DocumentScores document_expected_scores{
-        0,
-          (6 * 1 + 3 * 1 + 3 * 2) / sqrt((1 + 1 + 1 + 4) * (36 + 9 + 4 + 9)),
-          (2 * 4) / sqrt((4 + 9) * (4 + 16 + 9)),
-          0};
-
-      CorpusTokenSequences corpus_token_sequences;
-      corpus_token_sequences.push_back(document_token_sequences);
-      corpus_token_sequences.push_back(document_token_sequences);
-      corpus_token_sequences.push_back(document_token_sequences);
-      corpus_token_sequences.push_back(document_token_sequences);
-
-      CorpusScores corpus_expected_scores;
-      corpus_expected_scores.push_back(document_expected_scores);
-      corpus_expected_scores.push_back(document_expected_scores);
-      corpus_expected_scores.push_back(document_expected_scores);
-      corpus_expected_scores.push_back(document_expected_scores);
-
-      GIVEN("a document of token sequences and sentence size 2") {
-        TextTileBlockEvaluator eval(2);
-
-        THEN("the scores are as expected") {
-          DocumentScores actual = eval.evaluate(document_token_sequences);
-
-          check_equality(actual, document_expected_scores);
-        }
-      }
-
-      GIVEN("a corpus of token sequences and sentence size 2") {
-        TextTileBlockEvaluator eval(2);
-
-        THEN("the scores are as expected") {
-          CorpusScores actual = eval.evaluate(corpus_token_sequences);
-
-          check_equality(actual, corpus_expected_scores);
-        }
-      }
-    }
-
-    SCENARIO("a vocabulary evaluator construction", "[constructor]") {
-      GIVEN("a sentence size less than 1") {
-        THEN("it should throw invalid argument exception") {
-          REQUIRE_THROWS_AS(TextTileVocabularyEvaluator(0), std::invalid_argument);
-        }
-      }
-
-      GIVEN("a sentence size equal 1") {
-        THEN("it should not throw invalid argument exception") {
-          REQUIRE_NOTHROW(TextTileVocabularyEvaluator(1));
-        }
-      }
-
-      GIVEN("a sentence size greater than 1") {
-        THEN("it should not throw invalid argument exception") {
-          REQUIRE_NOTHROW(TextTileVocabularyEvaluator(2));
-        }
-      }
-    }
-
-    SCENARIO("a vocabulary evaluator evaluates", "[evaluate]") {
-      DocumentSequences<TokenSequence> document_token_sequences{
-        TokenSequence({"good"}),
-          TokenSequence({"what", "are"}),
+      test_that("block evaluator evaluates document correctly") {
+        DocumentTokenSequences document_token_sequences{
           TokenSequence({"good"}),
-          TokenSequence({"here", "here"})
-          };
+            TokenSequence({"what", "are", "doing", "doing"}),
+            TokenSequence({"good", "good", "doing", "doing", "doing"}),
+            TokenSequence({"here", "here", "good", "good", "good", "good", "what", "what", "what"})
+            };
 
-      DocumentScores document_expected_scores{3 / 4.0, 2 / 4.0, 1 / 4.0, 1 / 4.0};
+        DocumentScores document_expected_scores{
+          0,
+            (6 * 1 + 3 * 1 + 3 * 2) / sqrt((1 + 1 + 1 + 4) * (36 + 9 + 4 + 9)),
+            (2 * 4) / sqrt((4 + 9) * (4 + 16 + 9)),
+            0};
 
-      CorpusSequences<TokenSequence> corpus_token_sequences;
-      corpus_token_sequences.push_back(document_token_sequences);
-      corpus_token_sequences.push_back(document_token_sequences);
-      corpus_token_sequences.push_back(document_token_sequences);
-      corpus_token_sequences.push_back(document_token_sequences);
-
-      CorpusScores corpus_expected_scores;
-      corpus_expected_scores.push_back(document_expected_scores);
-      corpus_expected_scores.push_back(document_expected_scores);
-      corpus_expected_scores.push_back(document_expected_scores);
-      corpus_expected_scores.push_back(document_expected_scores);
-
-      GIVEN("a document of token sequences and sentence size 2") {
-        TextTileVocabularyEvaluator eval(2);
-
-        THEN("the scores are as expected") {
-          DocumentScores actual = eval.evaluate(document_token_sequences);
-
-          check_equality(actual, document_expected_scores);
-        }
+        TextTileBlockEvaluator eval(2);
+        DocumentScores actual = eval.evaluate(document_token_sequences);
+        check_equality(actual, document_expected_scores);
       }
 
-      GIVEN("a corpus of token sequences and sentence size 2") {
+      test_that("block evaluator evaluates corpus correctly") {
+        DocumentTokenSequences document_token_sequences{
+          TokenSequence({"good"}),
+            TokenSequence({"what", "are", "doing", "doing"}),
+            TokenSequence({"good", "good", "doing", "doing", "doing"}),
+            TokenSequence({"here", "here", "good", "good", "good", "good", "what", "what", "what"})
+            };
+
+        DocumentScores document_expected_scores{
+          0,
+            (6 * 1 + 3 * 1 + 3 * 2) / sqrt((1 + 1 + 1 + 4) * (36 + 9 + 4 + 9)),
+            (2 * 4) / sqrt((4 + 9) * (4 + 16 + 9)),
+            0};
+
+        CorpusTokenSequences corpus_token_sequences{document_token_sequences,
+            document_token_sequences, document_token_sequences, document_token_sequences};
+
+        CorpusScores corpus_expected_scores{document_expected_scores,
+            document_expected_scores, document_expected_scores, document_expected_scores};
+
+        TextTileBlockEvaluator eval(2);
+        CorpusScores actual = eval.evaluate(corpus_token_sequences);
+        check_equality(actual, corpus_expected_scores);
+      }
+    }
+
+    context("vocabulary evaluator") {
+      test_that("vocabulary evaluator constructs correctly") {
+          expect_error_as(TextTileVocabularyEvaluator(0), std::invalid_argument);
+          expect_no_error(TextTileVocabularyEvaluator(1));
+          expect_no_error(TextTileVocabularyEvaluator(2));
+      }
+
+      test_that("vocabluary evaluator evaluates document correctly") {
+        DocumentSequences<TokenSequence> document_token_sequences{
+          TokenSequence({"good"}),
+            TokenSequence({"what", "are"}),
+            TokenSequence({"good"}),
+            TokenSequence({"here", "here"})
+            };
+
+        DocumentScores document_expected_scores{3 / 4.0, 2 / 4.0, 1 / 4.0, 1 / 4.0};
+
         TextTileVocabularyEvaluator eval(2);
+          DocumentScores actual = eval.evaluate(document_token_sequences);
+          check_equality(actual, document_expected_scores);
+      }
 
-        THEN("the scores are as expected") {
-          CorpusScores actual = eval.evaluate(corpus_token_sequences);
+      test_that("vocabulary evaluator evaluates corpus correctly") {
+        DocumentSequences<TokenSequence> document_token_sequences{
+          TokenSequence({"good"}),
+            TokenSequence({"what", "are"}),
+            TokenSequence({"good"}),
+            TokenSequence({"here", "here"})
+            };
 
-          check_equality(actual, corpus_expected_scores);
-        }
+        DocumentScores document_expected_scores{3 / 4.0, 2 / 4.0, 1 / 4.0, 1 / 4.0};
+
+        CorpusSequences<TokenSequence> corpus_token_sequences{document_token_sequences,
+            document_token_sequences, document_token_sequences, document_token_sequences};
+
+        CorpusScores corpus_expected_scores{document_expected_scores,
+            document_expected_scores, document_expected_scores, document_expected_scores};
+
+        TextTileVocabularyEvaluator eval(2);
+        CorpusScores actual = eval.evaluate(corpus_token_sequences);
+        check_equality(actual, corpus_expected_scores);
       }
     }
 

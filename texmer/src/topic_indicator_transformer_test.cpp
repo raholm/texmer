@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <testthat.h>
 
 #include "def.h"
 #include "topic_indicator_transformer.h"
@@ -9,58 +9,48 @@
 namespace texmer {
   namespace test {
 
-    SCENARIO("a topic indicator transformer requires a positive sentence size", "[constructor]") {
-      GIVEN("a sentence size of 0") {
-        THEN("it should throw an invalid argument error") {
-          REQUIRE_THROWS_AS(TopicIndicatorTransformer(0), std::invalid_argument);
-        }
+    context("topic indicator transformer"){
+      test_that("topic indicator transformer constructs correctly") {
+        expect_error_as(TopicIndicatorTransformer(0), std::invalid_argument);
+        expect_no_error(TopicIndicatorTransformer(1));
       }
 
-      GIVEN("a positive sentence size") {
-        THEN("it should not throw an invalid argument error") {
-          REQUIRE_NOTHROW(TopicIndicatorTransformer(1));
-        }
-      }
-    }
+      test_that("topic indicator transformer transforms document correctly") {
+        Document doc{"is", "good", "what", "are", "that", "doing", "here", "here"};
+        IntVector topic_indicators{1, 1, 1, 2, 1, 1, 2, 2};
+        TypeTopicIndicatorMode modes{doc, topic_indicators};
+        size_t sentence_size = 2;
+        StringVector stopwords{"is", "that"};
 
-    SCENARIO("a topic indicator transformer should transform tokens to topic indicator sequences", "[transform]") {
-      Document doc{"is", "good", "what", "are", "that", "doing", "here", "here"};
-      IntVector topic_indicators{1, 1, 1, 2, 1, 1, 2, 2};
-      TypeTopicIndicatorMode modes{doc, topic_indicators};
-      size_t sentence_size = 2;
-      StringVector stopwords{"is", "that"};
-
-      Corpus corpus;
-      corpus.push_back(doc);
-      corpus.push_back(doc);
-
-      GIVEN("a document and sentence size of 2") {
         TopicIndicatorTransformer trans{sentence_size};
-        THEN("it should return topic indicator sequences") {
-          auto sequences = trans.transform(doc, stopwords, modes);
-          check_equality(sequences, DocumentTopicIndicatorSequences{
+        auto sequences = trans.transform(doc, stopwords, modes);
+        check_equality(sequences, DocumentTopicIndicatorSequences{
+            TopicIndicatorSequence({1}),
+              TopicIndicatorSequence({1, 2}),
+              TopicIndicatorSequence({1}),
+              TopicIndicatorSequence({2, 2})});
+      }
+
+      test_that("topic indicator transformer transforms corpus correctly") {
+        Document doc{"is", "good", "what", "are", "that", "doing", "here", "here"};
+        Corpus corpus{doc, doc};
+        IntVector topic_indicators{1, 1, 1, 2, 1, 1, 2, 2};
+        TypeTopicIndicatorMode modes{doc, topic_indicators};
+        size_t sentence_size = 2;
+        StringVector stopwords{"is", "that"};
+
+        TopicIndicatorTransformer trans{sentence_size};
+        auto sequences = trans.transform(corpus, stopwords, modes);
+        check_equality(sequences, CorpusTopicIndicatorSequences{{
               TopicIndicatorSequence({1}),
                 TopicIndicatorSequence({1, 2}),
                 TopicIndicatorSequence({1}),
-                TopicIndicatorSequence({2, 2})});
-        }
-      }
-
-      GIVEN("a corpus and sentence size of 2") {
-        TopicIndicatorTransformer trans{sentence_size};
-        THEN("it should return topic indicator sequences") {
-          auto sequences = trans.transform(corpus, stopwords, modes);
-          check_equality(sequences, CorpusTopicIndicatorSequences{{
+                TopicIndicatorSequence({2, 2})},{
+              TopicIndicatorSequence({1}),
+                TopicIndicatorSequence({1, 2}),
                 TopicIndicatorSequence({1}),
-                  TopicIndicatorSequence({1, 2}),
-                  TopicIndicatorSequence({1}),
-                  TopicIndicatorSequence({2, 2})},{
-                TopicIndicatorSequence({1}),
-                  TopicIndicatorSequence({1, 2}),
-                  TopicIndicatorSequence({1}),
-                  TopicIndicatorSequence({2, 2})
-                  }});
-        }
+                TopicIndicatorSequence({2, 2})
+                }});
       }
     }
 

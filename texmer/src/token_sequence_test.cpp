@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <testthat.h>
 
 #include "token_sequence.h"
 #include "test_helper.h"
@@ -6,151 +6,113 @@
 namespace texmer {
   namespace test {
 
-    SCENARIO("a token sequence construction", "[constructor]") {
-      Vector<TokenSequence::key> tokens{"hello", "world", "hello"};
-      TokenSequence copy(tokens);
+    context("token sequence") {
+      test_that("token sequence given tokens construct correctly") {
+        Vector<TokenSequence::key> tokens{"hello", "world", "hello"};
 
-      REQUIRE(copy.size() == 2);
-      REQUIRE(copy.length() == 3);
-
-      GIVEN("a vector of tokens") {
         TokenSequence ts{tokens};
-
-        THEN("the size is equal to the number of unique tokens") {
-          REQUIRE(ts.size() == 2);
-        }
-
-        THEN("the length is equal to the number of tokens") {
-          REQUIRE(ts.length() == 3);
-        }
+        expect_true(ts.size() == 2);
+        expect_true(ts.length() == 3);
       }
 
-      GIVEN("a copy of token sequence") {
+      test_that("token sequence given a copy construct correctly") {
+        Vector<TokenSequence::key> tokens{"hello", "world", "hello"};
+        TokenSequence copy(tokens);
+        expect_true(copy.size() == 2);
+        expect_true(copy.length() == 3);
+
         TokenSequence ts{copy};
-
-        THEN("the size is equal to the size of the copy") {
-          REQUIRE(ts.size() == copy.size());
-        }
-
-        THEN("the length is equal to the length of the copy") {
-          REQUIRE(ts.length() == copy.length());
-        }
+        expect_true(ts.size() == copy.size());
+        expect_true(ts.length() == copy.length());
       }
 
-      GIVEN("a copy of token sequence using move semantics") {
+      test_that("token sequence given a moved copy construct correctly") {
+        Vector<TokenSequence::key> tokens{"hello", "world", "hello"};
+        TokenSequence copy(tokens);
+        expect_true(copy.size() == 2);
+        expect_true(copy.length() == 3);
+
         TokenSequence ts{std::move(copy)};
-
-        THEN("the size is equal to the size of the copy") {
-          REQUIRE(ts.size() == 2);
-        }
-
-        THEN("the length is equal to the length of the copy") {
-          REQUIRE(ts.length() == 3);
-        }
+        expect_true(ts.size() == 2);
+        expect_true(ts.length() == 3);
       }
-    }
 
-    SCENARIO("token sequences have getters", "[getters]") {
-      TokenSequence ts({"hello", "world", "hello"});
+      test_that("token sequence have getters") {
+        TokenSequence ts({"hello", "world", "hello"});
 
-      GIVEN("a token sequence") {
-        THEN("its counts is a vector corresponding to the token counts") {
-          auto counts = ts.get_values();
-          std::sort(counts.begin(), counts.end());
-          check_equality(counts, {1, 2});
-        }
+        auto counts = ts.get_values();
+        std::sort(counts.begin(), counts.end());
+        check_equality(counts, {1, 2});
 
-        THEN("its vocabulary contains its token") {
-          auto vocabulary = ts.get_vocabulary();
-          check_contains(vocabulary, {"hello", "world"});
-        }
+        auto vocabulary = ts.get_vocabulary();
+        check_contains(vocabulary, {"hello", "world"});
       }
-    }
 
-    SCENARIO("token sequences can be compared", "[comparison]") {
-      GIVEN("two empty token sequences") {
+      test_that("token sequences can be compared") {
         TokenSequence ts1;
         TokenSequence ts2;
+        expect_true(ts1 == ts2);
 
-        THEN("they should be equal") {
-          REQUIRE(ts1 == ts2);
-        }
+        TokenSequence ts3({"hello", "world", "hello"});
+        TokenSequence ts4({"hello", "world", "hello"});
+        expect_true(ts3 == ts4);
+
+        TokenSequence ts5({"hello", "world", "hello"});
+        TokenSequence ts6({"hello", "hello", "world"});
+        expect_true(ts5 == ts6);
+
+        TokenSequence ts7({"hello", "world", "hello"});
+        TokenSequence ts8({"hello", "hello"});
+        expect_true(ts7 != ts8);
       }
 
-      GIVEN("two equal non-empty token sequences") {
-        TokenSequence ts1({"hello", "world", "hello"});
-        TokenSequence ts2({"hello", "world", "hello"});
+      test_that("token sequences can be added") {
+        TokenSequence ts1({"hello", "world", "hello", "hello"});
+        TokenSequence ts2({"hello", "hello", "what", "what"});
+        TokenSequence ts3;
 
-        THEN("they should be equal regardless of token order") {
-          REQUIRE(ts1 == ts2);
-        }
+        ts3 = ts1 + ts2;
+
+        auto counts = ts3.get_values();
+        std::sort(counts.begin(), counts.end());
+        check_equality(counts, {1, 2, 5});
+
+        auto vocabulary = ts3.get_vocabulary();
+        check_contains(vocabulary, {"hello", "world", "what"});
+
       }
 
-      GIVEN("two equal non-empty token sequences") {
-        TokenSequence ts1({"hello", "world", "hello"});
-        TokenSequence ts2({"hello", "hello", "world"});
+      test_that("token sequences can be subtracted by vocabulary") {
+        TokenSequence ts1({"hello", "world", "hello", "hello"});
+        TokenSequence ts2({"hello", "hello", "what", "what"});
+        TokenSequence ts3;
+        Vocabulary v({"hello", "what"});
 
-        THEN("they should be equal") {
-          REQUIRE(ts1 == ts2);
-        }
+        ts3 = ts1 - v;
+
+        auto counts = ts3.get_values();
+        std::sort(counts.begin(), counts.end());
+        check_equality(counts, {1});
+
+        auto vocabulary = ts3.get_vocabulary();
+        check_contains(vocabulary, {"world"});
+        check_not_contains(vocabulary, {"hello", "what"});
       }
 
-      GIVEN("two non-equal non-empty token sequences") {
-        TokenSequence ts1({"hello", "world", "hello"});
-        TokenSequence ts2({"hello", "hello"});
+      test_that("token sequences can be multiplied") {
+        TokenSequence ts1({"hello", "world", "hello", "hello"});
+        TokenSequence ts2({"hello", "hello", "what", "what"});
+        TokenSequence ts3;
 
-        THEN("they should not be equal") {
-          REQUIRE(ts1 != ts2);
-        }
-      }
-    }
+        ts3 = ts1 * ts2;
 
-    SCENARIO("token sequences can added, subtracted, and multiplied", "[operator]") {
-      TokenSequence ts1({"hello", "world", "hello", "hello"});
-      TokenSequence ts2({"hello", "hello", "what", "what"});
-      TokenSequence ts3;
-      Vocabulary v({"hello", "what"});
+        auto counts = ts3.get_values();
+        std::sort(counts.begin(), counts.end());
+        check_equality(counts, {6});
 
-      GIVEN("two token sequences") {
-        THEN("if added to each other") {
-          ts3 = ts1 + ts2;
-
-          auto counts = ts3.get_values();
-          std::sort(counts.begin(), counts.end());
-          check_equality(counts, {1, 2, 5});
-
-          auto vocabulary = ts3.get_vocabulary();
-          check_contains(vocabulary, {"hello", "world", "what"});
-        }
-      }
-
-      GIVEN("two token sequences") {
-        THEN("if multiplied to each other") {
-          ts3 = ts1 * ts2;
-
-          auto counts = ts3.get_values();
-          std::sort(counts.begin(), counts.end());
-          check_equality(counts, {6});
-
-          auto vocabulary = ts3.get_vocabulary();
-          check_contains(vocabulary, {"hello"});
-          check_not_contains(vocabulary, {"world", "what"});
-        }
-      }
-
-      GIVEN("one token sequence and one vocabulary") {
-        THEN("if subtracted to each other") {
-          ts3 = ts1 - v;
-
-          auto counts = ts3.get_values();
-          std::sort(counts.begin(), counts.end());
-          check_equality(counts, {1});
-
-          auto vocabulary = ts3.get_vocabulary();
-          check_contains(vocabulary, {"world"});
-          check_not_contains(vocabulary, {"hello", "what"});
-        }
-      }
+        auto vocabulary = ts3.get_vocabulary();
+        check_contains(vocabulary, {"hello"});
+        check_not_contains(vocabulary, {"world", "what"});      }
     }
 
   } // namespace test

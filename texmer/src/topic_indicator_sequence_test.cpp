@@ -1,4 +1,4 @@
-#include <catch.hpp>
+#include <testthat.h>
 
 #include "topic_indicator_sequence.h"
 #include "test_helper.h"
@@ -6,163 +6,96 @@
 namespace texmer {
   namespace test {
 
-    SCENARIO("a topic indicator sequence construction", "[constructor]") {
-      Vector<TopicIndicatorSequence::key> topic_indicators{1, 2, 1};
-      TopicIndicatorSequence copy(topic_indicators);
+    context("topic indicator sequence") {
+      test_that("topic indicator sequence given topic indicators constructs correctly") {
+        Vector<TopicIndicatorSequence::key> topic_indicators{1, 2, 1};
 
-      REQUIRE(copy.size() == 2);
-      REQUIRE(copy.length() == 3);
-
-      GIVEN("a vector of topic indicators") {
         TopicIndicatorSequence tis{topic_indicators};
-
-        THEN("the size is equal to the number of unique topic indicators") {
-          REQUIRE(tis.size() == 2);
-        }
-
-        THEN("the length is equal to the number of topic indicators") {
-          REQUIRE(tis.length() == 3);
-        }
+        expect_true(tis.size() == 2);
+        expect_true(tis.length() == 3);
       }
 
-      GIVEN("a copy of topic indicator sequence") {
+      test_that("topic indicator given a copy constructs correctly")  {
+        Vector<TopicIndicatorSequence::key> topic_indicators{1, 2, 1};
+        TopicIndicatorSequence copy(topic_indicators);
+        expect_true(copy.size() == 2);
+        expect_true(copy.length() == 3);
+
         TopicIndicatorSequence tis{copy};
-
-        THEN("the size is equal to the size of the copy") {
-          REQUIRE(tis.size() == copy.size());
-        }
-
-        THEN("the length is equal to the length of the copy") {
-          REQUIRE(tis.length() == copy.length());
-        }
+        expect_true(tis.size() == copy.size());
+        expect_true(tis.length() == copy.length());
       }
 
-      GIVEN("a copy of topic indicator sequence using move semantics") {
+      test_that("topic indicator given a moved copy constructs correctly")  {
+        Vector<TopicIndicatorSequence::key> topic_indicators{1, 2, 1};
+        TopicIndicatorSequence copy(topic_indicators);
+        expect_true(copy.size() == 2);
+        expect_true(copy.length() == 3);
+
         TopicIndicatorSequence tis{std::move(copy)};
-
-        THEN("the size is equal to the size of the copy") {
-          REQUIRE(tis.size() == 2);
-        }
-
-        THEN("the length is equal to the length of the copy") {
-          REQUIRE(tis.length() == 3);
-        }
+        expect_true(tis.size() == 2);
+        expect_true(tis.length() == 3);
       }
-    }
 
-    SCENARIO("topic indicator sequences have getters", "[getters]") {
-      TopicIndicatorSequence tis({1, 2, 1});
+      test_that("topic indicator sequence has getters") {
+        TopicIndicatorSequence tis({1, 2, 1});
 
-      GIVEN("a topic indicator sequence") {
-        THEN("its counts is a vector corresponding to the topic indicator counts") {
-          auto counts = tis.get_values();
-          std::sort(counts.begin(), counts.end());
-          check_equality(counts, {1, 2});
-        }
+        auto counts = tis.get_values();
+        std::sort(counts.begin(), counts.end());
+        check_equality(counts, {1, 2});
 
-        THEN("its keys contains its topic indicators") {
-          auto keys = tis.get_keys();
-          std::sort(keys.begin(), keys.end());
-          check_equality(keys, {1, 2});
-        }
+        auto keys = tis.get_keys();
+        std::sort(keys.begin(), keys.end());
+        check_equality(keys, {1, 2});
       }
-    }
 
-    SCENARIO("topic indicator sequences can be compared", "[comparison]") {
-      GIVEN("two empty topic indicator sequences") {
+      test_that("topic indicators sequences can be compared") {
         TopicIndicatorSequence tis1;
         TopicIndicatorSequence tis2;
+        expect_true(tis1 == tis2);
 
-        THEN("they should be equal") {
-          REQUIRE(tis1 == tis2);
-        }
+        TopicIndicatorSequence tis3({1, 2, 1});
+        TopicIndicatorSequence tis4({1, 2, 1});
+        expect_true(tis3 == tis4);
+
+        TopicIndicatorSequence tis5({1, 2, 1});
+        TopicIndicatorSequence tis6({1, 1, 2});
+        expect_true(tis5 == tis6);
+
+        TopicIndicatorSequence tis7({1, 2, 1});
+        TopicIndicatorSequence tis8({1, 1});
+        expect_true(tis7 != tis8);
       }
 
-      GIVEN("two equal non-empty topic indicator sequences") {
-        TopicIndicatorSequence tis1({1, 2, 1});
-        TopicIndicatorSequence tis2({1, 2, 1});
+      test_that("topic indicator sequences can be added") {
+        TopicIndicatorSequence tis1({1, 2, 1, 1});
+        TopicIndicatorSequence tis2({1, 1, 3, 3});
+        TopicIndicatorSequence tis3;
 
-        THEN("they should be equal") {
-          REQUIRE(tis1 == tis2);
-        }
+        tis3 = tis1 + tis2;
+
+        auto counts = tis3.get_values();
+        std::sort(counts.begin(), counts.end());
+        check_equality(counts, {1, 2, 5});
+
+        auto keys = tis3.get_keys();
+        std::sort(keys.begin(), keys.end());
+        check_equality(keys, {1, 2, 3});
       }
 
-      GIVEN("two equal non-empty topic indicator sequences") {
-        TopicIndicatorSequence tis1({1, 2, 1});
-        TopicIndicatorSequence tis2({1, 1, 2});
+      test_that("topic indicator sequences can be multiplied") {
+        TopicIndicatorSequence tis1({1, 2, 1, 1});
+        TopicIndicatorSequence tis2({1, 1, 3, 3});
+        TopicIndicatorSequence tis3;
 
-        THEN("they should be equal regardless of topic indicator order") {
-          REQUIRE(tis1 == tis2);
-        }
-      }
+        tis3 = tis1 * tis2;
 
-      GIVEN("two non-equal non-empty topic indicator sequences") {
-        TopicIndicatorSequence tis1({1, 2, 1});
-        TopicIndicatorSequence tis2({1, 1});
+        auto counts = tis3.get_values();
+        std::sort(counts.begin(), counts.end());
+        check_equality(counts, {6});
 
-        THEN("they should not be equal") {
-          REQUIRE(tis1 != tis2);
-        }
-      }
-    }
-
-    SCENARIO("topic indicator sequences can added, subtracted, and multiplied", "[operator]") {
-      TopicIndicatorSequence tis1({1, 2, 1, 1});
-      TopicIndicatorSequence tis2({1, 1, 3, 3});
-      TopicIndicatorSequence tis3;
-
-      GIVEN("two topic indicator sequences") {
-        THEN("if added to each other") {
-          tis3 = tis1 + tis2;
-
-          auto counts = tis3.get_values();
-          std::sort(counts.begin(), counts.end());
-          check_equality(counts, {1, 2, 5});
-
-          auto keys = tis3.get_keys();
-          std::sort(keys.begin(), keys.end());
-          check_equality(keys, {1, 2, 3});
-        }
-      }
-
-      GIVEN("two topic indicator sequences") {
-        THEN("if added to each other") {
-          tis3 += tis1 + tis2;
-
-          auto counts = tis3.get_values();
-          std::sort(counts.begin(), counts.end());
-          check_equality(counts, {1, 2, 5});
-
-          auto keys = tis3.get_keys();
-          std::sort(keys.begin(), keys.end());
-          check_equality(keys, {1, 2, 3});
-        }
-      }
-
-      GIVEN("two topic indicator sequences") {
-        THEN("if multiplied to each other") {
-          tis3 = tis1 * tis2;
-
-          auto counts = tis3.get_values();
-          std::sort(counts.begin(), counts.end());
-          check_equality(counts, {6});
-
-          auto keys = tis3.get_keys();
-          check_equality(keys, {1});
-        }
-      }
-
-      GIVEN("two topic indicator sequences") {
-        THEN("if multiplied to each other") {
-          tis3 *= tis1 * tis2;
-
-          auto counts = tis3.get_values();
-          std::sort(counts.begin(), counts.end());
-          check_equality(counts, {});
-
-          auto keys = tis3.get_keys();
-          check_equality(keys, {});
-        }
+        auto keys = tis3.get_keys();
+        check_equality(keys, {1});
       }
     }
 

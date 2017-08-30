@@ -61,7 +61,7 @@ namespace texmer {
   TopicIndicatorTransformer::tokens_to_topic_indicators(const Document& tokens,
                                                         const Vocabulary& stopwords,
                                                         const TypeTopicIndicatorMode& modes) const {
-    Vector<TopicIndicatorSequence::key> topics;
+    Vector<TopicIndicatorSequence::KeyType> topics;
     topics.reserve(tokens.size());
 
     // TODO: Should we check that token has a mode and is not a stopword?

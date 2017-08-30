@@ -17,7 +17,7 @@ Rcpp::IntegerVector get_token_segment_ids_cpp(const Rcpp::IntegerVector& n_token
 
   int max_id = 1;
   int id_idx = 0;
-  int current_id, n_tokens, n_segs, segsize;
+  unsigned current_id = 0, n_tokens, n_segs, segsize;
 
   for (unsigned i = 0; i < n_tokens_per_doc.size(); ++i) {
     n_tokens = n_tokens_per_doc[i];
@@ -29,7 +29,7 @@ Rcpp::IntegerVector get_token_segment_ids_cpp(const Rcpp::IntegerVector& n_token
     for (unsigned seg_id = 0; seg_id < n_segs; ++seg_id) {
       current_id = seg_id + max_id;
 
-      for (unsigned j = 0; j < id_repeat_counts[seg_id]; ++j) {
+      for (unsigned j = 0; j < (unsigned) id_repeat_counts[seg_id]; ++j) {
         ids[id_idx++] = current_id;
       }
     }
@@ -41,12 +41,12 @@ Rcpp::IntegerVector get_token_segment_ids_cpp(const Rcpp::IntegerVector& n_token
 }
 
 Rcpp::IntegerVector get_repeat_counts(int n_tokens, int segsize) {
-  int n = ceil((double) n_tokens / segsize);
+  unsigned n = ceil((double) n_tokens / segsize);
 
   Rcpp::IntegerVector counts(n);
 
-  int left_count = 0;
-  int right_count = segsize;
+  unsigned  left_count = 0;
+  unsigned right_count = segsize;
 
   for (unsigned i = 0; i < (n - 1); ++i) {
     counts[i] = right_count - left_count;

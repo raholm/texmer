@@ -95,13 +95,15 @@ namespace texmer {
   }
 
   IntVector TopicTileBoundaryIdentifier::get_boundaries_by_fixed_count(const DoubleVector& scores) const {
+    using GapDepthPair = Pair<size_t, double>;
+
     IntVector boundaries;
     boundaries.reserve(n_boundaries_);
 
     if (n_boundaries_ == 0)
       return boundaries;
 
-    Vector<Pair<size_t, double>> gap_depth;
+    Vector<GapDepthPair> gap_depth;
     double depth_score, left_depth_score, right_depth_score;
 
     for (unsigned gap = 0; gap < scores.size(); ++gap) {
@@ -114,14 +116,14 @@ namespace texmer {
     }
 
     std::sort(gap_depth.begin(), gap_depth.end(),
-              [](auto const& p1, auto const& p2) {
+              [](GapDepthPair const& p1, GapDepthPair const& p2) {
                 return p1.second > p2.second;
               });
 
     std::transform(gap_depth.cbegin(),
                    gap_depth.cbegin() + std::min((size_t) n_boundaries_, scores.size()),
                    std::back_inserter(boundaries),
-                   [](auto const& p) { return p.first; });
+                   [](GapDepthPair const& p) { return p.first; });
 
     std::sort(boundaries.begin(), boundaries.end());
 

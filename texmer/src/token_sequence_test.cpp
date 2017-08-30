@@ -8,7 +8,7 @@ namespace texmer {
 
     context("token sequence") {
       test_that("token sequence given tokens construct correctly") {
-        Vector<TokenSequence::key> tokens{"hello", "world", "hello"};
+        Vector<TokenSequence::KeyType> tokens{"hello", "world", "hello"};
 
         TokenSequence ts{tokens};
         expect_true(ts.size() == 2);
@@ -16,7 +16,7 @@ namespace texmer {
       }
 
       test_that("token sequence given a copy construct correctly") {
-        Vector<TokenSequence::key> tokens{"hello", "world", "hello"};
+        Vector<TokenSequence::KeyType> tokens{"hello", "world", "hello"};
         TokenSequence copy(tokens);
         expect_true(copy.size() == 2);
         expect_true(copy.length() == 3);
@@ -27,7 +27,7 @@ namespace texmer {
       }
 
       test_that("token sequence given a moved copy construct correctly") {
-        Vector<TokenSequence::key> tokens{"hello", "world", "hello"};
+        Vector<TokenSequence::KeyType> tokens{"hello", "world", "hello"};
         TokenSequence copy(tokens);
         expect_true(copy.size() == 2);
         expect_true(copy.length() == 3);

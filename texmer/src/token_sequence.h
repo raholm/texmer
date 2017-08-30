@@ -9,24 +9,24 @@ namespace texmer {
 
   class TokenSequence : public Sequence<String> {
   public:
-    using base_class = Sequence<String>;
-    using key = base_class::key;
-    using value = base_class::value;
+    using BaseClass = Sequence<String>;
+    using KeyType = BaseClass::KeyType;
+    using ValueType = BaseClass::ValueType;
 
-    TokenSequence() : base_class() {}
-    TokenSequence(const TokenSequence& other) : base_class(other) {}
-    TokenSequence(TokenSequence&& other) : base_class(std::move(other)) {}
-    TokenSequence(const Vector<key>& tokens) : base_class(tokens) {}
+    TokenSequence() : BaseClass() {}
+    TokenSequence(const TokenSequence& other) : BaseClass(other) {}
+    TokenSequence(TokenSequence&& other) : BaseClass(std::move(other)) {}
+    TokenSequence(const Vector<KeyType>& tokens) : BaseClass(tokens) {}
 
     ~TokenSequence() = default;
 
     inline TokenSequence& operator=(const TokenSequence& rhs) {
-      base_class::operator=(rhs);
+      BaseClass::operator=(rhs);
       return *this;
     }
 
     inline TokenSequence& operator=(TokenSequence&& rhs) {
-      base_class::operator=(std::move(rhs));
+      BaseClass::operator=(std::move(rhs));
       return *this;
     }
 
@@ -36,7 +36,7 @@ namespace texmer {
     }
 
     inline TokenSequence& operator+=(const TokenSequence& rhs) {
-      base_class::operator+=(rhs);
+      BaseClass::operator+=(rhs);
       return *this;
     }
 
@@ -46,16 +46,16 @@ namespace texmer {
     }
 
     inline TokenSequence& operator*=(const TokenSequence& rhs) {
-      base_class::operator*=(rhs);
+      BaseClass::operator*=(rhs);
       return *this;
     }
 
     inline bool operator==(const TokenSequence& rhs) const {
-      return base_class::operator==(rhs);
+      return BaseClass::operator==(rhs);
     }
 
     inline bool operator!=(const TokenSequence& rhs) const {
-      return base_class::operator!=(rhs);
+      return BaseClass::operator!=(rhs);
     }
 
     inline TokenSequence operator-(const Vocabulary& rhs) const {

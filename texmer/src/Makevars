@@ -1,1 +1,1 @@
-PKG_CPPFLAGS=-I../inst/include/
+PKG_CPPFLAGS=-std=gnu++14 -g -Wall -Wpedantic -Werror -Wformat -I../inst/include -DCOMPILING_TESTTHAT

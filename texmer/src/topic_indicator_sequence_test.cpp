@@ -8,7 +8,7 @@ namespace texmer {
 
     context("topic indicator sequence") {
       test_that("topic indicator sequence given topic indicators constructs correctly") {
-        Vector<TopicIndicatorSequence::key> topic_indicators{1, 2, 1};
+        Vector<TopicIndicatorSequence::KeyType> topic_indicators{1, 2, 1};
 
         TopicIndicatorSequence tis{topic_indicators};
         expect_true(tis.size() == 2);
@@ -16,7 +16,7 @@ namespace texmer {
       }
 
       test_that("topic indicator given a copy constructs correctly")  {
-        Vector<TopicIndicatorSequence::key> topic_indicators{1, 2, 1};
+        Vector<TopicIndicatorSequence::KeyType> topic_indicators{1, 2, 1};
         TopicIndicatorSequence copy(topic_indicators);
         expect_true(copy.size() == 2);
         expect_true(copy.length() == 3);
@@ -27,7 +27,7 @@ namespace texmer {
       }
 
       test_that("topic indicator given a moved copy constructs correctly")  {
-        Vector<TopicIndicatorSequence::key> topic_indicators{1, 2, 1};
+        Vector<TopicIndicatorSequence::KeyType> topic_indicators{1, 2, 1};
         TopicIndicatorSequence copy(topic_indicators);
         expect_true(copy.size() == 2);
         expect_true(copy.length() == 3);

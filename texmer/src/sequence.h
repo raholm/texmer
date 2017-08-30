@@ -17,13 +17,14 @@ namespace texmer {
   template<typename Key>
   class Sequence : public SequenceBase {
   public:
-    using key = Key;
-    using value = size_t;
+    using KeyType = Key;
+    using ValueType = size_t;
+    using KeyValuePair = Pair<KeyType, ValueType>;
 
     Sequence() = default;
     Sequence(const Sequence& other) = default;
     Sequence(Sequence&& other) = default;
-    Sequence(const Vector<key>& keys) {
+    Sequence(const Vector<KeyType>& keys) {
       for (auto const& key : keys)
         insert_or_add_element(std::make_pair(key, 1));
     }
@@ -39,9 +40,8 @@ namespace texmer {
     }
 
     inline Sequence& operator+=(const Sequence& rhs) {
-      for (auto const &p : rhs.map_) {
+      for (auto const &p : rhs.map_)
         insert_or_add_element(p);
-      }
       return *this;
     }
 
@@ -82,8 +82,8 @@ namespace texmer {
                              });
     }
 
-    inline Vector<key> get_keys() const {
-      Vector<key> keys;
+    inline Vector<KeyType> get_keys() const {
+      Vector<KeyType> keys;
       keys.reserve(size());
       std::transform(map_.cbegin(), map_.cend(), std::back_inserter(keys),
                      [](auto const& pair) {
@@ -92,8 +92,8 @@ namespace texmer {
       return keys;
     }
 
-    inline Vector<value> get_values() const {
-      Vector<value> values;
+    inline Vector<ValueType> get_values() const {
+      Vector<ValueType> values;
       values.reserve(size());
       std::transform(map_.cbegin(), map_.cend(), std::back_inserter(values),
                      [](auto const& pair) {
@@ -103,10 +103,10 @@ namespace texmer {
     }
 
   protected:
-    Map<key, value> map_;
+    Map<KeyType, ValueType> map_;
 
   private:
-    inline void insert_or_add_element(const Pair<key, value>& element) {
+    inline void insert_or_add_element(const KeyValuePair& element) {
       if (!map_.insert(element).second)
         map_.at(element.first) += element.second;
     }

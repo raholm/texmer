@@ -4,8 +4,15 @@
 \alias{tf_topictile}
 \title{Segmenting text based on Latent Dirichlet Allocation.}
 \usage{
-tf_topictile()
+tf_topictile(corpus, stopwords, mode, sentence_size = 20, block_size = 2,
+  nsegments = 0, liberal = TRUE)
+}
+\value{
+A data frame with 'token' replaced by the segments in 'text'. 'id' contains the new ids and the old ids are preserved in 'docid'.
 }
 \description{
-Segmenting text based on Latent Dirichlet Allocation.
+description here.
+}
+\details{
+details here.
 }

@@ -1,7 +1,5 @@
 #include "topictile.h"
 
-#include <iostream>
-
 namespace texmer {
 
   CorpusSegments TopicTile::segment(const Corpus& corpus, const StringVector& stopwords) const {

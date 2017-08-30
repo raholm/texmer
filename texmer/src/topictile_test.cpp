@@ -143,6 +143,7 @@ namespace texmer {
 
         TopicTile topictile{sentence_size, block_size, modes, nsegments, false};
         auto segments = topictile.segment(doc, stopwords);
+        // It splits on the last boundary which means the last segment is empty (not included)
         expect_true(segments.size() == nsegments - 1);
         check_equality(segments, {"hello world", "what is that hello what hello", "what what"});
       }

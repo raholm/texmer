@@ -77,7 +77,7 @@ namespace texmer {
     inline size_t length() const {
       return std::accumulate(map_.cbegin(), map_.cend(), 0,
                              [](const size_t acc,
-                                auto const& p) {
+                                KeyValuePair const& p) {
                                return acc + p.second;
                              });
     }
@@ -86,7 +86,7 @@ namespace texmer {
       Vector<KeyType> keys;
       keys.reserve(size());
       std::transform(map_.cbegin(), map_.cend(), std::back_inserter(keys),
-                     [](auto const& pair) {
+                     [](KeyValuePair const& pair) {
                        return pair.first;
                      });
       return keys;
@@ -96,7 +96,7 @@ namespace texmer {
       Vector<ValueType> values;
       values.reserve(size());
       std::transform(map_.cbegin(), map_.cend(), std::back_inserter(values),
-                     [](auto const& pair) {
+                     [](KeyValuePair const& pair) {
                        return pair.second;
                      });
       return values;

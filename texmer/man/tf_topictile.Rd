@@ -4,7 +4,8 @@
 \alias{tf_topictile}
 \title{Segmenting text based on Latent Dirichlet Allocation.}
 \usage{
-tf_topictile()
+tf_topictile(corpus, stopwords, model, gibbs_iters = 50, sentence_size = 20,
+  block_size = 2, n_segments = 0, liberal = TRUE)
 }
 \description{
 Segmenting text based on Latent Dirichlet Allocation.

@@ -7,12 +7,11 @@ namespace texmer {
   namespace test {
 
     context("topictile") {
-      // test_that("construction works properly") {
-      //   expect_error_as(TextTile(0, 1, "vocabulary", true), std::invalid_argument);
-      //   expect_error_as(TextTile(1, 0, "block", false), std::invalid_argument);
-      //   expect_no_error(TextTile(1, 0, "vocabulary", false));
-      //   expect_error_as(TextTile(1, 1, "unknown_method", true), std::invalid_argument);
-      // }
+      test_that("construction works properly") {
+        expect_error_as(TopicTile(0, 1, TypeTopicIndicatorMode(), 0, true), std::invalid_argument);
+        expect_error_as(TopicTile(1, 0, TypeTopicIndicatorMode(), 0, false), std::invalid_argument);
+        expect_no_error(TopicTile(1, 1, TypeTopicIndicatorMode(), 0, false));
+      }
 
       /*
         The token sequences are:
@@ -60,7 +59,7 @@ namespace texmer {
         {hello world, what is that hello what hello what what}
       */
 
-      test_that("topictile liberal block method segments document correctly") {
+      test_that("topictile liberal heuristic method segments document correctly") {
         Document doc{"hello", "world",
             "what", "is",
             "that", "hello",
@@ -76,56 +75,98 @@ namespace texmer {
         check_equality(segments, {"hello world", "what is", "that hello what hello", "what what"});
       }
 
-      // test_that("topictile liberal block method segments corpus correctly") {
-      //   Document doc{"hello", "world",
-      //       "what", "is",
-      //       "that", "hello",
-      //       "what", "hello",
-      //       "what", "what"};
-      //   size_t sentence_size = 2;
-      //   size_t block_size = 2;
-      //   Document stopwords{"is", "that"};
-      //   Corpus corpus{doc, doc};
+      test_that("topictile liberal heuristic method segments corpus correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        Corpus corpus{doc, doc};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
+        TypeTopicIndicatorMode modes{{"hello", "world", "what"}, {0, 1, 2}};
 
-      //   Topictile topictile{sentence_size, block_size, "block", true};
-      //   auto segments = topictile.segment(corpus, stopwords);
-      //   check_equality(segments, {
-      //       {"hello world", "what is", "that hello what hello", "what what"},
-      //         {"hello world", "what is", "that hello what hello", "what what"}});
-      // }
+        TopicTile topictile{sentence_size, block_size, modes, 0, true};
+        auto segments = topictile.segment(corpus, stopwords);
+        check_equality(segments, {
+            {"hello world", "what is", "that hello what hello", "what what"},
+              {"hello world", "what is", "that hello what hello", "what what"}});
+      }
 
-      // test_that("topictile non-liberal block method segments document correctly") {
-      //   Document doc{"hello", "world",
-      //       "what", "is",
-      //       "that", "hello",
-      //       "what", "hello",
-      //       "what", "what"};
-      //   size_t sentence_size = 2;
-      //   size_t block_size = 2;
-      //   Document stopwords{"is", "that"};
+      test_that("topictile non-liberal heuristic method segments document correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
+        TypeTopicIndicatorMode modes{{"hello", "world", "what"}, {0, 1, 2}};
 
-      //   Topictile topictile{sentence_size, block_size, "block", false};
-      //   auto segments = topictile.segment(doc, stopwords);
-      //   check_equality(segments, {"hello world", "what is that hello what hello what what"});
-      // }
+        TopicTile topictile{sentence_size, block_size, modes, 0, false};
+        auto segments = topictile.segment(doc, stopwords);
+        check_equality(segments, {"hello world", "what is that hello what hello what what"});
+      }
 
-      // test_that("topictile non-liberal block method segments corpus correctly") {
-      //   Document doc{"hello", "world",
-      //       "what", "is",
-      //       "that", "hello",
-      //       "what", "hello",
-      //       "what", "what"};
-      //   size_t sentence_size = 2;
-      //   size_t block_size = 2;
-      //   Document stopwords{"is", "that"};
-      //   Corpus corpus{doc, doc};
+      test_that("topictile non-liberal heuristic method segments corpus correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        Corpus corpus{doc, doc};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        Document stopwords{"is", "that"};
+        TypeTopicIndicatorMode modes{{"hello", "world", "what"}, {0, 1, 2}};
 
-      //   Topictile topictile{sentence_size, block_size, "block", false};
-      //   auto segments = topictile.segment(corpus, stopwords);
-      //   check_equality(segments, {
-      //       {"hello world", "what is that hello what hello what what"},
-      //         {"hello world", "what is that hello what hello what what"}});
-      // }
+        TopicTile topictile{sentence_size, block_size, modes, 0, false};
+        auto segments = topictile.segment(corpus, stopwords);
+        check_equality(segments, {
+            {"hello world", "what is that hello what hello what what"},
+              {"hello world", "what is that hello what hello what what"}});
+      }
+
+      test_that("topictile fixed count segments document correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        size_t nsegments = 4;
+        Document stopwords{"is", "that"};
+        TypeTopicIndicatorMode modes{{"hello", "world", "what"}, {0, 1, 2}};
+
+        TopicTile topictile{sentence_size, block_size, modes, nsegments, false};
+        auto segments = topictile.segment(doc, stopwords);
+        expect_true(segments.size() == nsegments - 1);
+        check_equality(segments, {"hello world", "what is that hello what hello", "what what"});
+      }
+
+      test_that("topictile fixed count segments corpus correctly") {
+        Document doc{"hello", "world",
+            "what", "is",
+            "that", "hello",
+            "what", "hello",
+            "what", "what"};
+        Corpus corpus{doc, doc};
+        size_t sentence_size = 2;
+        size_t block_size = 2;
+        size_t nsegments = 4;
+        Document stopwords{"is", "that"};
+        TypeTopicIndicatorMode modes{{"hello", "world", "what"}, {0, 1, 2}};
+
+        TopicTile topictile{sentence_size, block_size, modes, nsegments, false};
+        auto segments = topictile.segment(corpus, stopwords);
+        check_equality(segments, {
+            {"hello world", "what is that hello what hello", "what what"},
+              {"hello world", "what is that hello what hello", "what what"}});
+      }
+
     }
 
   } // namespace test

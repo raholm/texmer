@@ -1,5 +1,6 @@
 #include "topictile.h"
 
+#include <iostream>
 
 namespace texmer {
 

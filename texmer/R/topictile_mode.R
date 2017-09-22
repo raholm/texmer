@@ -92,7 +92,7 @@ write_topictile_mode_to_file <- function(mode, dst) {
 #'
 #' @export
 read_topictile_mode_from_file <- function(src) {
-    data <- read.table(src)
+    data <- read.table(src, header=TRUE)
     get_topictile_mode_from_data(data$type, data$topic_indicator)
 }
 

@@ -40,8 +40,8 @@ tf_texttile <- function(corpus, stopwords,
                         sentence_size, block_size,
                         method="block",
                         liberal=TRUE,
-                        smooth_rounds=1,
-                        smooth_width=2) {
+                        smoothing_rounds=1,
+                        smoothing_width=2) {
     .check_input_texttile(corpus, stopwords,
                           sentence_size ,block_size,
                           method, liberal, smooth_rounds,
@@ -56,7 +56,7 @@ tf_texttile <- function(corpus, stopwords,
     segments <- get_texttile_segments_cpp(texttile_tokens, stopwords,
                                           sentence_size, block_size,
                                           method, liberal,
-                                          smooth_rounds, smooth_width) %>%
+                                          smoothing_rounds, smoothing_width) %>%
         reshape2::melt() %>%
         dplyr::rename(text=value, docid=L1) %>%
         dplyr::mutate(id=as.character(row_number()),
@@ -70,16 +70,16 @@ tf_texttile <- function(corpus, stopwords,
 .check_input_texttile <- function(corpus, stopwords,
                                   sentence_size, block_size,
                                   method, liberal,
-                                  smooth_rounds, smooth_width) {
+                                  smoothing_rounds, smoothing_width) {
     checkr::assert_tidy_table(corpus, c("id", "token"))
     checkr::assert_character(stopwords)
     checkr::assert_integer(sentence_size, len=1, lower=1)
     checkr::assert_integer(block_size, len=1, lower=1)
     checkr::assert_choice(method, c("block", "vocabulary"))
     checkr::assert_logical(liberal, len=1)
-    checkr::assert_integer(smooth_rounds, len=1, lower=0)
-    checkr::assert_integer(smooth_width, len=1, lower=1)
+    checkr::assert_integer(smoothing_rounds, len=1, lower=0)
+    checkr::assert_integer(smoothing_width, len=1, lower=1)
 
-    if (!(smooth_width %% 2 == 0))
+    if (!(smoothing_width %% 2 == 0))
         stop("Smooth width must be even.")
 }

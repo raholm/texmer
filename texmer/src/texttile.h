@@ -16,7 +16,8 @@ namespace texmer {
   public:
     explicit TextTile(size_t sentence_size, size_t block_size,
                       const String& method, bool liberal,
-                      size_t smooth_rounds=0, size_t smooth_width=0);
+                      size_t smoothing_rounds=0,
+                      size_t smoothing_width=2);
 
     ~TextTile();
 

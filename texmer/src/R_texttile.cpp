@@ -35,11 +35,11 @@ Rcpp::List get_texttile_segments_cpp(const Rcpp::List& tokens,
                                      size_t block_size,
                                      const Rcpp::CharacterVector& method,
                                      bool liberal,
-                                     size_t smooth_rounds,
-                                     size_t smooth_width) {
+                                     size_t smoothing_rounds,
+                                     size_t smoothing_width) {
   TextTile texttile{sentence_size, block_size,
       Rcpp::as<std::string>(method),
-      liberal, smooth_rounds, smooth_width};
+      liberal, smoothing_rounds, smoothing_width};
   auto segments = texttile.segment(convert_from_R(tokens),
                                    convert_from_R(stopwords));
   return convert_to_R(segments);

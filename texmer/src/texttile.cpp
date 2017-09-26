@@ -8,11 +8,11 @@ namespace texmer {
 
   TextTile::TextTile(size_t sentence_size, size_t block_size,
                      const String& method, bool liberal,
-                     size_t smooth_rounds, size_t smooth_width)
+                     size_t smoothing_rounds, size_t smoothing_width)
     : sentence_size_{sentence_size},
       transformer_{sentence_size},
       identifier_{liberal},
-      smoother_{smooth_rounds, smooth_width}
+      smoother_{smoothing_rounds, smoothing_width}
   {
     if (sentence_size_ < 1) {
       throw std::invalid_argument("Invalid sentence size: '" + std::to_string(sentence_size_) + "'.");

@@ -8,13 +8,15 @@
 #include "lexical_evaluator.h"
 #include "boundary_identifier.h"
 #include "token_segmenter.h"
+#include "score_smoother.h"
 
 namespace texmer {
 
   class TextTile {
   public:
     explicit TextTile(size_t sentence_size, size_t block_size,
-                      const String& method, bool liberal);
+                      const String& method, bool liberal,
+                      size_t smooth_rounds=0, size_t smooth_width=0);
 
     ~TextTile();
 
@@ -28,6 +30,7 @@ namespace texmer {
     LexicalEvaluatorBase* evaluator_;
     TextTileBoundaryIdentifier identifier_;
     TokenSegmenter segmenter_;
+    AverageScoreSmoother smoother_;
 
     void adjust_boundaries_by_sentence_size(IntMatrix& boundaries) const;
     void adjust_boundaries_by_sentence_size(IntVector& boundaries) const;

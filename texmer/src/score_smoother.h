@@ -14,14 +14,17 @@ namespace texmer {
 
   };
 
-  class AverageScoreSmoother {
+  class AverageScoreSmoother : public ScoreSmoother {
   public:
     explicit AverageScoreSmoother(size_t rounds, size_t width)
       : rounds_{rounds},
         width_{width}
     {
       if (width_ % 2 != 0)
-        throw std::invalid_argument("Width has to be even.")
+        throw std::invalid_argument("Width must be even.");
+
+      if (width_ == 0)
+        throw std::invalid_argument("Width must be positive.");
     }
 
     CorpusScores smooth(const CorpusScores& scores) const override {
@@ -43,7 +46,7 @@ namespace texmer {
 
       for (unsigned i = 0; i < rounds_; ++i) {
         for (unsigned current_gap = 0; current_gap < result.size(); ++current_gap) {
-          lower = std::max(0, current_gap - width2);
+          lower = std::max(0, (int) (current_gap - width2));
           upper = std::min(result.size(), current_gap + width2);
 
           val = 0;

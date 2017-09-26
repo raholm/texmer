@@ -7,21 +7,24 @@
 namespace texmer {
 
   TextTile::TextTile(size_t sentence_size, size_t block_size,
-                     const String& method, bool liberal)
+                     const String& method, bool liberal,
+                     size_t smooth_rounds, size_t smooth_width)
     : sentence_size_{sentence_size},
       transformer_{sentence_size},
-      identifier_{liberal} {
-        if (sentence_size_ < 1) {
-          throw std::invalid_argument("Invalid sentence size: '" + std::to_string(sentence_size_) + "'.");
-        }
+      identifier_{liberal},
+      smoother_{smooth_rounds, smooth_width}
+  {
+    if (sentence_size_ < 1) {
+      throw std::invalid_argument("Invalid sentence size: '" + std::to_string(sentence_size_) + "'.");
+    }
 
-        if (to_lower(method) == "block")
-          evaluator_ = new TextTileBlockEvaluator(block_size);
-        else if (to_lower(method) == "vocabulary")
-          evaluator_ = new TextTileVocabularyEvaluator(sentence_size);
-        else
-          throw std::invalid_argument("Invalid choice of method: '" + method + "'.");
-      }
+    if (to_lower(method) == "block")
+      evaluator_ = new TextTileBlockEvaluator(block_size);
+    else if (to_lower(method) == "vocabulary")
+      evaluator_ = new TextTileVocabularyEvaluator(sentence_size);
+    else
+      throw std::invalid_argument("Invalid choice of method: '" + method + "'.");
+  }
 
   TextTile::~TextTile() {
     delete evaluator_;
@@ -37,7 +40,7 @@ namespace texmer {
     else if (TextTileVocabularyEvaluator* e = dynamic_cast<TextTileVocabularyEvaluator*>(evaluator_))
       scores = e->evaluate(transformed_corpus);
 
-    auto boundaries = identifier_.get_boundaries(scores);
+    auto boundaries = identifier_.get_boundaries(smoother_.smooth(scores));
     adjust_boundaries_by_sentence_size(boundaries);
     auto segments = segmenter_.segment(corpus, boundaries);
 
@@ -54,7 +57,7 @@ namespace texmer {
     else if (TextTileVocabularyEvaluator* e = dynamic_cast<TextTileVocabularyEvaluator*>(evaluator_))
       scores = e->evaluate(doc_ts);
 
-    auto boundaries = identifier_.get_boundaries(scores);
+    auto boundaries = identifier_.get_boundaries(smoother_.smooth(scores));
     adjust_boundaries_by_sentence_size(boundaries);
     auto segments = segmenter_.segment(doc, boundaries);
 

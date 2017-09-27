@@ -3,6 +3,8 @@
 
 #include <exception>
 
+#include "def.h"
+
 namespace texmer {
 
   class ScoreSmoother {
@@ -22,9 +24,6 @@ namespace texmer {
     {
       if (width_ % 2 != 0)
         throw std::invalid_argument("Width must be even.");
-
-      if (width_ == 0)
-        throw std::invalid_argument("Width must be positive.");
     }
 
     CorpusScores smooth(const CorpusScores& scores) const override {
@@ -39,6 +38,7 @@ namespace texmer {
 
     DocumentScores smooth(const DocumentScores& scores) const override {
       DocumentScores result{scores};
+      DocumentScores tmp{scores};
 
       size_t lower, upper;
       size_t width2 = width_ / 2;
@@ -47,14 +47,18 @@ namespace texmer {
       for (unsigned i = 0; i < rounds_; ++i) {
         for (unsigned current_gap = 0; current_gap < result.size(); ++current_gap) {
           lower = std::max(0, (int) (current_gap - width2));
-          upper = std::min(result.size(), current_gap + width2);
+          upper = std::min(result.size() - 1, current_gap + width2);
+
+          if (lower == upper) continue;
 
           val = 0;
-          for (unsigned j = lower; j < upper; ++j)
+          for (unsigned j = lower; j <= upper; ++j)
             val += result.at(j);
 
-          result.at(current_gap) = val / (upper - lower);
+          tmp.at(current_gap) = val / (1 + upper - lower);
         }
+
+        result = tmp;
       }
 
       return result;

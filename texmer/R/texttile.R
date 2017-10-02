@@ -36,16 +36,18 @@
 #' @importFrom stats sd
 #'
 #' @export
-tf_texttile <- function(corpus, stopwords,
-                        sentence_size, block_size,
+tf_texttile <- function(corpus,
+                        stopwords,
+                        sentence_size,
+                        block_size,
                         method="block",
                         liberal=TRUE,
                         smoothing_rounds=1,
                         smoothing_width=2) {
     .check_input_texttile(corpus, stopwords,
                           sentence_size ,block_size,
-                          method, liberal, smooth_rounds,
-                          smooth_width)
+                          method, liberal, smoothing_rounds,
+                          smoothing_width)
 
     texttile_tokens <- corpus %>%
         dplyr::group_by(id) %>%
@@ -67,10 +69,14 @@ tf_texttile <- function(corpus, stopwords,
     segments
 }
 
-.check_input_texttile <- function(corpus, stopwords,
-                                  sentence_size, block_size,
-                                  method, liberal,
-                                  smoothing_rounds, smoothing_width) {
+.check_input_texttile <- function(corpus,
+                                  stopwords,
+                                  sentence_size,
+                                  block_size,
+                                  method,
+                                  liberal,
+                                  smoothing_rounds,
+                                  smoothing_width) {
     checkr::assert_tidy_table(corpus, c("id", "token"))
     checkr::assert_character(stopwords)
     checkr::assert_integer(sentence_size, len=1, lower=1)
@@ -81,5 +87,5 @@ tf_texttile <- function(corpus, stopwords,
     checkr::assert_integer(smoothing_width, len=1, lower=1)
 
     if (!(smoothing_width %% 2 == 0))
-        stop("Smooth width must be even.")
+        stop("Smoothing width must be even.")
 }

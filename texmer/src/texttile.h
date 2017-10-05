@@ -26,7 +26,6 @@ namespace texmer {
 
   private:
     size_t sentence_size_;
-
     TokenTransformer transformer_;
     LexicalEvaluatorBase* evaluator_;
     TextTileBoundaryIdentifier identifier_;

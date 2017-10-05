@@ -10,6 +10,7 @@
 #include "boundary_identifier.h"
 #include "lexical_evaluator.h"
 #include "token_segmenter.h"
+#include "score_smoother.h"
 
 namespace texmer {
 
@@ -17,18 +18,9 @@ namespace texmer {
   public:
     TopicTile(size_t sentence_size, size_t block_size,
               const TypeTopicIndicatorMode& modes,
-              size_t n_segments, bool liberal)
-      : sentence_size_{sentence_size},
-        modes_{modes},
-        transformer_{sentence_size},
-        evaluator_{block_size},
-        identifier_{(int) n_segments - 1, liberal},
-        segmenter_{} {
-          if (sentence_size_ < 1) {
-            throw std::invalid_argument("Invalid sentence size: '" + std::to_string(sentence_size_) + "'.");
-          }
-        }
-
+              size_t n_segments, bool liberal,
+              size_t smoothing_rounds=0,
+              size_t smoothing_width=2);
 
     ~TopicTile() = default;
 
@@ -38,11 +30,11 @@ namespace texmer {
   private:
     size_t sentence_size_;
     TypeTopicIndicatorMode modes_;
-
     TopicIndicatorTransformer transformer_;
     TopicTileBlockEvaluator evaluator_;
     TopicTileBoundaryIdentifier identifier_;
     TokenSegmenter segmenter_;
+    AverageScoreSmoother smoother_;
 
     void adjust_boundaries_by_sentence_size(IntMatrix& boundaries) const;
     void adjust_boundaries_by_sentence_size(IntVector& boundaries) const;

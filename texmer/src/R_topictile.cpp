@@ -72,9 +72,16 @@ Rcpp::List mode_get_topictile_segments_cpp(TypeTopicIndicatorMode* const modes,
                                            size_t sentence_size,
                                            size_t block_size,
                                            size_t n_segments,
-                                           bool liberal) {
-  TopicTile topictile{sentence_size, block_size, *modes,
-      n_segments, liberal};
+                                           bool liberal,
+                                           size_t smoothing_rounds,
+                                           size_t smoothing_width) {
+  TopicTile topictile(sentence_size,
+                      block_size,
+                      *modes,
+                      n_segments,
+                      liberal,
+                      smoothing_rounds,
+                      smoothing_width);
   auto segments = topictile.segment(convert_from_R(tokens),
                                     convert_from_R(stopwords));
   return convert_to_R(segments);

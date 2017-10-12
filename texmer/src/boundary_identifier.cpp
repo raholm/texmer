@@ -85,7 +85,7 @@ namespace texmer {
       left_depth_score = get_depth_by_side(scores, gap, true);
       right_depth_score = get_depth_by_side(scores, gap, false);
 
-      depth_score = (left_depth_score + right_depth_score) / 2;
+      depth_score = left_depth_score + right_depth_score;
 
       if (depth_score >= cutoff_score)
         boundaries.push_back(gap);

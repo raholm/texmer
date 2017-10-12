@@ -77,20 +77,29 @@ namespace texmer {
 
   IntVector TopicTileBoundaryIdentifier::get_boundaries_by_heuristic(const DoubleVector& scores) const {
     IntVector boundaries;
+    boundaries.reserve(scores.size());
 
-    double cutoff_score = get_depth_cutoff(scores, liberal_);
+    DoubleVector depth_scores;
+    depth_scores.reserve(scores.size());
+
     double depth_score, left_depth_score, right_depth_score;
 
     for (unsigned gap = 0; gap < scores.size(); ++gap) {
       left_depth_score = get_depth_by_side(scores, gap, true);
       right_depth_score = get_depth_by_side(scores, gap, false);
 
-      depth_score = left_depth_score + right_depth_score;
+      depth_score = (left_depth_score + right_depth_score) / 2;
 
-      if (depth_score >= cutoff_score)
-        boundaries.push_back(gap);
+      depth_scores.push_back(depth_score);
     }
 
+    double cutoff_score = get_depth_cutoff(depth_scores, liberal_);
+
+    for (unsigned gap = 0; gap < depth_scores.size(); ++gap)
+      if (depth_scores.at(gap) >= cutoff_score)
+        boundaries.push_back(gap);
+
+    boundaries.shrink_to_fit();
     return boundaries;
   }
 
@@ -127,6 +136,7 @@ namespace texmer {
 
     std::sort(boundaries.begin(), boundaries.end());
 
+    boundaries.shrink_to_fit();
     return boundaries;
   }
 

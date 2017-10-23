@@ -45,6 +45,7 @@ tf_topictile <- function(corpus,
                                smoothing_width) %>%
         reshape2::melt() %>%
         dplyr::rename(text=value, docid=L1) %>%
+        dplyr::group_by(docid) %>%
         dplyr::mutate(id=row_number()) %>%
         dplyr::as_data_frame()
 

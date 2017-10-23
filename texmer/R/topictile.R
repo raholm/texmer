@@ -36,7 +36,7 @@ tf_topictile <- function(corpus,
         dplyr::group_by(id) %>%
         dplyr::summarise(tokens=list(token)) %>%
         dplyr::select(tokens)
-    topictile_tokens <- as.character(topictile_tokens$tokens)
+    topictile_tokens <- topictile_tokens$tokens
 
     segments <- mode$topictile(topictile_tokens, stopwords,
                                sentence_size, block_size,
@@ -47,6 +47,7 @@ tf_topictile <- function(corpus,
         dplyr::rename(text=value, docid=L1) %>%
         dplyr::group_by(docid) %>%
         dplyr::mutate(id=row_number()) %>%
+        dplyr::ungroup() %>%
         dplyr::as_data_frame()
 
     segments

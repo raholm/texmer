@@ -32,6 +32,8 @@ tf_token_seg <- function(corpus, seg_size) {
 
     tokens %>%
         texcur::tf_merge_tokens(delim=" ") %>%
+        dplyr::group_by(docid) %>%
+        dplyr::mutate(id=row_number()) %>%
         dplyr::as_data_frame()
 }
 

@@ -37,7 +37,7 @@ tf_token_seg <- function(corpus, seg_size) {
 
 .check_input_token_seg <- function(corpus, seg_size) {
     checkmate::assert_names(c("id", "token"), subset.of=names(corpus))
-    checkmate::assert_integer(seg_size, lower=1, len=1)
+    checkmate::assert_number(seg_size, lower=1)
     ## checkr::assert_character(corpus$id)
     ## checkr::assert_character(corpus$token)
     ## checkr::assert_integer(seg_size, len=1, lower=1)

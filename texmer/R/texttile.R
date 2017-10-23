@@ -61,10 +61,12 @@ tf_texttile <- function(corpus,
                                           smoothing_rounds, smoothing_width) %>%
         reshape2::melt() %>%
         dplyr::rename(text=value, docid=L1) %>%
-        dplyr::mutate(id=as.character(row_number()),
-                      text=as.character(text),
-                      docid=as.character(docid)) %>%
+        dplyr::mutate(id=row_number()) %>%
         dplyr::as_data_frame()
+
+    ## dplyr::mutate(id=as.character(row_number()),
+    ##               text=as.character(text),
+    ##               docid=as.character(docid)) %>%
 
     segments
 }
@@ -77,14 +79,14 @@ tf_texttile <- function(corpus,
                                   liberal,
                                   smoothing_rounds,
                                   smoothing_width) {
-    checkr::assert_tidy_table(corpus, c("id", "token"))
-    checkr::assert_character(stopwords)
-    checkr::assert_integer(sentence_size, len=1, lower=1)
-    checkr::assert_integer(block_size, len=1, lower=1)
-    checkr::assert_choice(method, c("block", "vocabulary"))
-    checkr::assert_logical(liberal, len=1)
-    checkr::assert_integer(smoothing_rounds, len=1, lower=0)
-    checkr::assert_integer(smoothing_width, len=1, lower=1)
+    checkmate::assert_names(c("id", "token"), subset.of=names(corpus))
+    checkmate::assert_character(stopwords)
+    checkmate::assert_number(sentence_size, lower=1)
+    checkmate::assert_number(block_size, lower=1)
+    checkmate::assert_choice(method, c("block", "vocabulary"))
+    checkmate::assert_logical(liberal, len=1)
+    checkmate::assert_number(smoothing_rounds, lower=0)
+    checkmate::assert_number(smoothing_width, lower=1)
 
     if (!(smoothing_width %% 2 == 0))
         stop("Smoothing width must be even.")

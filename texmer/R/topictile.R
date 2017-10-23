@@ -49,10 +49,6 @@ tf_topictile <- function(corpus,
         dplyr::mutate(id=row_number()) %>%
         dplyr::as_data_frame()
 
-    ## dplyr::mutate(id=as.character(row_number()),
-    ##           text=as.character(text),
-    ##           docid=as.character(docid)) %>%
-
     segments
 }
 

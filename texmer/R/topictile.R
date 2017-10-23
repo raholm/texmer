@@ -65,7 +65,6 @@ tf_topictile <- function(corpus,
     checkmate::assert_number(sentence_size, lower=1)
     checkmate::assert_number(block_size, lower=1)
     checkmate::assert_number(nsegments, lower=0)
-    checkmate::assert_choice(method, c("block", "vocabulary"))
     checkmate::assert_logical(liberal, len=1)
     checkmate::assert_number(smoothing_rounds, lower=0)
     checkmate::assert_number(smoothing_width, lower=1)

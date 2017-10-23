@@ -25,9 +25,9 @@ tf_token_seg <- function(corpus, seg_size) {
         dplyr::ungroup() %>%
         dplyr::mutate(id=NULL)
 
-    ids <- as.character(get_token_segment_ids_cpp(seg_stats$ntoken,
-                                                  seg_stats$nseg,
-                                                  seg_stats$segsize))
+    ids <- get_token_segment_ids_cpp(seg_stats$ntoken,
+                                     seg_stats$nseg,
+                                     seg_stats$segsize)
     tokens$id <- ids
 
     tokens %>%
@@ -36,8 +36,9 @@ tf_token_seg <- function(corpus, seg_size) {
 }
 
 .check_input_token_seg <- function(corpus, seg_size) {
-    checkr::assert_tidy_table(corpus, c("id", "token"))
-    checkr::assert_character(corpus$id)
-    checkr::assert_character(corpus$token)
-    checkr::assert_integer(seg_size, len=1, lower=1)
+    checkmate::assert_names(c("id", "token"), subset.of=names(corpus))
+    checkmate::assert_integer(seg_size, lower=1, len=1)
+    ## checkr::assert_character(corpus$id)
+    ## checkr::assert_character(corpus$token)
+    ## checkr::assert_integer(seg_size, len=1, lower=1)
 }

@@ -53,7 +53,7 @@ tf_texttile <- function(corpus,
         dplyr::group_by(id) %>%
         dplyr::summarise(tokens=list(token)) %>%
         dplyr::select(tokens)
-    texttile_tokens <- texttile_tokens$tokens
+    texttile_tokens <- as.character(texttile_tokens$tokens)
 
     segments <- get_texttile_segments_cpp(texttile_tokens, stopwords,
                                           sentence_size, block_size,
